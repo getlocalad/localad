@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LocalAd</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, sans-serif;
+      width: 280px;
+      padding: 16px;
+      background: #fff;
+      color: #1a1a1a;
+    }
+    h1 { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
+    .subtitle { font-size: 12px; color: #666; margin-bottom: 16px; }
+    label { font-size: 13px; font-weight: 600; display: block; margin-bottom: 6px; }
+    input[type="text"] {
+      width: 100%; padding: 8px 10px;
+      border: 1px solid #ddd; border-radius: 6px;
+      font-size: 14px; outline: none;
+    }
+    input[type="text"]:focus { border-color: #2563eb; }
+    button {
+      width: 100%; margin-top: 10px;
+      padding: 9px; border: none; border-radius: 6px;
+      background: #2563eb; color: #fff;
+      font-size: 14px; font-weight: 600; cursor: pointer;
+    }
+    button:hover { background: #1d4ed8; }
+    .status {
+      margin-top: 14px; padding: 8px 10px;
+      border-radius: 6px; font-size: 12px;
+      background: #f0fdf4; color: #166534; display: none;
+    }
+    .status.visible { display: block; }
+    .divider { border: none; border-top: 1px solid #eee; margin: 14px 0; }
+    .info-row { display: flex; justify-content: space-between; font-size: 12px; color: #555; }
+    .badge {
+      font-size: 11px; font-weight: 600;
+      padding: 2px 7px; border-radius: 999px;
+      background: #dbeafe; color: #1d4ed8;
+    }
+  </style>
+</head>
+<body>
+  <h1>LocalAd</h1>
+  <p class="subtitle">Lokale Werbung aus deiner Region</p>
+
+  <label for="postalCode">Deine Postleitzahl</label>
+  <input type="text" id="postalCode" placeholder="z.B. 47051" maxlength="5" />
+  <button id="saveBtn">Speichern</button>
+
+  <div class="status" id="status">Gespeichert!</div>
+
+  <hr class="divider" />
+  <div class="info-row">
+    <span>Abo</span>
+    <span class="badge" id="subStatus">Abo prüfen…</span>
+  </div>
+  <div class="info-row" style="margin-top:8px;">
+    <span>Umgebung</span>
+    <span class="badge" id="envBadge" style="cursor:pointer;" title="Klicken zum Wechseln">–</span>
+  </div>
+
+  <script src="popup.js" type="module"></script>
+</body>
+</html>

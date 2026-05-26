@@ -1,0 +1,40 @@
+services:
+
+  # ── PostgreSQL ──────────────────────────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: localad-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB:       ${DB_NAME:-localad}
+      POSTGRES_USER:     ${DB_USER:-localad}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-localad_dev}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backend/src/db/schema.sql:/docker-entrypoint-initdb.d/01_schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-localad} -d ${DB_NAME:-localad}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # ── pgAdmin (optional, nur für Entwicklung) ─────────────────────────────────
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: localad-pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL:    admin@getlocalad.dev
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    profiles:
+      - tools    # Nur starten mit: docker compose --profile tools up
+
+volumes:
+  postgres_data:

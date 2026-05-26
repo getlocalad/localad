@@ -1,0 +1,52 @@
+# Render.com Alternative (falls Railway nicht gewählt)
+services:
+  - type: web
+    name: localad-api
+    runtime: node
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: node src/server.js
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+      - key: DB_HOST
+        fromDatabase:
+          name: localad-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: localad-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: localad-db
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: localad-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: localad-db
+          property: password
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_REFRESH_SECRET
+        generateValue: true
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false
+      - key: STRIPE_PRICE_USER_MONTHLY
+        sync: false
+      - key: DASHBOARD_URL
+        value: https://getlocalad.de
+
+databases:
+  - name: localad-db
+    databaseName: localad
+    user: localad
+    plan: free

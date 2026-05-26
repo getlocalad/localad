@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LocalAd – Willkommen</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue:    #2563eb;
+      --blue-dk: #1d4ed8;
+      --blue-lt: #eff6ff;
+      --green:   #16a34a;
+      --border:  #e2e8f0;
+      --muted:   #64748b;
+      --text:    #0f172a;
+      --bg:      #f8fafc;
+    }
+
+    body {
+      font-family: system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ── Step-Navigation ── */
+    .progress-bar {
+      height: 4px; background: var(--border); position: fixed; top: 0; left: 0; right: 0; z-index: 10;
+    }
+    .progress-fill {
+      height: 100%; background: var(--blue);
+      transition: width 0.4s ease;
+    }
+
+    /* ── Screens ── */
+    .screen { display: none; min-height: 100vh; }
+    .screen.active { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 20px; }
+
+    .screen-inner { width: 100%; max-width: 480px; }
+
+    .logo { font-size: 22px; font-weight: 800; color: var(--blue); margin-bottom: 32px; }
+    h1 { font-size: 26px; font-weight: 800; margin-bottom: 8px; line-height: 1.25; }
+    .subtitle { font-size: 15px; color: var(--muted); margin-bottom: 32px; line-height: 1.6; }
+
+    /* ── Feature-Liste ── */
+    .features { display: flex; flex-direction: column; gap: 14px; margin-bottom: 32px; }
+    .feature {
+      display: flex; align-items: flex-start; gap: 12px;
+      background: #fff; border: 1px solid var(--border);
+      border-radius: 10px; padding: 14px 16px;
+    }
+    .feature-icon { font-size: 22px; flex-shrink: 0; }
+    .feature-text strong { display: block; font-size: 14px; margin-bottom: 2px; }
+    .feature-text span { font-size: 13px; color: var(--muted); }
+
+    /* ── Formular ── */
+    .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+    label { font-size: 13px; font-weight: 600; color: var(--muted); }
+    input {
+      padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px;
+      font-size: 15px; outline: none; font-family: inherit;
+    }
+    input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px #dbeafe; }
+    input.error { border-color: #ef4444; }
+
+    /* ── PLZ-Input mit großer Schrift ── */
+    .plz-input {
+      font-size: 28px; font-weight: 700; letter-spacing: 6px;
+      text-align: center; padding: 16px;
+    }
+
+    /* ── Buttons ── */
+    .btn {
+      display: block; width: 100%;
+      padding: 13px; border: none; border-radius: 8px;
+      font-size: 15px; font-weight: 700; cursor: pointer;
+      font-family: inherit; text-align: center; text-decoration: none;
+    }
+    .btn-primary { background: var(--blue); color: #fff; }
+    .btn-primary:hover { background: var(--blue-dk); }
+    .btn-primary:disabled { background: #93c5fd; cursor: not-allowed; }
+    .btn-ghost { background: transparent; color: var(--muted); margin-top: 10px; font-size: 13px; }
+    .btn-ghost:hover { color: var(--text); }
+
+    .error-msg { color: #dc2626; font-size: 13px; margin-top: -8px; margin-bottom: 8px; display: none; }
+    .error-msg.visible { display: block; }
+
+    /* ── Preis-Box ── */
+    .price-box {
+      background: var(--blue-lt); border: 2px solid var(--blue);
+      border-radius: 12px; padding: 20px; text-align: center; margin-bottom: 24px;
+    }
+    .price { font-size: 42px; font-weight: 800; color: var(--blue); }
+    .price-period { font-size: 16px; color: var(--muted); }
+    .price-note { font-size: 12px; color: var(--muted); margin-top: 6px; }
+
+    /* ── Success-Screen ── */
+    .success-icon { font-size: 64px; text-align: center; margin-bottom: 16px; }
+    .step-hint { font-size: 12px; color: var(--muted); text-align: center; margin-top: 24px; }
+
+    /* ── Responsive ── */
+    @media (max-width: 480px) {
+      h1 { font-size: 22px; }
+      .price { font-size: 34px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="progress-bar"><div class="progress-fill" id="progress" style="width:25%"></div></div>
+
+<!-- ═══════════════════════════════════════════════════
+     Screen 1: Willkommen
+══════════════════════════════════════════════════════ -->
+<div class="screen active" id="screen-welcome">
+  <div class="screen-inner">
+    <div class="logo">LocalAd</div>
+    <h1>Werbefreies Surfen.<br/>Lokale Unterstützung.</h1>
+    <p class="subtitle">
+      LocalAd blockiert Konzernwerbung und ersetzt sie durch echte lokale Anzeigen aus deiner Region.
+      Gut für dich – gut für Duisburg.
+    </p>
+
+    <div class="features">
+      <div class="feature">
+        <div class="feature-icon">🚫</div>
+        <div class="feature-text">
+          <strong>Keine Konzernwerbung mehr</strong>
+          <span>Google, Meta, Amazon und Co. werden blockiert.</span>
+        </div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">📍</div>
+        <div class="feature-text">
+          <strong>Lokale Werbung stattdessen</strong>
+          <span>Siehst du Werbung, kommt sie aus Duisburg.</span>
+        </div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🏪</div>
+        <div class="feature-text">
+          <strong>Heimische Wirtschaft stärken</strong>
+          <span>Dein Abo fließt direkt in die lokale Infrastruktur.</span>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn btn-primary" onclick="goTo('screen-register')">Jetzt starten →</button>
+    <p class="step-hint">Schritt 1 von 3</p>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     Screen 2: Account erstellen
+══════════════════════════════════════════════════════ -->
+<div class="screen" id="screen-register">
+  <div class="screen-inner">
+    <div class="logo">LocalAd</div>
+    <h1>Account erstellen</h1>
+    <p class="subtitle">Damit wir dein Abo verwalten können, brauchst du einen Account.</p>
+
+    <div class="form-group">
+      <label>E-Mail-Adresse</label>
+      <input type="email" id="reg-email" placeholder="du@example.de" autocomplete="email" />
+    </div>
+    <div class="form-group">
+      <label>Passwort (min. 8 Zeichen)</label>
+      <input type="password" id="reg-password" placeholder="••••••••" autocomplete="new-password" />
+    </div>
+    <div class="form-group">
+      <label>Passwort wiederholen</label>
+      <input type="password" id="reg-password2" placeholder="••••••••" autocomplete="new-password" />
+    </div>
+
+    <p class="error-msg" id="reg-error"></p>
+
+    <button class="btn btn-primary" id="reg-btn" onclick="handleRegister()">Account erstellen</button>
+    <button class="btn btn-ghost" onclick="goTo('screen-welcome')">← Zurück</button>
+    <p class="step-hint">Schritt 2 von 3 · Bereits einen Account? <a href="javascript:void(0)" onclick="goTo('screen-login')" style="color:var(--blue)">Anmelden</a></p>
+  </div>
+</div>
+
+<!-- Login (versteckt, für bestehende Nutzer) -->
+<div class="screen" id="screen-login">
+  <div class="screen-inner">
+    <div class="logo">LocalAd</div>
+    <h1>Willkommen zurück</h1>
+    <p class="subtitle">Melde dich an um dein Abo zu aktivieren.</p>
+    <div class="form-group">
+      <label>E-Mail</label>
+      <input type="email" id="login-email" placeholder="du@example.de" />
+    </div>
+    <div class="form-group">
+      <label>Passwort</label>
+      <input type="password" id="login-password" placeholder="••••••••" />
+    </div>
+    <p class="error-msg" id="login-error"></p>
+    <button class="btn btn-primary" onclick="handleLogin()">Anmelden</button>
+    <button class="btn btn-ghost" onclick="goTo('screen-register')">← Zurück</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     Screen 3: PLZ eingeben
+══════════════════════════════════════════════════════ -->
+<div class="screen" id="screen-plz">
+  <div class="screen-inner">
+    <div class="logo">LocalAd</div>
+    <h1>Deine Region</h1>
+    <p class="subtitle">Gib deine Postleitzahl ein. So können wir dir Werbung aus deiner Nachbarschaft zeigen.</p>
+
+    <div class="form-group">
+      <input type="text" id="plz-input" class="plz-input" placeholder="47051"
+             maxlength="5" inputmode="numeric" pattern="\d{5}" autocomplete="postal-code" />
+    </div>
+    <p class="error-msg" id="plz-error"></p>
+
+    <button class="btn btn-primary" onclick="handlePlz()">Weiter →</button>
+    <p class="step-hint">Schritt 3 von 3 · Duisburg-PLZs: 47051–47279</p>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     Screen 4: Abo abschließen
+══════════════════════════════════════════════════════ -->
+<div class="screen" id="screen-subscribe">
+  <div class="screen-inner">
+    <div class="logo">LocalAd</div>
+    <h1>Abo aktivieren</h1>
+    <p class="subtitle">Für 3 € im Monat – weniger als ein Kaffee.</p>
+
+    <div class="price-box">
+      <div class="price">3 €</div>
+      <div class="price-period">pro Monat</div>
+      <div class="price-note">Jederzeit kündbar · Keine Mindestlaufzeit</div>
+    </div>
+
+    <div class="features" style="margin-bottom:24px;">
+      <div class="feature">
+        <div class="feature-icon">✓</div>
+        <div class="feature-text">
+          <strong>Konzernwerbung vollständig blockiert</strong>
+          <span>Auf allen Websites, automatisch.</span>
+        </div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">✓</div>
+        <div class="feature-text">
+          <strong>Lokale Werbung aus deiner PLZ</strong>
+          <span>Nur auf Partnerseiten die zugestimmt haben.</span>
+        </div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">✓</div>
+        <div class="feature-text">
+          <strong>Kein Tracking, keine Daten an Konzerne</strong>
+          <span>Deine PLZ bleibt auf deinem Gerät.</span>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn btn-primary" id="checkout-btn" onclick="handleCheckout()">
+      Jetzt für 3 €/Monat abonnieren
+    </button>
+    <button class="btn btn-ghost" onclick="goTo('screen-plz')">← Zurück</button>
+    <p class="step-hint">Sichere Zahlung via Stripe · Keine Kreditkartendaten bei LocalAd gespeichert</p>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     Screen 5: Erfolg
+══════════════════════════════════════════════════════ -->
+<div class="screen" id="screen-success">
+  <div class="screen-inner" style="text-align:center;">
+    <div class="success-icon">🎉</div>
+    <div class="logo" style="justify-content:center;display:flex;">LocalAd</div>
+    <h1 style="margin-top:16px;">Alles bereit!</h1>
+    <p class="subtitle">
+      Dein Abo ist aktiv. Die Extension ist bereits eingerichtet –
+      du kannst sofort lossurfen.
+    </p>
+
+    <div class="features" style="text-align:left;">
+      <div class="feature">
+        <div class="feature-icon">🚫</div>
+        <div class="feature-text">
+          <strong>Konzernwerbung wird blockiert</strong>
+          <span>Ab sofort auf allen Seiten.</span>
+        </div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">📍</div>
+        <div class="feature-text">
+          <strong>Lokale Ads aus PLZ <span id="success-plz">–</span></strong>
+          <span>Auf registrierten Partnerseiten.</span>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn btn-primary" style="margin-top:8px;" onclick="window.close()">
+      Fertig – Tab schließen
+    </button>
+  </div>
+</div>
+
+<script>
+  const API = 'http://localhost:3000/api';
+  let accessToken = null;
+  let userId      = null;
+  let userEmail   = null;
+  let postalCode  = null;
+
+  const STEPS = {
+    'screen-welcome':   25,
+    'screen-register':  50,
+    'screen-login':     50,
+    'screen-plz':       75,
+    'screen-subscribe': 90,
+    'screen-success':   100,
+  };
+
+  function goTo(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    document.getElementById('progress').style.width = (STEPS[id] ?? 50) + '%';
+    window.scrollTo(0, 0);
+  }
+
+  async function apiFetch(path, body, token) {
+    const res = await fetch(API + path, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: JSON.stringify(body),
+      credentials: 'include',
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ error: `HTTP ${res.status}` }));
+      throw new Error(err.error || `HTTP ${res.status}`);
+    }
+    return res.json();
+  }
+
+  function showError(id, msg) {
+    const el = document.getElementById(id);
+    el.textContent = msg;
+    el.classList.add('visible');
+  }
+  function clearError(id) {
+    document.getElementById(id).classList.remove('visible');
+  }
+
+  // ── Registrierung ─────────────────────────────────────────────────────────
+  async function handleRegister() {
+    clearError('reg-error');
+    const email = document.getElementById('reg-email').value.trim();
+    const pw1   = document.getElementById('reg-password').value;
+    const pw2   = document.getElementById('reg-password2').value;
+
+    if (!email || !pw1) return showError('reg-error', 'Alle Felder ausfüllen.');
+    if (pw1.length < 8) return showError('reg-error', 'Passwort muss min. 8 Zeichen haben.');
+    if (pw1 !== pw2) return showError('reg-error', 'Passwörter stimmen nicht überein.');
+
+    const btn = document.getElementById('reg-btn');
+    btn.disabled = true; btn.textContent = 'Erstelle Account…';
+
+    try {
+      await apiFetch('/auth/register', { email, password: pw1, role: 'user' });
+      const login = await apiFetch('/auth/login', { email, password: pw1 });
+      accessToken = login.accessToken;
+      userId      = login.user.id;
+      userEmail   = email;
+      goTo('screen-plz');
+    } catch (err) {
+      showError('reg-error', err.message);
+    } finally {
+      btn.disabled = false; btn.textContent = 'Account erstellen';
+    }
+  }
+
+  // ── Login ─────────────────────────────────────────────────────────────────
+  async function handleLogin() {
+    clearError('login-error');
+    const email = document.getElementById('login-email').value.trim();
+    const pw    = document.getElementById('login-password').value;
+    if (!email || !pw) return showError('login-error', 'E-Mail und Passwort erforderlich.');
+    try {
+      const login = await apiFetch('/auth/login', { email, password: pw });
+      accessToken = login.accessToken;
+      userId      = login.user.id;
+      userEmail   = email;
+
+      if (login.user.isSubscribed) {
+        goTo('screen-success');
+      } else {
+        goTo('screen-plz');
+      }
+    } catch (err) {
+      showError('login-error', err.message);
+    }
+  }
+
+  // ── PLZ ───────────────────────────────────────────────────────────────────
+  function handlePlz() {
+    clearError('plz-error');
+    const plz = document.getElementById('plz-input').value.trim();
+    if (!/^\d{5}$/.test(plz)) return showError('plz-error', 'Bitte eine gültige 5-stellige PLZ eingeben.');
+    postalCode = plz;
+
+    // PLZ direkt in Extension-Storage schreiben (falls Seite aus Extension heraus geöffnet)
+    if (typeof chrome !== 'undefined' && chrome.storage) {
+      chrome.storage.local.set({ postalCode: plz });
+    }
+
+    goTo('screen-subscribe');
+  }
+
+  // ── PLZ-Input: nur Ziffern ────────────────────────────────────────────────
+  document.getElementById('plz-input').addEventListener('input', (e) => {
+    e.target.value = e.target.value.replace(/\D/g, '').slice(0, 5);
+  });
+
+  // ── Checkout ──────────────────────────────────────────────────────────────
+  async function handleCheckout() {
+    const btn = document.getElementById('checkout-btn');
+    btn.disabled = true; btn.textContent = 'Weiterleitung zu Stripe…';
+
+    try {
+      const data = await apiFetch('/stripe/create-checkout',
+        { userId, email: userEmail },
+        accessToken
+      );
+
+      if (data.checkoutUrl) {
+        // Stripe Checkout in gleichem Tab öffnen
+        window.location.href = data.checkoutUrl;
+      }
+    } catch (err) {
+      btn.disabled = false;
+      btn.textContent = 'Jetzt für 3 €/Monat abonnieren';
+      alert('Fehler: ' + err.message);
+    }
+  }
+
+  // ── URL-Params auswerten (Stripe redirect zurück) ─────────────────────────
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('success') === '1') {
+    document.getElementById('success-plz').textContent = params.get('plz') || '–';
+    goTo('screen-success');
+  }
+  if (params.get('cancel') === '1') {
+    goTo('screen-subscribe');
+  }
+</script>
+</body>
+</html>

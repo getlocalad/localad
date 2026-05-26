@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LocalAd – Publisher-Dashboard</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue:    #2563eb;
+      --blue-dk: #1d4ed8;
+      --green:   #16a34a;
+      --amber:   #d97706;
+      --red:     #dc2626;
+      --bg:      #f8fafc;
+      --card:    #ffffff;
+      --border:  #e2e8f0;
+      --muted:   #64748b;
+      --text:    #0f172a;
+    }
+
+    body { font-family: system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+    #app { display: none; }
+
+    nav {
+      background: var(--card); border-bottom: 1px solid var(--border);
+      padding: 0 24px; height: 56px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo  { font-weight: 800; font-size: 18px; color: var(--blue); }
+    .nav-sub   { font-size: 12px; color: var(--muted); margin-left: 10px; }
+    .nav-right { display: flex; align-items: center; gap: 12px; font-size: 13px; color: var(--muted); }
+
+    main { max-width: 820px; margin: 32px auto; padding: 0 20px; }
+
+    /* ── Cards ── */
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 20px 24px; margin-bottom: 20px; }
+    .card-title { font-size: 15px; font-weight: 700; margin-bottom: 16px; }
+
+    /* ── Status-Banner ── */
+    .status-banner {
+      display: flex; align-items: center; gap: 12px;
+      padding: 14px 18px; border-radius: 8px; margin-bottom: 20px;
+      font-size: 14px; font-weight: 500;
+    }
+    .status-banner.unregistered { background: #fefce8; border: 1px solid #fde68a; color: #92400e; }
+    .status-banner.pending      { background: #fffbeb; border: 1px solid #fcd34d; color: #92400e; }
+    .status-banner.verified     { background: #f0fdf4; border: 1px solid #86efac; color: #166534; }
+
+    /* ── Stats ── */
+    .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 20px; }
+    .stat { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 14px 18px; }
+    .stat-label { font-size: 11px; color: var(--muted); margin-bottom: 4px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; }
+    .stat-value { font-size: 26px; font-weight: 800; }
+
+    /* ── Formulare ── */
+    .form-group { display: flex; flex-direction: column; gap: 5px; margin-bottom: 14px; }
+    label { font-size: 12px; font-weight: 600; color: var(--muted); }
+    input, select {
+      padding: 8px 10px; border: 1px solid var(--border); border-radius: 6px;
+      font-size: 13px; outline: none; font-family: inherit;
+    }
+    input:focus, select:focus { border-color: var(--blue); }
+
+    /* ── Buttons ── */
+    button { padding: 8px 16px; border: none; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; }
+    .btn-primary { background: var(--blue); color: #fff; }
+    .btn-primary:hover { background: var(--blue-dk); }
+    .btn-primary:disabled { background: #93c5fd; cursor: not-allowed; }
+    .btn-ghost { background: transparent; color: var(--muted); }
+    .btn-ghost:hover { background: var(--bg); }
+
+    /* ── Code-Block ── */
+    .code-block {
+      background: #1e293b; color: #e2e8f0; border-radius: 8px;
+      padding: 14px 16px; font-family: monospace; font-size: 13px;
+      margin: 10px 0; position: relative; overflow-x: auto;
+    }
+    .copy-btn {
+      position: absolute; top: 8px; right: 8px;
+      background: #334155; color: #94a3b8; padding: 3px 10px;
+      border-radius: 4px; font-size: 11px; font-weight: 600;
+      cursor: pointer; border: none;
+    }
+    .copy-btn:hover { background: #475569; color: #fff; }
+
+    /* ── Steps ── */
+    .steps { counter-reset: step; list-style: none; display: flex; flex-direction: column; gap: 16px; }
+    .steps li { display: flex; gap: 14px; }
+    .steps li::before {
+      counter-increment: step;
+      content: counter(step);
+      min-width: 26px; height: 26px; border-radius: 50%;
+      background: var(--blue); color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 700; flex-shrink: 0; margin-top: 1px;
+    }
+    .step-text { font-size: 13px; line-height: 1.6; }
+
+    /* ── Login ── */
+    #login-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+    .login-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 32px; width: 360px; }
+    .login-card h2 { font-size: 20px; margin-bottom: 4px; }
+    .login-card p  { font-size: 13px; color: var(--muted); margin-bottom: 24px; }
+    .login-card button { width: 100%; margin-top: 6px; padding: 10px; }
+
+    .error-msg { color: var(--red); font-size: 12px; margin-top: 6px; display: none; }
+    .error-msg.visible { display: block; }
+
+    .badge { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 600; }
+    .badge-green  { background: #dcfce7; color: #166534; }
+    .badge-amber  { background: #fef3c7; color: #92400e; }
+
+    @media (max-width: 600px) { .stats { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+
+<!-- ── Login ── -->
+<div id="login-screen">
+  <div class="login-card">
+    <h2>LocalAd</h2>
+    <p>Publisher-Dashboard</p>
+    <div class="form-group">
+      <label>E-Mail</label>
+      <input type="email" id="login-email" placeholder="mail@example.de" />
+    </div>
+    <div class="form-group">
+      <label>Passwort</label>
+      <input type="password" id="login-password" placeholder="••••••••" />
+    </div>
+    <p class="error-msg" id="login-error"></p>
+    <button class="btn-primary" id="login-btn">Anmelden</button>
+  </div>
+</div>
+
+<!-- ── App ── -->
+<div id="app">
+  <nav>
+    <div style="display:flex;align-items:baseline;gap:8px;">
+      <span class="nav-logo">LocalAd</span>
+      <span class="nav-sub">Publisher</span>
+    </div>
+    <div class="nav-right">
+      <span id="nav-email"></span>
+      <button class="btn-ghost" id="logout-btn">Abmelden</button>
+    </div>
+  </nav>
+
+  <main>
+
+    <!-- Status-Banner -->
+    <div id="status-banner" class="status-banner unregistered">
+      ⏳ Domain noch nicht registriert
+    </div>
+
+    <!-- Stats (nur sichtbar wenn verifiziert) -->
+    <div id="stats-section" style="display:none;">
+      <div class="stats">
+        <div class="stat"><div class="stat-label">Impressions (30 Tage)</div><div class="stat-value" id="stat-impressions">–</div></div>
+        <div class="stat"><div class="stat-label">Klicks (30 Tage)</div><div class="stat-value" id="stat-clicks">–</div></div>
+        <div class="stat"><div class="stat-label">Umsatzbeteiligung</div><div class="stat-value" id="stat-revenue">–</div></div>
+      </div>
+    </div>
+
+    <!-- Domain registrieren -->
+    <div class="card" id="register-section">
+      <div class="card-title">Domain registrieren</div>
+      <div class="form-group">
+        <label>Domain (ohne https://)</label>
+        <input type="text" id="reg-domain" placeholder="meine-zeitung.de" />
+      </div>
+      <div class="form-group">
+        <label>Verifizierungsmethode</label>
+        <select id="reg-method">
+          <option value="meta-tag">Meta-Tag (einfacher, nur HTML-Zugriff nötig)</option>
+          <option value="dns">DNS TXT-Record (empfohlen, kein Seiten-Deploy nötig)</option>
+        </select>
+      </div>
+      <p class="error-msg" id="reg-error"></p>
+      <button class="btn-primary" id="reg-btn">Registrieren</button>
+    </div>
+
+    <!-- Verifizierungsanleitung (nach Registrierung sichtbar) -->
+    <div class="card" id="verify-section" style="display:none;">
+      <div class="card-title">Verifizierung</div>
+      <div id="verify-instructions"></div>
+      <div style="margin-top:16px;display:flex;align-items:center;gap:12px;">
+        <button class="btn-primary" id="verify-btn">Jetzt prüfen</button>
+        <span id="verify-result" style="font-size:13px;"></span>
+      </div>
+    </div>
+
+    <!-- Publisher-Info (nach Verifizierung) -->
+    <div class="card" id="publisher-info" style="display:none;">
+      <div class="card-title">Deine Publisher-Domain</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;font-size:14px;">
+        <div>
+          <strong id="pub-domain">–</strong>
+          <span class="badge badge-green" style="margin-left:8px;">Verifiziert</span>
+        </div>
+        <div style="font-size:13px;color:var(--muted);">
+          Umsatzbeteiligung: <strong id="pub-revenue-pct">30</strong>%
+        </div>
+      </div>
+    </div>
+
+    <!-- Slot-Anleitung -->
+    <div class="card" id="slots-section" style="display:none;">
+      <div class="card-title">Ad-Slots einrichten</div>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:16px;">
+        Füge dieses Attribut zu beliebigen <code>&lt;div&gt;</code>-Elementen auf deiner Seite hinzu.
+        LocalAd ersetzt deren Inhalt automatisch durch lokale Werbung.
+      </p>
+
+      <ul class="steps">
+        <li>
+          <div class="step-text">
+            <strong>Header-Banner (728×90)</strong><br/>
+            <div class="code-block">
+              &lt;div data-localad-slot="header-banner"&gt;&lt;/div&gt;
+              <button class="copy-btn" onclick="copyCode(this)">Kopieren</button>
+            </div>
+          </div>
+        </li>
+        <li>
+          <div class="step-text">
+            <strong>Sidebar-Box (300×250)</strong><br/>
+            <div class="code-block">
+              &lt;div data-localad-slot="sidebar-box"&gt;&lt;/div&gt;
+              <button class="copy-btn" onclick="copyCode(this)">Kopieren</button>
+            </div>
+          </div>
+        </li>
+        <li>
+          <div class="step-text">
+            <strong>In-Article (468×60)</strong><br/>
+            <div class="code-block">
+              &lt;div data-localad-slot="in-article"&gt;&lt;/div&gt;
+              <button class="copy-btn" onclick="copyCode(this)">Kopieren</button>
+            </div>
+          </div>
+        </li>
+        <li>
+          <div class="step-text">
+            Eigene Slot-Namen sind erlaubt – der Name muss nur eindeutig pro Seite sein.
+          </div>
+        </li>
+      </ul>
+    </div>
+
+  </main>
+</div>
+
+<script>
+  const API = 'http://localhost:3000/api';
+  let accessToken = sessionStorage.getItem('localad_pub_token') || null;
+  let publisherData = null;
+  let verifyToken = null;
+  let verifyDomain = null;
+
+  // ── Auth ──────────────────────────────────────────────────────────────────
+  async function apiFetch(path, options = {}) {
+    const res = await fetch(API + path, {
+      ...options,
+      headers: {
+        'Content-Type': 'application/json',
+        ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+        ...options.headers,
+      },
+      credentials: 'include',
+    });
+
+    if (res.status === 401) {
+      const refreshed = await fetch(API + '/auth/refresh', { method: 'POST', credentials: 'include' });
+      if (refreshed.ok) {
+        const data = await refreshed.json();
+        accessToken = data.accessToken;
+        sessionStorage.setItem('localad_pub_token', accessToken);
+        return apiFetch(path, options);
+      } else { logout(); throw new Error('Sitzung abgelaufen'); }
+    }
+
+    if (res.status === 204) return null;
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ error: `HTTP ${res.status}` }));
+      throw new Error(err.error || `HTTP ${res.status}`);
+    }
+    return res.json();
+  }
+
+  document.getElementById('login-btn').addEventListener('click', async () => {
+    const email = document.getElementById('login-email').value.trim();
+    const pwd   = document.getElementById('login-password').value;
+    const errEl = document.getElementById('login-error');
+    errEl.classList.remove('visible');
+
+    try {
+      const data = await apiFetch('/auth/login', { method: 'POST', body: JSON.stringify({ email, password: pwd }) });
+      accessToken = data.accessToken;
+      sessionStorage.setItem('localad_pub_token', accessToken);
+      document.getElementById('nav-email').textContent = data.user.email;
+      showApp();
+    } catch (err) {
+      errEl.textContent = err.message;
+      errEl.classList.add('visible');
+    }
+  });
+
+  document.getElementById('logout-btn').addEventListener('click', logout);
+
+  function logout() {
+    fetch(API + '/auth/logout', { method: 'POST', credentials: 'include' });
+    accessToken = null;
+    sessionStorage.removeItem('localad_pub_token');
+    document.getElementById('app').style.display = 'none';
+    document.getElementById('login-screen').style.display = 'flex';
+  }
+
+  // ── App ───────────────────────────────────────────────────────────────────
+  function showApp() {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    loadPublisher();
+  }
+
+  async function loadPublisher() {
+    try {
+      const data = await apiFetch('/publishers/me');
+      publisherData = data.publisher;
+
+      if (!publisherData) {
+        setStatus('unregistered');
+        return;
+      }
+
+      if (!publisherData.is_verified) {
+        setStatus('pending');
+        return;
+      }
+
+      setStatus('verified');
+      loadStats();
+    } catch {
+      setStatus('unregistered');
+    }
+  }
+
+  function setStatus(status) {
+    const banner = document.getElementById('status-banner');
+    const reg    = document.getElementById('register-section');
+    const verify = document.getElementById('verify-section');
+    const pubInfo = document.getElementById('publisher-info');
+    const slots  = document.getElementById('slots-section');
+    const stats  = document.getElementById('stats-section');
+
+    banner.className = `status-banner ${status}`;
+
+    if (status === 'unregistered') {
+      banner.textContent = '⏳ Domain noch nicht registriert – trage deine Domain unten ein.';
+      reg.style.display = 'block'; verify.style.display = 'none';
+      pubInfo.style.display = 'none'; slots.style.display = 'none'; stats.style.display = 'none';
+    }
+    if (status === 'pending') {
+      banner.textContent = '🔍 Verifizierung ausstehend – folge der Anleitung unten.';
+      reg.style.display = 'none'; verify.style.display = 'block';
+      pubInfo.style.display = 'none'; slots.style.display = 'none'; stats.style.display = 'none';
+    }
+    if (status === 'verified') {
+      banner.textContent = '✅ Domain verifiziert – du nimmst an LocalAd teil.';
+      reg.style.display = 'none'; verify.style.display = 'none';
+      pubInfo.style.display = 'block'; slots.style.display = 'block'; stats.style.display = 'block';
+
+      document.getElementById('pub-domain').textContent = publisherData.domain;
+      document.getElementById('pub-revenue-pct').textContent = publisherData.revenue_share_pct ?? 30;
+    }
+  }
+
+  // ── Registrierung ─────────────────────────────────────────────────────────
+  document.getElementById('reg-btn').addEventListener('click', async () => {
+    const domain = document.getElementById('reg-domain').value.trim();
+    const method = document.getElementById('reg-method').value;
+    const errEl  = document.getElementById('reg-error');
+    errEl.classList.remove('visible');
+
+    if (!domain) { errEl.textContent = 'Domain erforderlich'; errEl.classList.add('visible'); return; }
+
+    try {
+      const data = await apiFetch('/publishers/register', {
+        method: 'POST',
+        body: JSON.stringify({ domain, verificationMethod: method }),
+      });
+
+      verifyToken  = data.token;
+      verifyDomain = domain;
+      renderVerifyInstructions(data.instructions);
+      setStatus('pending');
+    } catch (err) {
+      errEl.textContent = err.message;
+      errEl.classList.add('visible');
+    }
+  });
+
+  // ── Verifizierungsanleitung rendern ───────────────────────────────────────
+  function renderVerifyInstructions(instructions) {
+    const el = document.getElementById('verify-instructions');
+
+    if (instructions.type === 'dns') {
+      el.innerHTML = `
+        <ul class="steps">
+          <li><div class="step-text">Logge dich bei deinem DNS-Anbieter ein (z.B. Strato, IONOS, Namecheap).</div></li>
+          <li><div class="step-text">
+            Erstelle einen neuen <strong>TXT-Record</strong> für deine Domain:
+            <div class="code-block">${esc(instructions.value)}<button class="copy-btn" onclick="copyCode(this)">Kopieren</button></div>
+          </div></li>
+          <li><div class="step-text">DNS-Propagation kann bis zu 48h dauern. Danach auf „Jetzt prüfen" klicken.</div></li>
+        </ul>`;
+    } else {
+      el.innerHTML = `
+        <ul class="steps">
+          <li><div class="step-text">Öffne den HTML-Code deiner Website.</div></li>
+          <li><div class="step-text">
+            Füge folgenden Tag in den <code>&lt;head&gt;</code>-Bereich ein:
+            <div class="code-block">${esc(instructions.tag)}<button class="copy-btn" onclick="copyCode(this)">Kopieren</button></div>
+          </div></li>
+          <li><div class="step-text">Veröffentliche die Änderung, dann auf „Jetzt prüfen" klicken.</div></li>
+        </ul>`;
+    }
+  }
+
+  // ── Verifizierung anstoßen ────────────────────────────────────────────────
+  document.getElementById('verify-btn').addEventListener('click', async () => {
+    const btn    = document.getElementById('verify-btn');
+    const result = document.getElementById('verify-result');
+    const domain = verifyDomain || publisherData?.domain;
+
+    if (!domain) return;
+
+    btn.disabled = true;
+    btn.textContent = 'Prüfe…';
+    result.textContent = '';
+
+    try {
+      const data = await apiFetch('/publishers/verify', { method: 'POST', body: JSON.stringify({ domain }) });
+
+      if (data.verified) {
+        publisherData = { ...publisherData, is_verified: true, domain };
+        setStatus('verified');
+      } else {
+        result.textContent = data.message;
+        result.style.color = 'var(--amber)';
+        btn.disabled = false;
+        btn.textContent = 'Erneut prüfen';
+      }
+    } catch (err) {
+      result.textContent = err.message;
+      result.style.color = 'var(--red)';
+      btn.disabled = false;
+      btn.textContent = 'Erneut prüfen';
+    }
+  });
+
+  // ── Stats laden ───────────────────────────────────────────────────────────
+  async function loadStats() {
+    try {
+      const data = await apiFetch('/publishers/me/stats?days=30');
+
+      document.getElementById('stat-impressions').textContent =
+        Number(data.impressions || 0).toLocaleString('de');
+      document.getElementById('stat-clicks').textContent =
+        Number(data.clicks || 0).toLocaleString('de');
+      document.getElementById('stat-revenue').textContent =
+        (data.estimatedRevenue ?? 0).toFixed(2) + ' €';
+
+      // Top-Slots rendern wenn vorhanden
+      if (data.topSlots?.length > 0) {
+        renderTopSlots(data.topSlots);
+      }
+    } catch { /* silent – kein Stats-Endpoint wenn nicht verifiziert */ }
+  }
+
+  function renderTopSlots(slots) {
+    const existing = document.getElementById('top-slots-card');
+    if (existing) existing.remove();
+
+    const card = document.createElement('div');
+    card.id = 'top-slots-card';
+    card.className = 'card';
+    card.innerHTML = `
+      <div class="card-title">Top-Slots (30 Tage)</div>
+      <table>
+        <thead><tr><th>Slot</th><th>Impressions</th><th>Klicks</th><th>CTR</th></tr></thead>
+        <tbody>
+          ${slots.map(s => `
+            <tr>
+              <td><code>${esc(s.slotId)}</code></td>
+              <td>${Number(s.impressions).toLocaleString('de')}</td>
+              <td>${Number(s.clicks).toLocaleString('de')}</td>
+              <td>${s.ctr} %</td>
+            </tr>`).join('')}
+        </tbody>
+      </table>`;
+    document.querySelector('main').appendChild(card);
+  }
+
+  // ── Utils ─────────────────────────────────────────────────────────────────
+  function copyCode(btn) {
+    const text = btn.parentElement.textContent.replace('Kopieren', '').trim();
+    navigator.clipboard.writeText(text).then(() => {
+      btn.textContent = '✓';
+      setTimeout(() => btn.textContent = 'Kopieren', 1500);
+    });
+  }
+
+  function esc(str) {
+    return String(str ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  // ── Auto-Login ────────────────────────────────────────────────────────────
+  if (accessToken) {
+    apiFetch('/publishers/me').then(data => {
+      if (data !== undefined) {
+        document.getElementById('nav-email').textContent = '–';
+        showApp();
+      }
+    }).catch(() => {
+      sessionStorage.removeItem('localad_pub_token');
+      accessToken = null;
+    });
+  }
+</script>
+</body>
+</html>

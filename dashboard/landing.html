@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LocalAd – Lokale Werbung statt Konzerntracking</title>
+  <meta name="description" content="Der Browser-Werbeblocker, der Konzernwerbung durch echte lokale Anzeigen aus deiner Region ersetzt. Für Duisburg und bald ganz Deutschland." />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:   #0F2D52;
+      --navy2:  #1a3f6f;
+      --orange: #E85D04;
+      --orange2:#ff7a2e;
+      --white:  #ffffff;
+      --gray:   #f4f6f9;
+      --gray2:  #e2e7ef;
+      --text:   #1a2635;
+      --muted:  #5a6a7e;
+      --radius: 12px;
+      --shadow: 0 4px 24px rgba(15,45,82,0.12);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+      color: var(--text);
+      background: var(--white);
+      line-height: 1.6;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: rgba(15,45,82,0.97);
+      backdrop-filter: blur(8px);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 5%;
+      height: 64px;
+    }
+    .nav-logo {
+      font-size: 1.4rem; font-weight: 800; color: var(--white);
+      letter-spacing: -0.5px;
+    }
+    .nav-logo span { color: var(--orange); }
+    .nav-links {
+      display: flex; gap: 2rem; align-items: center;
+      list-style: none;
+    }
+    .nav-links a {
+      color: rgba(255,255,255,0.8); text-decoration: none;
+      font-size: 0.9rem; font-weight: 500;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--white); }
+    .nav-cta {
+      background: var(--orange); color: var(--white) !important;
+      padding: 0.45rem 1.2rem; border-radius: 6px; font-weight: 600 !important;
+      transition: background 0.2s !important;
+    }
+    .nav-cta:hover { background: var(--orange2) !important; }
+
+    /* ── HERO ── */
+    .hero {
+      background: linear-gradient(135deg, var(--navy) 0%, #0a1f38 100%);
+      min-height: 100vh;
+      display: flex; align-items: center;
+      padding: 100px 5% 80px;
+      position: relative; overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; top: -40%; right: -10%;
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(232,93,4,0.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-inner {
+      max-width: 1100px; margin: 0 auto;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center;
+    }
+    .hero-badge {
+      display: inline-block;
+      background: rgba(232,93,4,0.2); color: var(--orange2);
+      border: 1px solid rgba(232,93,4,0.4);
+      padding: 0.3rem 0.9rem; border-radius: 20px;
+      font-size: 0.8rem; font-weight: 700; letter-spacing: 0.05em;
+      text-transform: uppercase; margin-bottom: 1.2rem;
+    }
+    .hero h1 {
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      font-weight: 900; color: var(--white);
+      line-height: 1.15; margin-bottom: 1.2rem;
+      letter-spacing: -1px;
+    }
+    .hero h1 em { color: var(--orange); font-style: normal; }
+    .hero p {
+      color: rgba(255,255,255,0.75); font-size: 1.1rem;
+      margin-bottom: 2rem; max-width: 480px;
+    }
+    .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; }
+    .btn-primary {
+      background: var(--orange); color: var(--white);
+      padding: 0.85rem 2rem; border-radius: 8px;
+      font-weight: 700; font-size: 1rem; text-decoration: none;
+      transition: background 0.2s, transform 0.15s;
+      display: inline-block;
+    }
+    .btn-primary:hover { background: var(--orange2); transform: translateY(-1px); }
+    .btn-ghost {
+      color: var(--white); border: 1.5px solid rgba(255,255,255,0.35);
+      padding: 0.85rem 2rem; border-radius: 8px;
+      font-weight: 600; font-size: 1rem; text-decoration: none;
+      transition: border-color 0.2s, background 0.2s;
+      display: inline-block;
+    }
+    .btn-ghost:hover { border-color: var(--white); background: rgba(255,255,255,0.08); }
+
+    /* Hero visual – mockup */
+    .hero-visual {
+      position: relative;
+    }
+    .mockup-card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      backdrop-filter: blur(6px);
+    }
+    .mockup-bar {
+      display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;
+    }
+    .dot { width: 10px; height: 10px; border-radius: 50%; }
+    .dot-r { background: #ff5f57; }
+    .dot-y { background: #febc2e; }
+    .dot-g { background: #28c840; }
+    .mockup-url {
+      flex: 1; background: rgba(255,255,255,0.08);
+      border-radius: 4px; padding: 0.25rem 0.6rem;
+      font-size: 0.75rem; color: rgba(255,255,255,0.5);
+    }
+    .before-after {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;
+      margin-top: 0.5rem;
+    }
+    .ba-box {
+      border-radius: 8px; padding: 1rem; text-align: center;
+    }
+    .ba-before {
+      background: rgba(255,0,0,0.08); border: 1px solid rgba(255,0,0,0.2);
+    }
+    .ba-after {
+      background: rgba(232,93,4,0.12); border: 1px solid rgba(232,93,4,0.35);
+    }
+    .ba-label {
+      font-size: 0.65rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.08em; margin-bottom: 0.5rem;
+    }
+    .ba-before .ba-label { color: rgba(255,100,100,0.8); }
+    .ba-after .ba-label { color: var(--orange2); }
+    .ba-ad {
+      border-radius: 5px; padding: 0.5rem; font-size: 0.7rem; line-height: 1.3;
+    }
+    .ba-before .ba-ad {
+      background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.4);
+      text-decoration: line-through;
+    }
+    .ba-after .ba-ad {
+      background: rgba(232,93,4,0.2); color: rgba(255,255,255,0.85);
+    }
+    .ba-after .ba-ad strong { color: var(--orange2); display: block; font-size: 0.75rem; }
+
+    /* stats strip */
+    .hero-stats {
+      display: flex; gap: 2rem; margin-top: 2.5rem; flex-wrap: wrap;
+    }
+    .stat-item { color: rgba(255,255,255,0.9); }
+    .stat-item .num {
+      font-size: 1.6rem; font-weight: 800; color: var(--orange2); display: block;
+    }
+    .stat-item small { font-size: 0.8rem; color: rgba(255,255,255,0.5); }
+
+    /* ── SECTIONS ── */
+    section { padding: 80px 5%; }
+    .section-inner { max-width: 1100px; margin: 0 auto; }
+    .section-label {
+      font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.1em; color: var(--orange); margin-bottom: 0.6rem;
+    }
+    .section-title {
+      font-size: clamp(1.6rem, 3vw, 2.4rem); font-weight: 800;
+      color: var(--navy); margin-bottom: 1rem; letter-spacing: -0.5px;
+    }
+    .section-sub {
+      color: var(--muted); font-size: 1rem; max-width: 560px; margin-bottom: 3rem;
+    }
+
+    /* ── HOW IT WORKS ── */
+    .how { background: var(--gray); }
+    .steps {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 2rem;
+    }
+    .step {
+      background: var(--white); border-radius: var(--radius);
+      padding: 1.8rem; box-shadow: var(--shadow);
+      position: relative;
+    }
+    .step-num {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: var(--navy); color: var(--white);
+      font-weight: 800; font-size: 1rem;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 1rem;
+    }
+    .step h3 { font-size: 1rem; font-weight: 700; margin-bottom: 0.4rem; color: var(--navy); }
+    .step p { font-size: 0.88rem; color: var(--muted); }
+
+    /* ── FEATURES ── */
+    .features-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+    .feature-card {
+      border: 1px solid var(--gray2); border-radius: var(--radius);
+      padding: 1.8rem;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .feature-card:hover {
+      border-color: var(--orange); box-shadow: 0 4px 20px rgba(232,93,4,0.12);
+    }
+    .feature-icon {
+      font-size: 1.8rem; margin-bottom: 0.9rem; display: block;
+    }
+    .feature-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 0.4rem; color: var(--navy); }
+    .feature-card p { font-size: 0.88rem; color: var(--muted); }
+
+    /* ── MARKET (3 groups) ── */
+    .market { background: var(--navy); }
+    .market .section-title { color: var(--white); }
+    .market .section-sub { color: rgba(255,255,255,0.6); }
+    .market .section-label { color: var(--orange2); }
+    .market-cards {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+    .market-card {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: var(--radius); padding: 2rem;
+    }
+    .market-card h3 {
+      color: var(--orange2); font-size: 0.7rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.5rem;
+    }
+    .market-card h2 {
+      color: var(--white); font-size: 1.3rem; font-weight: 800; margin-bottom: 0.75rem;
+    }
+    .market-card p { color: rgba(255,255,255,0.65); font-size: 0.88rem; margin-bottom: 1.2rem; }
+    .market-price {
+      color: var(--orange2); font-size: 1.6rem; font-weight: 900;
+      margin-bottom: 0.25rem;
+    }
+    .market-price span { font-size: 0.85rem; font-weight: 400; color: rgba(255,255,255,0.5); }
+    .market-tag {
+      display: inline-block;
+      background: rgba(232,93,4,0.2); color: var(--orange2);
+      border-radius: 4px; padding: 0.2rem 0.6rem; font-size: 0.75rem; font-weight: 600;
+    }
+    .market-card .btn-primary { margin-top: 1.2rem; display: inline-block; width: 100%; text-align: center; }
+
+    /* ── PRICING ── */
+    .pricing-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.5rem; align-items: start;
+    }
+    .price-card {
+      border: 1.5px solid var(--gray2); border-radius: var(--radius);
+      padding: 2rem; position: relative;
+    }
+    .price-card.featured {
+      border-color: var(--orange);
+      box-shadow: 0 0 0 4px rgba(232,93,4,0.1), var(--shadow);
+    }
+    .price-badge {
+      position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+      background: var(--orange); color: var(--white);
+      padding: 0.2rem 0.9rem; border-radius: 20px;
+      font-size: 0.72rem; font-weight: 700; text-transform: uppercase; white-space: nowrap;
+    }
+    .price-group { font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.08em; color: var(--muted); margin-bottom: 0.3rem; }
+    .price-name { font-size: 1.1rem; font-weight: 800; color: var(--navy); margin-bottom: 0.5rem; }
+    .price-amount { font-size: 2.2rem; font-weight: 900; color: var(--navy); line-height: 1; }
+    .price-amount span { font-size: 0.9rem; font-weight: 400; color: var(--muted); }
+    .price-desc { font-size: 0.83rem; color: var(--muted); margin: 0.75rem 0 1.2rem; }
+    .price-features { list-style: none; margin-bottom: 1.5rem; }
+    .price-features li {
+      font-size: 0.86rem; color: var(--text);
+      padding: 0.3rem 0; display: flex; gap: 0.5rem; align-items: flex-start;
+    }
+    .price-features li::before { content: '✓'; color: var(--orange); font-weight: 700; flex-shrink: 0; }
+    .btn-navy {
+      background: var(--navy); color: var(--white);
+      padding: 0.75rem 1.5rem; border-radius: 8px;
+      font-weight: 700; font-size: 0.9rem; text-decoration: none;
+      display: block; text-align: center;
+      transition: background 0.2s;
+    }
+    .btn-navy:hover { background: var(--navy2); }
+
+    /* ── PUBLISHER CTA ── */
+    .publisher-cta { background: var(--gray); }
+    .publisher-inner {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center;
+    }
+    .publisher-inner h2 { font-size: clamp(1.5rem, 2.5vw, 2rem); font-weight: 800; color: var(--navy); margin-bottom: 1rem; }
+    .publisher-inner p { color: var(--muted); margin-bottom: 1.5rem; }
+    .check-list { list-style: none; margin-bottom: 2rem; }
+    .check-list li {
+      padding: 0.4rem 0; font-size: 0.9rem; color: var(--text);
+      display: flex; gap: 0.6rem;
+    }
+    .check-list li::before { content: '✓'; color: var(--orange); font-weight: 700; }
+    .pub-visual {
+      background: var(--navy); border-radius: var(--radius);
+      padding: 2rem; color: var(--white);
+    }
+    .pub-visual h4 { font-size: 0.8rem; color: rgba(255,255,255,0.5); margin-bottom: 1.2rem; font-weight: 500; }
+    .pub-stat { margin-bottom: 1rem; }
+    .pub-stat .label { font-size: 0.75rem; color: rgba(255,255,255,0.5); margin-bottom: 0.2rem; }
+    .pub-stat .bar-wrap { background: rgba(255,255,255,0.1); border-radius: 3px; height: 8px; }
+    .pub-stat .bar-fill { background: var(--orange); height: 8px; border-radius: 3px; }
+    .pub-stat .value { font-size: 0.8rem; color: var(--orange2); margin-top: 0.2rem; font-weight: 600; }
+    .pub-revenue {
+      margin-top: 1.5rem; padding-top: 1.2rem;
+      border-top: 1px solid rgba(255,255,255,0.12);
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .pub-revenue span { font-size: 0.8rem; color: rgba(255,255,255,0.5); }
+    .pub-revenue strong { font-size: 1.5rem; font-weight: 800; color: var(--orange2); }
+
+    /* ── ADVERTISER CTA ── */
+    .advertiser-cta { background: var(--white); }
+    .adv-inner {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center;
+    }
+    .adv-visual {
+      border: 1.5px solid var(--gray2); border-radius: var(--radius); padding: 1.5rem;
+    }
+    .adv-visual h4 { font-size: 0.75rem; color: var(--muted); margin-bottom: 1.2rem; }
+    .targeting-chip {
+      display: inline-block; background: rgba(15,45,82,0.08); color: var(--navy);
+      border-radius: 20px; padding: 0.3rem 0.8rem; font-size: 0.78rem; font-weight: 600;
+      margin: 0.25rem;
+    }
+    .adv-form {
+      margin-top: 1.2rem; padding-top: 1.2rem;
+      border-top: 1px solid var(--gray2);
+    }
+    .form-row { display: flex; gap: 0.5rem; margin-top: 0.8rem; }
+    .form-mock {
+      flex: 1; background: var(--gray); border: 1px solid var(--gray2);
+      border-radius: 6px; padding: 0.5rem 0.8rem;
+      font-size: 0.8rem; color: var(--muted);
+    }
+    .form-btn {
+      background: var(--orange); color: var(--white);
+      border: none; border-radius: 6px; padding: 0 1rem;
+      font-weight: 700; font-size: 0.8rem; cursor: pointer;
+    }
+
+    /* ── TRUST ── */
+    .trust { background: var(--gray); text-align: center; }
+    .trust-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 2rem; margin-top: 3rem;
+    }
+    .trust-item { padding: 1.5rem; }
+    .trust-icon { font-size: 2rem; margin-bottom: 0.8rem; }
+    .trust-item h4 { font-size: 0.95rem; font-weight: 700; color: var(--navy); margin-bottom: 0.4rem; }
+    .trust-item p { font-size: 0.83rem; color: var(--muted); }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--navy); color: rgba(255,255,255,0.6);
+      padding: 3rem 5%;
+    }
+    .footer-inner {
+      max-width: 1100px; margin: 0 auto;
+      display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 3rem;
+    }
+    .footer-brand .nav-logo { font-size: 1.3rem; margin-bottom: 0.75rem; display: block; }
+    .footer-brand p { font-size: 0.85rem; line-height: 1.6; }
+    footer h4 { color: var(--white); font-size: 0.85rem; font-weight: 700;
+      margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.06em; }
+    footer ul { list-style: none; }
+    footer ul li { margin-bottom: 0.5rem; }
+    footer ul li a {
+      color: rgba(255,255,255,0.5); text-decoration: none; font-size: 0.85rem;
+      transition: color 0.2s;
+    }
+    footer ul li a:hover { color: var(--white); }
+    .footer-bottom {
+      max-width: 1100px; margin: 2.5rem auto 0;
+      padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.1);
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: 0.8rem; flex-wrap: wrap; gap: 0.5rem;
+    }
+    .pilot-badge {
+      background: rgba(232,93,4,0.25); color: var(--orange2);
+      padding: 0.2rem 0.7rem; border-radius: 4px; font-size: 0.72rem; font-weight: 700;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      .hero-inner, .publisher-inner, .adv-inner, .footer-inner {
+        grid-template-columns: 1fr;
+      }
+      .hero-visual { display: none; }
+      .footer-inner { grid-template-columns: 1fr 1fr; }
+      nav .nav-links { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <span class="nav-logo">Local<span>Ad</span></span>
+  <ul class="nav-links">
+    <li><a href="#wie-es-funktioniert">So funktioniert's</a></li>
+    <li><a href="#preise">Preise</a></li>
+    <li><a href="#publisher">Publisher</a></li>
+    <li><a href="#werbetreibende">Werbetreibende</a></li>
+    <li><a href="/onboarding.html" class="nav-cta">Jetzt installieren</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-content">
+      <span class="hero-badge">🔴 Pilotstart Duisburg</span>
+      <h1>Schluss mit Konzern&shy;werbung.<br><em>Dein Geld bleibt in der Region.</em></h1>
+      <p>LocalAd blockiert Google, Meta und Amazon-Werbung – und ersetzt sie durch echte lokale Anzeigen aus deiner Postleitzahl. Für nur 3 €/Monat.</p>
+      <div class="hero-actions">
+        <a href="/onboarding.html" class="btn-primary">Extension installieren</a>
+        <a href="#wie-es-funktioniert" class="btn-ghost">Wie funktioniert's?</a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat-item">
+          <span class="num">3 €</span>
+          <small>pro Monat</small>
+        </div>
+        <div class="stat-item">
+          <span class="num">0 €</span>
+          <small>für Publisher</small>
+        </div>
+        <div class="stat-item">
+          <span class="num">100%</span>
+          <small>DSGVO-konform</small>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <div class="mockup-card">
+        <div class="mockup-bar">
+          <span class="dot dot-r"></span>
+          <span class="dot dot-y"></span>
+          <span class="dot dot-g"></span>
+          <span class="mockup-url">lokalzeitung-duisburg.de</span>
+        </div>
+        <div class="before-after">
+          <div class="ba-box ba-before">
+            <div class="ba-label">❌ Vorher</div>
+            <div class="ba-ad">Google Ads<br>Sponsored Content<br>Meta Pixel aktiv</div>
+          </div>
+          <div class="ba-box ba-after">
+            <div class="ba-label">✅ Mit LocalAd</div>
+            <div class="ba-ad">
+              <strong>Bäckerei Müller</strong>
+              Frische Brötchen – 47051 Duisburg-Mitte<br>Mo–Sa ab 6 Uhr
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:1rem; padding:0.75rem; background:rgba(232,93,4,0.1); border-radius:8px; display:flex; gap:0.75rem; align-items:center;">
+          <span style="font-size:1.2rem;">🛡️</span>
+          <div>
+            <div style="font-size:0.72rem; color:rgba(255,255,255,0.5); margin-bottom:2px;">LocalAd aktiv</div>
+            <div style="font-size:0.8rem; color:rgba(255,255,255,0.85);">3 Konzern-Ads blockiert · 1 lokale Ad geladen</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how" id="wie-es-funktioniert">
+  <div class="section-inner">
+    <div class="section-label">So funktioniert's</div>
+    <h2 class="section-title">In 4 Schritten aktiv</h2>
+    <p class="section-sub">Keine technischen Kenntnisse nötig. Installation dauert unter 2 Minuten.</p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <h3>Extension installieren</h3>
+        <p>LocalAd aus dem Chrome Web Store installieren. Firefox wird ebenfalls unterstützt.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <h3>Postleitzahl eingeben</h3>
+        <p>Deine PLZ bleibt lokal auf deinem Gerät – sie wird nie an Dritte weitergegeben.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <h3>Für 3 €/Monat abonnieren</h3>
+        <p>Sichere Zahlung via Stripe. Jederzeit kündbar. Kein Jahresvertrag.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <h3>Fertig – lokal surfen</h3>
+        <p>Konzernwerbung weg. Auf Partnerseiten siehst du echte Anzeigen aus deiner Region.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="section-inner">
+    <div class="section-label">Features</div>
+    <h2 class="section-title">Kein normaler Werbeblocker</h2>
+    <p class="section-sub">LocalAd kombiniert effektives Blocking mit echtem Mehrwert für deine Region.</p>
+    <div class="features-grid">
+      <div class="feature-card">
+        <span class="feature-icon">🚫</span>
+        <h3>Konzernwerbung blockieren</h3>
+        <p>Google Ads, Meta, Amazon, Taboola und 40+ weitere Netzwerke werden automatisch blockiert – powered by EasyList.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">📍</span>
+        <h3>PLZ-basiertes Targeting</h3>
+        <p>Du siehst nur Anzeigen aus deiner Postleitzahl. Kein überregionales Rauschen, keine irrelevante Werbung.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">🔒</span>
+        <h3>Kein Tracking, kein MITM</h3>
+        <p>Deine PLZ bleibt auf deinem Gerät. Keine TLS-Interception. Kein Verkauf deiner Daten an Dritte.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">🏪</span>
+        <h3>Lokale Wirtschaft stärken</h3>
+        <p>Jede lokale Anzeige geht direkt an ein Unternehmen in deiner Stadt – nicht an einen Konzern in Irland.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">✅</span>
+        <h3>Nur auf Opt-in-Seiten</h3>
+        <p>Ad-Replacement nur auf Websites, die explizit zugestimmt haben. Transparent und rechtlich sauber.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">🦊</span>
+        <h3>Chrome & Firefox</h3>
+        <p>Manifest V3, kompatibel mit Chrome und Firefox ab Version 109. Regelmäßige Updates.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 3-SIDED MARKET -->
+<section class="market">
+  <div class="section-inner">
+    <div class="section-label">Dreiseitiger Markt</div>
+    <h2 class="section-title">Jeder profitiert</h2>
+    <p class="section-sub">LocalAd verbindet Nutzer, Werbetreibende und Website-Betreiber in einem fairen Ökosystem.</p>
+    <div class="market-cards">
+      <div class="market-card">
+        <h3>Endnutzer</h3>
+        <h2>Sauber surfen</h2>
+        <p>Keine Konzernwerbung mehr. Dafür relevante lokale Anzeigen – wenn du auf einer Partnerseite bist.</p>
+        <div class="market-price">3 €<span>/Monat</span></div>
+        <span class="market-tag">Jederzeit kündbar</span>
+        <a href="/onboarding.html" class="btn-primary">Jetzt starten</a>
+      </div>
+      <div class="market-card">
+        <h3>Werbetreibende</h3>
+        <h2>Lokale Reichweite</h2>
+        <p>Schalte Anzeigen, die nur Menschen in deinen Ziel-Postleitzahlen sehen. Keine Streuverluste.</p>
+        <div class="market-price">ab 50 €<span>/Monat</span></div>
+        <span class="market-tag">Flatrate, kein CPC</span>
+        <a href="/dashboard/index.html" class="btn-primary">Anzeige schalten</a>
+      </div>
+      <div class="market-card">
+        <h3>Publisher</h3>
+        <h2>Umsatz statt Konzernanteil</h2>
+        <p>Registriere deine Website und erhalte eine Umsatzbeteiligung für jeden lokalen Ad-Slot, den LocalAd füllt.</p>
+        <div class="market-price">Kostenlos<span> starten</span></div>
+        <span class="market-tag">Rev-Share inklusive</span>
+        <a href="/dashboard/publisher.html" class="btn-primary">Publisher werden</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="preise">
+  <div class="section-inner">
+    <div class="section-label">Preise</div>
+    <h2 class="section-title">Transparent und fair</h2>
+    <p class="section-sub">Kein Jahresvertrag. Kein versteckter Datenzugriff. Nur ein klares Modell.</p>
+    <div class="pricing-grid">
+      <!-- User -->
+      <div class="price-card featured">
+        <span class="price-badge">Meistgewählt</span>
+        <div class="price-group">Endnutzer</div>
+        <div class="price-name">LocalAd Pro</div>
+        <div class="price-amount">3 €<span>/Monat</span></div>
+        <div class="price-desc">Alles, was du brauchst, um werbefrei und lokal zu surfen.</div>
+        <ul class="price-features">
+          <li>Alle Konzern-Ads blockiert</li>
+          <li>Lokale Ads aus deiner PLZ</li>
+          <li>Chrome + Firefox</li>
+          <li>Kein Tracking, kein MITM</li>
+          <li>Jederzeit kündbar</li>
+        </ul>
+        <a href="/onboarding.html" class="btn-primary" style="text-align:center;display:block;">Jetzt abonnieren</a>
+      </div>
+      <!-- Advertiser Basic -->
+      <div class="price-card">
+        <div class="price-group">Werbetreibende</div>
+        <div class="price-name">Basis</div>
+        <div class="price-amount">50 €<span>/Monat</span></div>
+        <div class="price-desc">Ideal für lokale Einzelunternehmen und Freelancer.</div>
+        <ul class="price-features">
+          <li>1 aktive Anzeige</li>
+          <li>Targeting auf 1–3 PLZ</li>
+          <li>Impressions & Klick-Statistik</li>
+          <li>Flatrate – kein CPC</li>
+        </ul>
+        <a href="/dashboard/index.html" class="btn-navy">Anzeige starten</a>
+      </div>
+      <!-- Advertiser Standard -->
+      <div class="price-card">
+        <div class="price-group">Werbetreibende</div>
+        <div class="price-name">Standard</div>
+        <div class="price-amount">100 €<span>/Monat</span></div>
+        <div class="price-desc">Für Betriebe mit mehreren Standorten oder Aktionen.</div>
+        <ul class="price-features">
+          <li>3 aktive Anzeigen</li>
+          <li>Targeting auf bis zu 10 PLZ</li>
+          <li>Erweiterte Statistik + CTR</li>
+          <li>Datums-Targeting (Aktionen)</li>
+          <li>Flatrate – kein CPC</li>
+        </ul>
+        <a href="/dashboard/index.html" class="btn-navy">Anzeige starten</a>
+      </div>
+      <!-- Publisher -->
+      <div class="price-card">
+        <div class="price-group">Publisher</div>
+        <div class="price-name">Rev-Share</div>
+        <div class="price-amount">0 €<span> Einstieg</span></div>
+        <div class="price-desc">Umsatzbeteiligung pro befülltem Ad-Slot auf deiner Website.</div>
+        <ul class="price-features">
+          <li>Kostenlose Registrierung</li>
+          <li>DNS- oder Meta-Tag-Verifizierung</li>
+          <li>Monatliche Auszahlung via Stripe</li>
+          <li>Dashboard mit Slot-Statistiken</li>
+          <li>Keine Mindestlaufzeit</li>
+        </ul>
+        <a href="/dashboard/publisher.html" class="btn-navy">Publisher werden</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PUBLISHER CTA -->
+<section class="publisher-cta" id="publisher">
+  <div class="section-inner">
+    <div class="publisher-inner">
+      <div>
+        <div class="section-label">Für Website-Betreiber</div>
+        <h2>Verdiene an Slots, die du schon hast</h2>
+        <p>Als Publisher trägst du LocalAd-Slots auf deine Website ein und erhältst eine Umsatzbeteiligung, wenn lokale Anzeigen dort ausgespielt werden. Kein Aufwand, kein Risiko.</p>
+        <ul class="check-list">
+          <li>Domain-Verifizierung in unter 5 Minuten</li>
+          <li>Kein Einbau von externem JavaScript nötig</li>
+          <li>Kontrolle über Slot-Positionen via <code>data-localad-slot</code></li>
+          <li>Transparente Abrechnung im Publisher-Dashboard</li>
+          <li>Kompatibel mit bestehenden Werbeblocker-Strategien</li>
+        </ul>
+        <a href="/dashboard/publisher.html" class="btn-primary">Jetzt Publisher werden →</a>
+      </div>
+      <div class="pub-visual">
+        <h4>Publisher-Dashboard – Beispiel</h4>
+        <div class="pub-stat">
+          <div class="label">Impressions diese Woche</div>
+          <div class="bar-wrap"><div class="bar-fill" style="width:72%;"></div></div>
+          <div class="value">1.248 Impressions</div>
+        </div>
+        <div class="pub-stat">
+          <div class="label">Klickrate (CTR)</div>
+          <div class="bar-wrap"><div class="bar-fill" style="width:38%;"></div></div>
+          <div class="value">3,8 %</div>
+        </div>
+        <div class="pub-stat">
+          <div class="label">Aktive Slots</div>
+          <div class="bar-wrap"><div class="bar-fill" style="width:50%;"></div></div>
+          <div class="value">2 von 4 befüllt</div>
+        </div>
+        <div class="pub-revenue">
+          <span>Umsatz diesen Monat</span>
+          <strong>47,20 €</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ADVERTISER CTA -->
+<section class="advertiser-cta" id="werbetreibende">
+  <div class="section-inner">
+    <div class="adv-inner">
+      <div class="adv-visual">
+        <h4>Anzeige erstellen – Beispiel</h4>
+        <div style="margin-bottom:1rem;">
+          <div style="font-size:0.75rem;color:var(--muted);margin-bottom:0.5rem;">PLZ-Targeting</div>
+          <div>
+            <span class="targeting-chip">47051</span>
+            <span class="targeting-chip">47053</span>
+            <span class="targeting-chip">47055</span>
+            <span class="targeting-chip">+ PLZ hinzufügen</span>
+          </div>
+        </div>
+        <div style="background:var(--gray);border-radius:8px;padding:1rem;font-size:0.85rem;color:var(--navy);">
+          <div style="font-weight:700;margin-bottom:0.25rem;">🛒 Getränkemarkt Duisburg</div>
+          <div style="color:var(--muted);font-size:0.8rem;">Täglich frisch – Hol- und Lieferservice im Ruhrgebiet</div>
+          <div style="margin-top:0.5rem;font-size:0.75rem;color:var(--orange);font-weight:600;">Jetzt entdecken →</div>
+        </div>
+        <div class="adv-form">
+          <div style="font-size:0.75rem;color:var(--muted);margin-bottom:0.4rem;">Laufzeit</div>
+          <div class="form-row">
+            <div class="form-mock">01.06.2026</div>
+            <div style="line-height:2.2;font-size:0.8rem;color:var(--muted);">bis</div>
+            <div class="form-mock">30.06.2026</div>
+            <button class="form-btn">Speichern</button>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="section-label">Für Werbetreibende</div>
+        <h2 style="font-size:clamp(1.5rem,2.5vw,2rem);font-weight:800;color:var(--navy);margin-bottom:1rem;">Reichweite ohne Streuverlust</h2>
+        <p style="color:var(--muted);margin-bottom:1.5rem;">Du bestimmst selbst, in welchen Postleitzahlen deine Anzeige erscheint – und zahlst eine feste Monatspauschale statt pro Klick.</p>
+        <ul class="check-list">
+          <li>Anzeige in unter 10 Minuten live</li>
+          <li>Keine Mindestlaufzeit, kein Jahresvertrag</li>
+          <li>Flatrate: kein CPC, kein CPM – nur eine feste Rate</li>
+          <li>Echtzeit-Statistik im Advertiser-Dashboard</li>
+          <li>Datums-Targeting für zeitlich begrenzte Aktionen</li>
+        </ul>
+        <a href="/dashboard/index.html" class="btn-primary">Anzeige jetzt schalten →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TRUST / DATENSCHUTZ -->
+<section class="trust">
+  <div class="section-inner">
+    <div class="section-label">Datenschutz & Vertrauen</div>
+    <h2 class="section-title">Gebaut für Transparenz</h2>
+    <p class="section-sub" style="margin:0 auto 0;">LocalAd folgt dem Brave-Modell: Keine Tricks, kein Datenschatten.</p>
+    <div class="trust-grid">
+      <div class="trust-item">
+        <div class="trust-icon">📡</div>
+        <h4>Keine TLS-Interception</h4>
+        <p>Kein Man-in-the-Middle. LocalAd liest deinen verschlüsselten Traffic nicht.</p>
+      </div>
+      <div class="trust-item">
+        <div class="trust-icon">📍</div>
+        <h4>PLZ bleibt lokal</h4>
+        <p>Deine Postleitzahl wird nur auf deinem Gerät gespeichert – nie an Server übertragen.</p>
+      </div>
+      <div class="trust-item">
+        <div class="trust-icon">✅</div>
+        <h4>Nur Opt-in-Publisher</h4>
+        <p>Ad-Replacement ausschließlich auf Domains, die sich aktiv registriert und verifiziert haben.</p>
+      </div>
+      <div class="trust-item">
+        <div class="trust-icon">🇩🇪</div>
+        <h4>DSGVO-konform</h4>
+        <p>Entwickelt in Deutschland, für den deutschen Markt – nach deutschem Datenschutzrecht.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <span class="nav-logo">Local<span>Ad</span></span>
+      <p>Der erste Werbeblocker, der Konzernwerbung durch lokale Alternativen ersetzt. Pilotmarkt: Duisburg.</p>
+      <div style="margin-top:1rem;">
+        <span class="pilot-badge">Pilotmarkt Duisburg</span>
+      </div>
+    </div>
+    <div>
+      <h4>Produkt</h4>
+      <ul>
+        <li><a href="#wie-es-funktioniert">So funktioniert's</a></li>
+        <li><a href="#features">Features</a></li>
+        <li><a href="#preise">Preise</a></li>
+        <li><a href="/onboarding.html">Extension installieren</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Für Unternehmen</h4>
+      <ul>
+        <li><a href="#werbetreibende">Werbetreibende</a></li>
+        <li><a href="#publisher">Publisher</a></li>
+        <li><a href="/dashboard/index.html">Advertiser-Dashboard</a></li>
+        <li><a href="/dashboard/publisher.html">Publisher-Dashboard</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Rechtliches</h4>
+      <ul>
+        <li><a href="/datenschutz">Datenschutz</a></li>
+        <li><a href="/agb">AGB</a></li>
+        <li><a href="/impressum">Impressum</a></li>
+        <li><a href="mailto:kontakt@getlocalad.de">Kontakt</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 LocalAd – Alle Rechte vorbehalten</span>
+    <span>Made in Duisburg 🇩🇪</span>
+  </div>
+</footer>
+
+</body>
+</html>

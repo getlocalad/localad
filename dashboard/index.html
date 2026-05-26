@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LocalAd – Werbetreibenden-Dashboard</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue:    #2563eb;
+      --blue-dk: #1d4ed8;
+      --green:   #16a34a;
+      --red:     #dc2626;
+      --bg:      #f8fafc;
+      --card:    #ffffff;
+      --border:  #e2e8f0;
+      --muted:   #64748b;
+      --text:    #0f172a;
+    }
+
+    body { font-family: system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+    /* ── Layout ── */
+    #app { display: none; }
+    nav {
+      background: var(--card); border-bottom: 1px solid var(--border);
+      padding: 0 24px; height: 56px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo { font-weight: 800; font-size: 18px; color: var(--blue); }
+    .nav-right { display: flex; align-items: center; gap: 12px; font-size: 13px; color: var(--muted); }
+    .nav-right button { font-size: 13px; }
+    main { max-width: 960px; margin: 32px auto; padding: 0 20px; }
+
+    /* ── Cards ── */
+    .card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 10px; padding: 20px 24px; margin-bottom: 24px;
+    }
+    .card-title { font-size: 15px; font-weight: 700; margin-bottom: 16px; }
+
+    /* ── Stats ── */
+    .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+    .stat { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 16px 20px; }
+    .stat-label { font-size: 12px; color: var(--muted); margin-bottom: 4px; }
+    .stat-value { font-size: 28px; font-weight: 800; }
+
+    /* ── Tabelle ── */
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th { text-align: left; padding: 8px 12px; border-bottom: 2px solid var(--border); color: var(--muted); font-weight: 600; font-size: 12px; }
+    td { padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+    tr:last-child td { border-bottom: none; }
+    .badge {
+      display: inline-block; padding: 2px 8px; border-radius: 999px;
+      font-size: 11px; font-weight: 600;
+    }
+    .badge-green { background: #dcfce7; color: #166534; }
+    .badge-gray  { background: #f1f5f9; color: #64748b; }
+    .no-ads { text-align: center; padding: 32px; color: var(--muted); font-size: 14px; }
+
+    /* ── Formular ── */
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .form-group { display: flex; flex-direction: column; gap: 5px; }
+    .form-group.full { grid-column: 1 / -1; }
+    label { font-size: 12px; font-weight: 600; color: var(--muted); }
+    input, select, textarea {
+      padding: 8px 10px; border: 1px solid var(--border); border-radius: 6px;
+      font-size: 13px; outline: none; font-family: inherit;
+    }
+    input:focus, select:focus, textarea:focus { border-color: var(--blue); }
+    textarea { resize: vertical; min-height: 60px; }
+
+    /* ── Buttons ── */
+    button {
+      padding: 8px 16px; border: none; border-radius: 6px;
+      font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit;
+    }
+    .btn-primary { background: var(--blue); color: #fff; }
+    .btn-primary:hover { background: var(--blue-dk); }
+    .btn-ghost { background: transparent; color: var(--muted); }
+    .btn-ghost:hover { background: var(--bg); }
+    .btn-danger { background: #fee2e2; color: var(--red); }
+    .btn-sm { padding: 4px 10px; font-size: 12px; }
+
+    /* ── Login-Screen ── */
+    #login-screen {
+      min-height: 100vh; display: flex; align-items: center; justify-content: center;
+    }
+    .login-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 12px; padding: 32px; width: 360px;
+    }
+    .login-card h2 { font-size: 20px; margin-bottom: 4px; }
+    .login-card p { font-size: 13px; color: var(--muted); margin-bottom: 24px; }
+    .login-card .form-group { margin-bottom: 14px; }
+    .login-card button { width: 100%; margin-top: 6px; padding: 10px; }
+    .error-msg { color: var(--red); font-size: 12px; margin-top: 8px; display: none; }
+    .error-msg.visible { display: block; }
+
+    /* ── Responsive ── */
+    @media (max-width: 600px) {
+      .stats { grid-template-columns: 1fr; }
+      .form-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Login ── -->
+<div id="login-screen">
+  <div class="login-card">
+    <h2>LocalAd</h2>
+    <p>Werbetreibenden-Dashboard</p>
+    <div class="form-group">
+      <label>E-Mail</label>
+      <input type="email" id="login-email" placeholder="mail@example.de" />
+    </div>
+    <div class="form-group">
+      <label>Passwort</label>
+      <input type="password" id="login-password" placeholder="••••••••" />
+    </div>
+    <p class="error-msg" id="login-error"></p>
+    <button class="btn-primary" id="login-btn">Anmelden</button>
+  </div>
+</div>
+
+<!-- ── App ── -->
+<div id="app">
+  <nav>
+    <span class="nav-logo">LocalAd</span>
+    <div class="nav-right">
+      <span id="nav-email"></span>
+      <button class="btn-ghost" id="logout-btn">Abmelden</button>
+    </div>
+  </nav>
+
+  <main>
+    <!-- Stats -->
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-label">Impressions gesamt</div>
+        <div class="stat-value" id="stat-impressions">–</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Klicks gesamt</div>
+        <div class="stat-value" id="stat-clicks">–</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">CTR</div>
+        <div class="stat-value" id="stat-ctr">–</div>
+      </div>
+    </div>
+
+    <!-- Ad-Liste -->
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+        <div class="card-title" style="margin:0">Meine Anzeigen</div>
+        <button class="btn-primary btn-sm" id="new-ad-btn">+ Neue Anzeige</button>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Titel</th>
+            <th>PLZ-Targeting</th>
+            <th>Impressions</th>
+            <th>Klicks</th>
+            <th>Status</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="ads-table-body">
+          <tr><td colspan="6" class="no-ads">Lade Anzeigen…</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Neue Ad: Formular (versteckt bis Klick) -->
+    <div class="card" id="new-ad-form" style="display:none;">
+      <div class="card-title">Neue Anzeige erstellen</div>
+      <div class="form-grid">
+        <div class="form-group full">
+          <label>Titel</label>
+          <input type="text" id="ad-title" placeholder="z.B. Muster GmbH – Frühlingsangebot" />
+        </div>
+        <div class="form-group full">
+          <label>Bild-URL</label>
+          <input type="url" id="ad-image-url" placeholder="https://..." />
+        </div>
+        <div class="form-group full">
+          <label>Ziel-URL (Klick-Link)</label>
+          <input type="url" id="ad-target-url" placeholder="https://deine-website.de" />
+        </div>
+        <div class="form-group full">
+          <label>Alt-Text (Barrierefreiheit)</label>
+          <input type="text" id="ad-alt-text" placeholder="Kurze Beschreibung des Bildes" />
+        </div>
+        <div class="form-group full">
+          <label>Ziel-Postleitzahlen (Kommagetrennt)</label>
+          <input type="text" id="ad-postal-codes" placeholder="47051, 47053, 47055" />
+        </div>
+        <div class="form-group">
+          <label>Start (optional)</label>
+          <input type="date" id="ad-starts-at" />
+        </div>
+        <div class="form-group">
+          <label>Ende (optional)</label>
+          <input type="date" id="ad-ends-at" />
+        </div>
+      </div>
+      <p class="error-msg" id="ad-error"></p>
+      <div style="display:flex;gap:10px;margin-top:16px;">
+        <button class="btn-primary" id="create-ad-btn">Anzeige erstellen</button>
+        <button class="btn-ghost" id="cancel-ad-btn">Abbrechen</button>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+  const API = 'http://localhost:3000/api';
+  let accessToken = sessionStorage.getItem('localad_token') || null;
+
+  // ── Helpers ───────────────────────────────────────────────────────────────
+  async function apiFetch(path, options = {}) {
+    const res = await fetch(API + path, {
+      ...options,
+      headers: {
+        'Content-Type': 'application/json',
+        ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+        ...options.headers,
+      },
+      credentials: 'include',
+    });
+
+    if (res.status === 401) {
+      // Access Token abgelaufen → Refresh versuchen
+      const refreshed = await fetch(API + '/auth/refresh', {
+        method: 'POST', credentials: 'include',
+      });
+      if (refreshed.ok) {
+        const data = await refreshed.json();
+        accessToken = data.accessToken;
+        sessionStorage.setItem('localad_token', accessToken);
+        return apiFetch(path, options); // Retry
+      } else {
+        logout();
+        throw new Error('Sitzung abgelaufen');
+      }
+    }
+
+    if (res.status === 204) return null;
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ error: 'Unbekannter Fehler' }));
+      throw new Error(err.error || `HTTP ${res.status}`);
+    }
+    return res.json();
+  }
+
+  function showError(el, msg) {
+    el.textContent = msg;
+    el.classList.add('visible');
+  }
+  function clearError(el) { el.classList.remove('visible'); }
+
+  // ── Auth ──────────────────────────────────────────────────────────────────
+  document.getElementById('login-btn').addEventListener('click', async () => {
+    const email    = document.getElementById('login-email').value.trim();
+    const password = document.getElementById('login-password').value;
+    const errorEl  = document.getElementById('login-error');
+    clearError(errorEl);
+
+    try {
+      const data = await apiFetch('/auth/login', {
+        method: 'POST',
+        body: JSON.stringify({ email, password }),
+      });
+      accessToken = data.accessToken;
+      sessionStorage.setItem('localad_token', accessToken);
+      document.getElementById('nav-email').textContent = data.user.email;
+      showApp();
+    } catch (err) {
+      showError(errorEl, err.message);
+    }
+  });
+
+  document.getElementById('logout-btn').addEventListener('click', logout);
+
+  function logout() {
+    fetch(API + '/auth/logout', { method: 'POST', credentials: 'include' });
+    accessToken = null;
+    sessionStorage.removeItem('localad_token');
+    document.getElementById('app').style.display = 'none';
+    document.getElementById('login-screen').style.display = 'flex';
+  }
+
+  // ── App initialisieren ────────────────────────────────────────────────────
+  function showApp() {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    loadDashboard();
+  }
+
+  async function loadDashboard() {
+    await Promise.all([loadStats(), loadAds()]);
+  }
+
+  // ── Stats ─────────────────────────────────────────────────────────────────
+  async function loadStats() {
+    try {
+      const data = await apiFetch('/advertisers/me/stats');
+      document.getElementById('stat-impressions').textContent = data.impressions.toLocaleString('de');
+      document.getElementById('stat-clicks').textContent      = data.clicks.toLocaleString('de');
+      const ctr = data.impressions > 0 ? (data.clicks / data.impressions * 100).toFixed(2) : '0.00';
+      document.getElementById('stat-ctr').textContent = ctr + ' %';
+    } catch { /* Fehler still ignorieren – evtl. noch kein Advertiser-Account */ }
+  }
+
+  // ── Ad-Liste ──────────────────────────────────────────────────────────────
+  async function loadAds() {
+    const tbody = document.getElementById('ads-table-body');
+    try {
+      const data = await apiFetch('/ads');
+      if (!data.ads || data.ads.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" class="no-ads">Noch keine Anzeigen – erstelle deine erste!</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = data.ads.map(ad => `
+        <tr>
+          <td>
+            <strong>${esc(ad.title)}</strong><br/>
+            <span style="font-size:11px;color:#64748b;">${esc(ad.target_url)}</span>
+          </td>
+          <td>${(ad.postal_codes || []).join(', ')}</td>
+          <td>${ad.impressions || 0}</td>
+          <td>${ad.clicks || 0}</td>
+          <td>
+            <span class="badge ${ad.is_active ? 'badge-green' : 'badge-gray'}">
+              ${ad.is_active ? 'Aktiv' : 'Inaktiv'}
+            </span>
+          </td>
+          <td>
+            <button class="btn-danger btn-sm" onclick="deleteAd('${ad.id}')">Löschen</button>
+          </td>
+        </tr>
+      `).join('');
+    } catch (err) {
+      tbody.innerHTML = `<tr><td colspan="6" class="no-ads" style="color:#dc2626">${esc(err.message)}</td></tr>`;
+    }
+  }
+
+  async function deleteAd(id) {
+    if (!confirm('Anzeige wirklich löschen?')) return;
+    try {
+      await apiFetch(`/ads/${id}`, { method: 'DELETE' });
+      loadAds();
+      loadStats();
+    } catch (err) {
+      alert(err.message);
+    }
+  }
+
+  // ── Neue Ad ───────────────────────────────────────────────────────────────
+  document.getElementById('new-ad-btn').addEventListener('click', () => {
+    document.getElementById('new-ad-form').style.display = 'block';
+    document.getElementById('new-ad-btn').style.display  = 'none';
+  });
+
+  document.getElementById('cancel-ad-btn').addEventListener('click', () => {
+    document.getElementById('new-ad-form').style.display = 'none';
+    document.getElementById('new-ad-btn').style.display  = 'block';
+    clearError(document.getElementById('ad-error'));
+  });
+
+  document.getElementById('create-ad-btn').addEventListener('click', async () => {
+    const errorEl = document.getElementById('ad-error');
+    clearError(errorEl);
+
+    const postalCodes = document.getElementById('ad-postal-codes').value
+      .split(',').map(p => p.trim()).filter(p => /^\d{5}$/.test(p));
+
+    const payload = {
+      title:       document.getElementById('ad-title').value.trim(),
+      imageUrl:    document.getElementById('ad-image-url').value.trim(),
+      targetUrl:   document.getElementById('ad-target-url').value.trim(),
+      altText:     document.getElementById('ad-alt-text').value.trim(),
+      postalCodes,
+      startsAt:    document.getElementById('ad-starts-at').value || null,
+      endsAt:      document.getElementById('ad-ends-at').value   || null,
+    };
+
+    if (!payload.title || !payload.imageUrl || !payload.targetUrl || postalCodes.length === 0) {
+      showError(errorEl, 'Bitte alle Pflichtfelder ausfüllen (inkl. mindestens eine gültige PLZ).');
+      return;
+    }
+
+    try {
+      await apiFetch('/ads', { method: 'POST', body: JSON.stringify(payload) });
+      document.getElementById('cancel-ad-btn').click();
+      loadAds();
+      loadStats();
+    } catch (err) {
+      showError(errorEl, err.message);
+    }
+  });
+
+  // ── Escape helper ─────────────────────────────────────────────────────────
+  function esc(str) {
+    return String(str ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  // ── Auto-Login wenn Token vorhanden ───────────────────────────────────────
+  if (accessToken) {
+    // Versuchen ob Token noch gültig ist
+    apiFetch('/advertisers/me').then(data => {
+      if (data) {
+        document.getElementById('nav-email').textContent = '–';
+        showApp();
+      }
+    }).catch(() => {
+      sessionStorage.removeItem('localad_token');
+      accessToken = null;
+    });
+  }
+</script>
+</body>
+</html>

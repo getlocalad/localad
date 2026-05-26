@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <title>LocalAd Testseite – localhost</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 900px; margin: 40px auto; padding: 0 20px; color: #1a1a1a; }
+    h1 { font-size: 24px; margin-bottom: 4px; }
+    .meta { color: #666; font-size: 13px; margin-bottom: 32px; }
+    .article { line-height: 1.7; margin-bottom: 24px; }
+    .ad-zone {
+      width: 728px; max-width: 100%; height: 90px;
+      background: #f3f4f6; border: 2px dashed #d1d5db;
+      display: flex; align-items: center; justify-content: center;
+      color: #9ca3af; font-size: 13px; margin: 32px 0;
+      border-radius: 4px;
+    }
+    .localad-ad { position: relative; }
+    .localad-label {
+      position: absolute; bottom: 4px; right: 6px;
+      font-size: 10px; color: #6b7280; background: rgba(255,255,255,0.85);
+      padding: 1px 5px; border-radius: 3px;
+    }
+    .debug {
+      margin-top: 40px; padding: 16px; background: #f9fafb;
+      border: 1px solid #e5e7eb; border-radius: 6px; font-size: 12px;
+    }
+    .debug h3 { margin: 0 0 8px; font-size: 13px; }
+    .debug pre { margin: 0; white-space: pre-wrap; color: #374151; }
+  </style>
+</head>
+<body>
+
+  <h1>Duisburger Lokalzeitung – Testseite</h1>
+  <p class="meta">Lokalnachrichten · 25. Mai 2026</p>
+
+  <div class="article">
+    <p>Dies ist eine Testseite für die LocalAd Browser Extension. Sie simuliert eine registrierte Publisher-Domain.</p>
+    <p>Der Werbeplatz unten ist mit <code>data-localad-slot="header-banner"</code> markiert. Die Extension erkennt diesen Slot und ersetzt ihn mit einer lokalen Anzeige aus dem Backend.</p>
+  </div>
+
+  <!-- Ad-Slot: wird von der Extension erkannt und ersetzt -->
+  <div data-localad-slot="header-banner" class="ad-zone">
+    [Konzernwerbung – wird durch lokale Ad ersetzt]
+  </div>
+
+  <div class="article">
+    <p>Weitere Inhalte der Testseite. Mehr Text um eine realistische Seitenstruktur zu simulieren.</p>
+  </div>
+
+  <!-- Zweiter Slot für Multi-Slot-Test -->
+  <div data-localad-slot="sidebar-box" class="ad-zone" style="width:300px;height:250px;">
+    [Sidebar-Ad – 300×250]
+  </div>
+
+  <!-- Debug-Panel: zeigt was die Extension macht -->
+  <div class="debug">
+    <h3>Debug-Info (wird von der Extension befüllt)</h3>
+    <pre id="debug-output">Warte auf Extension…</pre>
+  </div>
+
+  <script>
+    // Lauscht auf Debug-Events der Extension (optional)
+    window.addEventListener('localad:debug', (e) => {
+      document.getElementById('debug-output').textContent = JSON.stringify(e.detail, null, 2);
+    });
+
+    // Fallback: nach 3s anzeigen dass Extension inaktiv ist
+    setTimeout(() => {
+      const el = document.getElementById('debug-output');
+      if (el.textContent === 'Warte auf Extension…') {
+        el.textContent = 'Extension nicht aktiv oder kein Abo/PLZ eingestellt.';
+      }
+    }, 3000);
+  </script>
+
+</body>
+</html>
