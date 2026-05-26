@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { createUser, loginUser, refreshTokens } from '../services/authService.js';
+import { sendWelcomeMail } from '../services/mailer.js';
 
 export const authRouter = Router();
 
@@ -33,6 +34,9 @@ authRouter.post('/register', async (req, res, next) => {
       plan,
     });
 
+    // Willkommensmail asynchron senden (kein await – blockiert Response nicht)
+    sendWelcomeMail(email.toLowerCase().trim()).catch(() => {});
+
     res.status(201).json({
       message: role === 'advertiser'
         ? 'Account + Werbetreibenden-Profil erstellt'
@@ -65,8 +69,9 @@ authRouter.post('/login', async (req, res, next) => {
     });
 
     res.json({
-      accessToken: result.accessToken,
-      user: result.user,
+      accessToken:  result.accessToken,
+      refreshToken: result.refreshToken, // für Extension (kein Cookie-Zugriff)
+      user:         result.user,
     });
   } catch (err) {
     next(err);

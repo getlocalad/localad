@@ -299,9 +299,9 @@
       </div>
     </div>
 
-    <button class="btn btn-primary" style="margin-top:8px;" onclick="window.close()">
-      Fertig – Tab schließen
-    </button>
+    <a href="/account" class="btn btn-primary" style="margin-top:8px;display:inline-block;text-decoration:none;">
+      Zum Konto
+    </a>
   </div>
 </div>
 
@@ -374,6 +374,8 @@
       accessToken = login.accessToken;
       userId      = login.user.id;
       userEmail   = email;
+      localStorage.setItem('localad_token', accessToken);
+      sendAuthToExtension(accessToken, login.refreshToken, login.user);
       goTo('screen-plz');
     } catch (err) {
       showError('reg-error', err.message);
@@ -393,6 +395,8 @@
       accessToken = login.accessToken;
       userId      = login.user.id;
       userEmail   = email;
+      localStorage.setItem('localad_token', accessToken);
+      sendAuthToExtension(accessToken, login.refreshToken, login.user);
 
       if (login.user.isSubscribed) {
         goTo('screen-success');
@@ -446,15 +450,6 @@
     }
   }
 
-  // ── URL-Params auswerten (Stripe redirect zurück) ─────────────────────────
-  const params = new URLSearchParams(window.location.search);
-  if (params.get('success') === '1') {
-    document.getElementById('success-plz').textContent = params.get('plz') || '–';
-    goTo('screen-success');
-  }
-  if (params.get('cancel') === '1') {
-    goTo('screen-subscribe');
-  }
-</script>
-</body>
-</html>
+  // ── Token an Extension weitergeben (falls Seite im Extension-Kontext läuft) ──
+  function sendAuthToExtension(token, refreshToken, user) {
+    if (typeof chrome === 'undef

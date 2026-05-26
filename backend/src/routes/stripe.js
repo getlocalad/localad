@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import Stripe from 'stripe';
 import { pool } from '../db/db.js';
+import { sendSubscriptionConfirmMail } from '../services/mailer.js';
 
 export const stripeRouter = Router();
 
@@ -137,6 +138,12 @@ async function handleCheckoutCompleted(session) {
       [subscriptionEnd, customerId, userId]
     );
     console.log(`[Stripe] User ${userId} Abo aktiviert bis ${subscriptionEnd.toISOString()}`);
+
+    // Bestätigungsmail senden
+    const userRow = await pool.query('SELECT email FROM users WHERE id = $1', [userId]);
+    if (userRow.rows[0]?.email) {
+      sendSubscriptionConfirmMail(userRow.rows[0].email, subscriptionEnd).catch(() => {});
+    }
   }
 
   if (advertiserId) {
@@ -188,10 +195,4 @@ async function handleSubscriptionEnded(subscription) {
 
 // Exportierter Middleware-Name damit server.js ihn direkt nutzen kann
 export function stripeRawBodyMiddleware(req, res, next) {
-  // Diese Middleware muss in server.js VOR express.json() für /api/stripe/webhook registriert werden
-  // Beispiel: app.use('/api/stripe/webhook', express.raw({ type: 'application/json' }), stripeRouter)
-  next();
-}
-
-// Interner Platzhalter – wird in server.js durch express.raw ersetzt
-function express_raw_middleware(req, res, next) { next(); }
+  // Diese Middleware muss in

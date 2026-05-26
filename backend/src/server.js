@@ -9,8 +9,10 @@ import { publishersRouter } from './routes/publishers.js';
 import { advertisersRouter } from './routes/advertisers.js';
 import { authRouter } from './routes/auth.js';
 import { stripeRouter } from './routes/stripe.js';
+import { usersRouter } from './routes/users.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import { requestLogger } from './middleware/requestLogger.js';
+import { authLimiter, adLimiter, globalLimiter } from './middleware/rateLimiter.js';
 
 // __dirname-Ersatz fuer ES-Module
 const __filename = fileURLToPath(import.meta.url);
@@ -49,10 +51,11 @@ app.use(requestLogger);
 app.use(express.static(resolve(__dirname, '../../dashboard'), { index: false }));
 
 // --- Routes ---
-app.use('/api/ads', adsRouter);
-app.use('/api/publishers', publishersRouter);
-app.use('/api/advertisers', advertisersRouter);
-app.use('/api/auth', authRouter);
+app.use('/api/auth', authLimiter, authRouter);
+app.use('/api/ads', adLimiter, adsRouter);
+app.use('/api/publishers', globalLimiter, publishersRouter);
+app.use('/api/advertisers', globalLimiter, advertisersRouter);
+app.use('/api/users', globalLimiter, usersRouter);
 app.use('/api/stripe', stripeRouter);
 
 // --- Health Check ---
@@ -89,6 +92,9 @@ app.get('/datenschutz', (req, res) => {
 });
 app.get('/agb', (req, res) => {
   res.sendFile(resolve(__dirname, '../../dashboard/agb.html'));
+});
+app.get('/account', (req, res) => {
+  res.sendFile(resolve(__dirname, '../../dashboard/account.html'));
 });
 
 // Stripe Success/Cancel Redirects

@@ -226,6 +226,12 @@ tr:hover td { background: var(--surface2); }
     <button class="nav-item" data-tab="nutzer">
       <span class="nav-icon">👥</span> Nutzer
     </button>
+    <button class="nav-item" data-tab="alle-nutzer">
+          <span class="nav-icon">👥</span> Alle Nutzer
+        </button>
+        <button class="nav-item" data-tab="anzeigen">
+      <span class="nav-icon">📢</span> Anzeigen
+    </button>
     <button class="nav-item" data-tab="deployment">
       <span class="nav-icon">🚀</span> Deployment
     </button>
@@ -249,7 +255,9 @@ tr:hover td { background: var(--surface2); }
         <div class="card"><div class="card-label">Verifizierte Publisher</div><div class="card-value yellow" id="stat-pub">–</div></div>
         <div class="card"><div class="card-label">Impressions gesamt</div><div class="card-value blue" id="stat-imp">–</div></div>
         <div class="card"><div class="card-label">Klicks gesamt</div><div class="card-value green" id="stat-clicks">–</div></div>
+        <div class="card"><div class="card-label">Umsatz (bezahlt)</div><div class="card-value yellow" id="stat-revenue">–</div></div>
       </div>
+      <div id="stat-error" style="display:none;color:var(--red);font-size:0.8rem;padding:8px 0 16px;"></div>
 
       <div class="section">
         <div class="section-header">
@@ -347,6 +355,74 @@ tr:hover td { background: var(--surface2); }
             </thead>
             <tbody id="pub-table-body">
               <tr><td colspan="6" class="empty">Lade...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Alle Nutzer -->
+    <div class="tab" id="tab-alle-nutzer">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Alle Nutzer</div>
+          <div class="page-sub">Registrierte Endnutzer</div>
+        </div>
+        <button class="btn btn-sm btn-green" onclick="loadUsers()">&#8635; Aktualisieren</button>
+      </div>
+      <div class="section">
+        <div class="section-header">
+          <span class="section-title">Nutzer</span>
+          <input id="user-search" type="text" placeholder="E-Mail suchen…"
+            style="padding:6px 10px;border:1px solid var(--border);border-radius:6px;font-size:0.85rem;background:var(--surface2);color:var(--text);width:200px"
+            oninput="filterUsers()" />
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>E-MAIL</th>
+                <th>PLZ</th>
+                <th>ABO</th>
+                <th>AKTIV BIS</th>
+                <th>REGISTRIERT</th>
+              </tr>
+            </thead>
+            <tbody id="users-table-body">
+              <tr><td colspan="5" class="empty">Tab öffnen zum Laden…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Anzeigen -->
+    <div class="tab" id="tab-anzeigen">
+      <div class="page-header">
+        <div class="page-title">Anzeigen</div>
+        <div class="page-sub">Alle aktiven und inaktiven Ads</div>
+      </div>
+      <div class="section">
+        <div class="section-header">
+          Alle Anzeigen
+          <button class="btn btn-gray btn-sm" onclick="loadAds()">↻ Aktualisieren</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Titel</th>
+                <th>Unternehmen</th>
+                <th>PLZ</th>
+                <th>Impressions</th>
+                <th>Klicks</th>
+                <th>CTR</th>
+                <th>Status</th>
+                <th>Aktion</th>
+              </tr>
+            </thead>
+            <tbody id="ads-table-body">
+              <tr><td colspan="8" class="empty">Lade...</td></tr>
             </tbody>
           </table>
         </div>

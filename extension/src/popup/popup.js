@@ -41,16 +41,36 @@ envBadge.addEventListener('click', async () => {
   }
 });
 
-// ── PLZ speichern ─────────────────────────────────────────────────────────────
-saveBtn.addEventListener('click', () => {
+// ── PLZ speichern + ans Backend syncen ───────────────────────────────────────
+saveBtn.addEventListener('click', async () => {
   const plz = postalInput.value.trim();
   if (!/^\d{5}$/.test(plz)) {
     postalInput.style.borderColor = '#ef4444';
     return;
   }
   postalInput.style.borderColor = '';
-  chrome.storage.local.set({ postalCode: plz }, () => {
-    statusEl.classList.add('visible');
-    setTimeout(() => statusEl.classList.remove('visible'), 2000);
-  });
+  saveBtn.disabled = true;
+
+  // Lokal speichern
+  await chrome.storage.local.set({ postalCode: plz });
+
+  // An Backend syncen (Service Worker übernimmt den API-Call)
+  const stored = await new Promise(r => chrome.storage.local.get(['authToken'], r));
+  if (stored.authToken) {
+    try {
+      const result = await chrome.runtime.sendMessage({
+        type: 'UPDATE_PLZ',
+        payload: { postalCode: plz, token: stored.authToken },
+      });
+      if (result && !result.ok) {
+        console.warn('[LocalAd] PLZ-Sync fehlgeschlagen:', result.error);
+      }
+    } catch (e) {
+      console.warn('[LocalAd] PLZ-Sync Fehler:', e.message);
+    }
+  }
+
+  saveBtn.disabled = false;
+  statusEl.classList.add('visible');
+  setTimeout(() => statusEl.classList.remove('visible'), 2000);
 });

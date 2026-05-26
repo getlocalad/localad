@@ -6,9 +6,7 @@
   "scripts": {
     "build:rules": "node scripts/build-rules.js",
     "zip": "node scripts/zip.js",
+    "zip:firefox": "node scripts/build-firefox.js",
     "dev": "echo 'Extension direkt in Chrome laden: siehe INSTALL.md'"
   },
-  "devDependencies": {
-    "archiver": "^6.0.1"
-  }
-}
+  

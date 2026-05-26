@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LocalAd – Mein Konto</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue:    #2563eb;
+      --blue-dk: #1d4ed8;
+      --blue-lt: #eff6ff;
+      --green:   #16a34a;
+      --green-lt:#f0fdf4;
+      --red:     #dc2626;
+      --red-lt:  #fef2f2;
+      --border:  #e2e8f0;
+      --muted:   #64748b;
+      --text:    #0f172a;
+      --bg:      #f8fafc;
+    }
+
+    body {
+      font-family: system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    .header {
+      background: #fff;
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo { font-weight: 700; font-size: 1.1rem; color: var(--blue); text-decoration: none; }
+    .btn-logout {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      padding: 6px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+    .btn-logout:hover { background: var(--bg); color: var(--text); }
+
+    /* ── Layout ── */
+    .container {
+      max-width: 640px;
+      margin: 40px auto;
+      padding: 0 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    h1 { font-size: 1.5rem; font-weight: 700; }
+    .subtitle { color: var(--muted); font-size: 0.9rem; margin-top: 4px; }
+
+    /* ── Cards ── */
+    .card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+    }
+    .card-title {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+
+    /* ── Status Badge ── */
+    .status-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+    .status-badge.active { background: var(--green-lt); color: var(--green); }
+    .status-badge.inactive { background: var(--red-lt); color: var(--red); }
+    .status-badge::before {
+      content: '';
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 16px;
+    }
+    .info-item label {
+      display: block;
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+    .info-item span {
+      font-size: 0.95rem;
+      font-weight: 500;
+    }
+
+    /* ── Formular ── */
+    .form-group { margin-bottom: 14px; }
+    .form-group label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 500;
+      margin-bottom: 6px;
+    }
+    .form-group input {
+      width: 100%;
+      padding: 9px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .form-group input:focus { border-color: var(--blue); }
+    .form-group input.error { border-color: var(--red); }
+
+    .btn {
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: background 0.15s;
+    }
+    .btn-primary { background: var(--blue); color: #fff; }
+    .btn-primary:hover { background: var(--blue-dk); }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-danger { background: var(--red-lt); color: var(--red); border: 1px solid #fca5a5; }
+    .btn-danger:hover { background: #fee2e2; }
+
+    .success-msg {
+      font-size: 0.85rem;
+      color: var(--green);
+      margin-top: 8px;
+      display: none;
+    }
+    .error-msg {
+      font-size: 0.85rem;
+      color: var(--red);
+      margin-top: 8px;
+      display: none;
+    }
+
+    /* ── Cancel Dialog ── */
+    .overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.4);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+    }
+    .overlay.open { display: flex; }
+    .dialog {
+      background: #fff;
+      border-radius: 12px;
+      padding: 28px;
+      max-width: 400px;
+      width: 90%;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    }
+    .dialog h3 { font-size: 1.1rem; margin-bottom: 10px; }
+    .dialog p { color: var(--muted); font-size: 0.9rem; margin-bottom: 20px; line-height: 1.5; }
+    .dialog-btns { display: flex; gap: 10px; justify-content: flex-end; }
+    .btn-ghost {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 9px 18px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+
+    /* ── Loading ── */
+    #loading {
+      text-align: center;
+      padding: 80px 20px;
+      color: var(--muted);
+    }
+    .spinner {
+      width: 32px; height: 32px;
+      border: 3px solid var(--border);
+      border-top-color: var(--blue);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      margin: 0 auto 16px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    #main { display: none; }
+  </style>
+</head>
+<body>
+
+<header class="header">
+  <a href="/" class="logo">LocalAd</a>
+  <button class="btn-logout" onclick="logout()">Abmelden</button>
+</header>
+
+<div id="loading">
+  <div class="spinner"></div>
+  <p>Konto wird geladen…</p>
+</div>
+
+<div class="container" id="main">
+
+  <div>
+    <h1>Mein Konto</h1>
+    <p class="subtitle" id="user-email"></p>
+  </div>
+
+  <!-- Abo-Status -->
+  <div class="card">
+    <div class="card-title">Abonnement</div>
+    <div class="status-row">
+      <div>
+        <div id="sub-status-badge" class="status-badge inactive">Kein Abo</div>
+      </div>
+    </div>
+    <div class="info-grid">
+      <div class="info-item">
+        <label>Aktiv bis</label>
+        <span id="sub-end">–</span>
+      </div>
+      <div class="info-item">
+        <label>Postleitzahl</label>
+        <span id="plz-display">–</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- PLZ ändern -->
+  <div class="card">
+    <div class="card-title">Postleitzahl ändern</div>
+    <div class="form-group">
+      <label for="plz-input">Neue PLZ</label>
+      <input type="text" id="plz-input" placeholder="z. B. 47051" maxlength="5" />
+    </div>
+    <button class="btn btn-primary" id="plz-btn" onclick="savePlz()">Speichern</button>
+    <div class="success-msg" id="plz-success">PLZ aktualisiert.</div>
+    <div class="error-msg" id="plz-error"></div>
+  </div>
+
+  <!-- Abo kündigen -->
+  <div class="card" id="cancel-section">
+    <div class="card-title">Abonnement kündigen</div>
+    <p style="font-size:0.9rem;color:var(--muted);margin-bottom:16px;line-height:1.5">
+      Das Abo läuft bis zum Ende der aktuellen Abrechnungsperiode weiter.
+      Danach wird die Extension deaktiviert und du wirst nicht mehr belastet.
+    </p>
+    <button class="btn btn-danger" onclick="openCancelDialog()">Abo kündigen</button>
+    <div class="error-msg" id="cancel-error"></div>
+  </div>
+
+</div>
+
+<!-- Bestätigungs-Dialog -->
+<div class="overlay" id="cancel-overlay">
+  <div class="dialog">
+    <h3>Abo wirklich kündigen?</h3>
+    <p>Das Abo bleibt bis zum Ende der aktuellen Periode aktiv. Danach endet es automatisch.</p>
+    <div class="dialog-btns">
+      <button class="btn-ghost" onclick="closeCancelDialog()">Abbrechen</button>
+      <button class="btn btn-danger" id="confirm-cancel-btn" onclick="confirmCancel()">Ja, kündigen</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const API = '';   // selbe Origin
+
+  function getToken() {
+    return localStorage.getItem('localad_token');
+  }
+
+  async function authFetch(path, opts = {}) {
+    const token = getToken();
+    return fetch(API + path, {
+      ...opts,
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { 'Authorization': 'Bearer ' + token } : {}),
+        ...(opts.headers || {}),
+      },
+    });
+  }
+
+  async function init() {
+    const token = getToken();
+    if (!token) {
+      window.location.href = '/onboarding';
+      return;
+    }
+
+    try {
+      const res = await authFetch('/api/users/me');
+      if (res.status === 401) {
+        localStorage.removeItem('localad_token');
+        window.location.href = '/onboarding';
+        return;
+      }
+      const data = await res.json();
+      if (!data.user) throw new Error('Keine Daten');
+
+      renderUser(data.user);
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('main').style.display = 'flex';
+    } catch (e) {
+      document.getElementById('loading').innerHTML =
+        '<p style="color:var(--red)">Fehler beim Laden: ' + e.message + '</p>';
+    }
+  }
+
+  function renderUser(user) {
+    document.getElementById('user-email').textContent = user.email;
+    document.getElementById('plz-display').textContent = user.postal_code || '–';
+    document.getElementById('plz-input').value = user.postal_code || '';
+
+    const badge = document.getElementById('sub-status-badge');
+    if (user.is_subscribed) {
+      badge.textContent = 'Aktiv';
+      badge.className = 'status-badge active';
+    } else {
+      badge.textContent = 'Kein Abo';
+      badge.className = 'status-badge inactive';
+      document.getElementById('cancel-section').style.display = 'none';
+    }
+
+    if (user.subscription_end) {
+      const d = new Date(user.subscription_end);
+      document.getElementById('sub-end').textContent =
+        d.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    }
+  }
+
+  async function savePlz() {
+    const plz = document.getElementById('plz-input').value.trim();
+    const errEl = document.getElementById('plz-error');
+    const okEl  = document.getElementById('plz-success');
+    const btn   = document.getElementById('plz-btn');
+    errEl.style.display = 'none';
+    okEl.style.display  = 'none';
+
+    if (!/^\d{5}$/.test(plz)) {
+      errEl.textContent = 'Bitte eine gültige 5-stellige PLZ eingeben.';
+      errEl.style.display = 'block';
+      return;
+    }
+
+    btn.disabled = true;
+    try {
+      const res = await authFetch('/api/users/me', {
+        method: 'PATCH',
+        body: JSON.stringify({ postalCode: plz }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Fehler');
+      document.getElementById('plz-display').textContent = plz;
+      okEl.style.display = 'block';
+    } catch (e) {
+      errEl.textContent = e.message;
+      errEl.style.display = 'block';
+    } finally {
+      btn.disabled = false;
+    }
+  }
+
+  function openCancelDialog() {
+    document.getElementById('cancel-overlay').classList.add('open');
+  }
+  function closeCancelDialog() {
+    document.getElementById('cancel-overlay').classList.remove('open');
+  }
+
+  async function confirmCancel() {
+    const btn = document.getElementById('confirm-cancel-btn');
+    const errEl = document.getElementById('cancel-error');
+    btn.disabled = true;
+    btn.textContent = 'Wird gekündigt…';
+    errEl.style.display = 'none';
+
+    try {
+      const res = await authFetch('/api/users/cancel-subscription', { method: 'POST' });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Fehler');
+
+      closeCancelDialog();
+      document.getElementById('cancel-section').innerHTML =
+        '<div class="card-title">Abonnement kündigen</div>' +
+        '<p style="color:var(--green);font-size:0.9rem">✓ Kündigung bestätigt. Das Abo endet am ' +
+        new Date(data.cancelAt).toLocaleDateString('de-DE') + '.</p>';
+    } catch (e) {
+      errEl.textContent = e.message;
+      errEl.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = 'Ja, kündigen';
+    }
+  }
+
+  function logout() {
+    localStorage.removeItem('localad_token');
+    window.location.href = '/';
+  }
+
+  init();
+</script>
+</body>
+</html>
