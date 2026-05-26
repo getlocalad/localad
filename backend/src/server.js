@@ -45,8 +45,8 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(requestLogger);
 
-// Dashboard-Dateien statisch ausliefern
-app.use(express.static(resolve(__dirname, '../../dashboard')));
+// Statische Assets ausliefern (kein Auto-Index – Routen steuern HTML-Seiten)
+app.use(express.static(resolve(__dirname, '../../dashboard'), { index: false }));
 
 // --- Routes ---
 app.use('/api/ads', adsRouter);
@@ -61,8 +61,17 @@ app.get('/health', (req, res) => {
 });
 
 // --- Seiten ---
+app.get('/', (req, res) => {
+  res.sendFile(resolve(__dirname, '../../dashboard/landing.html'));
+});
+app.get('/dashboard', (req, res) => {
+  res.sendFile(resolve(__dirname, '../../dashboard/index.html'));
+});
 app.get('/onboarding', (req, res) => {
   res.sendFile(resolve(__dirname, '../../dashboard/onboarding.html'));
+});
+app.get('/publisher', (req, res) => {
+  res.sendFile(resolve(__dirname, '../../dashboard/publisher.html'));
 });
 app.get('/impressum', (req, res) => {
   res.sendFile(resolve(__dirname, '../../dashboard/impressum.html'));

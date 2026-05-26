@@ -1,0 +1,16 @@
+{
+  "name": "localad-admin",
+  "version": "1.0.0",
+  "description": "LocalAd Admin-App",
+  "main": "main.js",
+  "type": "module",
+  "scripts": {
+    "start": "electron ."
+  },
+  "dependencies": {
+    "pg": "^8.21.0"
+  },
+  "devDependencies": {
+    "electron": "^31.0.0"
+  }
+}

@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>LocalAd Admin</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:       #0f172a;
+  --surface:  #1e293b;
+  --surface2: #273449;
+  --border:   #334155;
+  --blue:     #3b82f6;
+  --blue-dk:  #2563eb;
+  --green:    #22c55e;
+  --red:      #ef4444;
+  --yellow:   #f59e0b;
+  --text:     #f1f5f9;
+  --muted:    #94a3b8;
+  --radius:   10px;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ── Titlebar ── */
+.titlebar {
+  height: 48px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  gap: 12px;
+  -webkit-app-region: drag;
+  flex-shrink: 0;
+}
+.titlebar-logo { font-size: 1rem; font-weight: 800; color: var(--blue); }
+.titlebar-logo span { color: #f1f5f9; }
+.titlebar-sub { font-size: 0.75rem; color: var(--muted); }
+.titlebar-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); margin-left: auto; }
+.titlebar-dot.red { background: var(--red); }
+
+/* ── Layout ── */
+.layout { display: flex; flex: 1; overflow: hidden; }
+
+/* ── Sidebar ── */
+.sidebar {
+  width: 200px;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: 16px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex-shrink: 0;
+}
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-size: 0.875rem;
+  color: var(--muted);
+  transition: all 0.15s;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+}
+.nav-item:hover { background: var(--surface2); color: var(--text); }
+.nav-item.active { background: var(--blue); color: #fff; }
+.nav-icon { font-size: 1rem; width: 20px; text-align: center; }
+.sidebar-spacer { flex: 1; }
+.sidebar-version { font-size: 0.7rem; color: var(--border); padding: 8px 12px; }
+
+/* ── Content ── */
+.content { flex: 1; overflow-y: auto; padding: 24px; }
+
+.tab { display: none; }
+.tab.active { display: block; }
+
+/* ── Page Header ── */
+.page-header { margin-bottom: 24px; }
+.page-title { font-size: 1.5rem; font-weight: 700; }
+.page-sub { color: var(--muted); font-size: 0.875rem; margin-top: 4px; }
+
+/* ── Cards ── */
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 16px; margin-bottom: 24px; }
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+}
+.card-label { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+.card-value { font-size: 2rem; font-weight: 700; }
+.card-value.blue { color: var(--blue); }
+.card-value.green { color: var(--green); }
+.card-value.yellow { color: var(--yellow); }
+
+/* ── Section ── */
+.section {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+.section-header {
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+  font-weight: 600;
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* ── Health ── */
+.health-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border); }
+.health-item { background: var(--surface); padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; }
+.health-label { font-size: 0.875rem; }
+.health-url { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
+.badge {
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+.badge.green { background: rgba(34,197,94,0.15); color: var(--green); }
+.badge.red   { background: rgba(239,68,68,0.15);  color: var(--red); }
+.badge.gray  { background: rgba(148,163,184,0.15); color: var(--muted); }
+
+/* ── Table ── */
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+th { padding: 10px 16px; text-align: left; font-size: 0.75rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid var(--border); }
+td { padding: 12px 16px; border-bottom: 1px solid var(--border); }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: var(--surface2); }
+
+/* ── Buttons ── */
+.btn {
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all 0.15s;
+}
+.btn-blue  { background: var(--blue); color: #fff; }
+.btn-blue:hover { background: var(--blue-dk); }
+.btn-green { background: rgba(34,197,94,0.15); color: var(--green); border: 1px solid rgba(34,197,94,0.3); }
+.btn-green:hover { background: rgba(34,197,94,0.25); }
+.btn-red   { background: rgba(239,68,68,0.15); color: var(--red); border: 1px solid rgba(239,68,68,0.3); }
+.btn-red:hover { background: rgba(239,68,68,0.25); }
+.btn-gray  { background: var(--surface2); color: var(--muted); }
+.btn-gray:hover { color: var(--text); }
+.btn-sm { padding: 4px 10px; font-size: 0.75rem; }
+
+/* ── Backend ── */
+.backend-controls { padding: 20px; display: flex; align-items: center; gap: 12px; }
+.backend-status-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--red); flex-shrink: 0; }
+.backend-status-dot.on { background: var(--green); animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
+.backend-status-text { font-size: 0.875rem; flex: 1; }
+
+.log-box {
+  background: #0a0f1e;
+  border-top: 1px solid var(--border);
+  font-family: 'Cascadia Code', 'Fira Code', monospace;
+  font-size: 0.75rem;
+  color: #7dd3fc;
+  padding: 12px 16px;
+  height: 320px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+.log-box .log-err { color: #fca5a5; }
+.log-line { line-height: 1.6; }
+
+/* ── Deploy ── */
+.deploy-links { padding: 16px 20px; display: flex; flex-wrap: wrap; gap: 8px; }
+
+/* ── Loader ── */
+.loader { text-align: center; color: var(--muted); padding: 40px; font-size: 0.875rem; }
+
+/* ── Refresh ── */
+.btn-refresh { font-size: 0.75rem; }
+
+/* ── Empty ── */
+.empty { padding: 32px; text-align: center; color: var(--muted); font-size: 0.875rem; }
+</style>
+</head>
+<body>
+
+<div class="titlebar">
+  <div class="titlebar-logo">Local<span>Ad</span></div>
+  <div class="titlebar-sub">Admin-Konsole</div>
+  <div class="titlebar-dot" id="db-dot" title="DB-Verbindung"></div>
+</div>
+
+<div class="layout">
+  <!-- Sidebar -->
+  <nav class="sidebar">
+    <button class="nav-item active" data-tab="dashboard">
+      <span class="nav-icon">📊</span> Dashboard
+    </button>
+    <button class="nav-item" data-tab="backend">
+      <span class="nav-icon">⚙️</span> Backend
+    </button>
+    <button class="nav-item" data-tab="nutzer">
+      <span class="nav-icon">👥</span> Nutzer
+    </button>
+    <button class="nav-item" data-tab="deployment">
+      <span class="nav-icon">🚀</span> Deployment
+    </button>
+    <div class="sidebar-spacer"></div>
+    <div class="sidebar-version">LocalAd v1.0.0</div>
+  </nav>
+
+  <!-- Content -->
+  <main class="content">
+
+    <!-- Dashboard -->
+    <div class="tab active" id="tab-dashboard">
+      <div class="page-header">
+        <div class="page-title">Dashboard</div>
+        <div class="page-sub">Liveübersicht – lokale Datenbank</div>
+      </div>
+
+      <div class="cards" id="stat-cards">
+        <div class="card"><div class="card-label">Nutzer gesamt</div><div class="card-value blue" id="stat-users">–</div></div>
+        <div class="card"><div class="card-label">Aktive Werbetreibende</div><div class="card-value green" id="stat-adv">–</div></div>
+        <div class="card"><div class="card-label">Verifizierte Publisher</div><div class="card-value yellow" id="stat-pub">–</div></div>
+        <div class="card"><div class="card-label">Impressions gesamt</div><div class="card-value blue" id="stat-imp">–</div></div>
+        <div class="card"><div class="card-label">Klicks gesamt</div><div class="card-value green" id="stat-clicks">–</div></div>
+      </div>
+
+      <div class="section">
+        <div class="section-header">
+          Health-Status
+          <button class="btn btn-gray btn-sm btn-refresh" onclick="checkHealth()">↻ Prüfen</button>
+        </div>
+        <div class="health-grid">
+          <div class="health-item">
+            <div>
+              <div class="health-label">Lokales Backend</div>
+              <div class="health-url">http://localhost:3000</div>
+            </div>
+            <span class="badge gray" id="health-local">–</span>
+          </div>
+          <div class="health-item">
+            <div>
+              <div class="health-label">Railway (Production)</div>
+              <div class="health-url">grand-integrity-production-7a3c.up.railway.app</div>
+            </div>
+            <span class="badge gray" id="health-prod">–</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Backend -->
+    <div class="tab" id="tab-backend">
+      <div class="page-header">
+        <div class="page-title">Backend</div>
+        <div class="page-sub">Lokales Backend starten und Logs einsehen</div>
+      </div>
+
+      <div class="section">
+        <div class="section-header">Steuerung</div>
+        <div class="backend-controls">
+          <div class="backend-status-dot" id="backend-dot"></div>
+          <div class="backend-status-text" id="backend-status-text">Backend gestoppt</div>
+          <button class="btn btn-green" id="btn-start" onclick="startBackend()">▶ Starten</button>
+          <button class="btn btn-red" id="btn-stop" onclick="stopBackend()" disabled>■ Stoppen</button>
+        </div>
+        <div class="log-box" id="log-box">
+          <div class="log-line" style="color:var(--muted)">Warte auf Backend-Start...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Nutzer -->
+    <div class="tab" id="tab-nutzer">
+      <div class="page-header">
+        <div class="page-title">Nutzer</div>
+        <div class="page-sub">Werbetreibende und Publisher verwalten</div>
+      </div>
+
+      <div class="section">
+        <div class="section-header">
+          Werbetreibende
+          <button class="btn btn-gray btn-sm" onclick="loadAdvertisers()">↻ Aktualisieren</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Unternehmen</th>
+                <th>E-Mail</th>
+                <th>PLZ</th>
+                <th>Plan</th>
+                <th>Anzeigen</th>
+                <th>Status</th>
+                <th>Aktion</th>
+              </tr>
+            </thead>
+            <tbody id="adv-table-body">
+              <tr><td colspan="7" class="empty">Lade...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-header">
+          Publisher
+          <button class="btn btn-gray btn-sm" onclick="loadPublishers()">↻ Aktualisieren</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Domain</th>
+                <th>E-Mail</th>
+                <th>Methode</th>
+                <th>Umsatzbeteiligung</th>
+                <th>Status</th>
+                <th>Aktion</th>
+              </tr>
+            </thead>
+            <tbody id="pub-table-body">
+              <tr><td colspan="6" class="empty">Lade...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Deployment -->
+    <div class="tab" id="tab-deployment">
+      <div class="page-header">
+        <div class="page-title">Deployment</div>
+        <div class="page-sub">Railway-Links und Schnellzugriff</div>
+      </div>
+
+      <div class="section">
+        <div class="section-header">Railway</div>
+        <div class="deploy-links">
+          <button class="btn btn-blue" onclick="api.openLink('https://railway.app/project/2b28e235-9aba-457d-b9a5-bc6a76f4808e')">🚂 Railway Dashboard</button>
+          <button class="btn btn-gray" onclick="api.openLink('https://grand-integrity-production-7a3c.up.railway.app/health')">❤️ Health Check</button>
+          <button class="btn btn-gray" onclick="api.openLink('https://getlocalad.de')">🌐 getlocalad.de</button>
+          <button class="btn btn-gray" onclick="api.openLink('https://dashboard.stripe.com/test/dashboard')">💳 Stripe Dashboard</button>
+          <button class="btn btn-gray" onclick="api.openLink('https://github.com/getlocalad/localad')">🐙 GitHub Repo</button>
+          <button class="btn btn-gray" onclick="api.openLink('https://chrome.google.com/webstore/devconsole')">🔌 Chrome Web Store</button>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-header">Git – neuen Stand deployen</div>
+        <div style="padding:20px;font-size:0.875rem;color:var(--muted);line-height:2">
+          <code style="background:var(--surface2);padding:2px 8px;border-radius:4px;color:var(--text)">
+            git add . && git commit -m "update" && git push
+          </code>
+          <br/>
+          Railway deployt automatisch nach jedem Push auf <strong>main</strong>.
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-header">Stripe Webhook</div>
+        <div style="padding:20px;font-size:0.875rem;color:var(--muted);line-height:2">
+          Endpoint: <code style="background:var(--surface2);padding:2px 8px;border-radius:4px;color:var(--text)">https://grand-integrity-production-7a3c.up.railway.app/api/stripe/webhook</code><br/>
+          Events: <code style="background:var(--surface2);padding:2px 8px;border-radius:4px;color:var(--text)">checkout.session.completed · invoice.paid · customer.subscription.deleted</code>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

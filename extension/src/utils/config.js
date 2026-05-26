@@ -3,8 +3,8 @@
 // Fallback: Dev-URL, damit die Extension ohne Setup sofort testbar ist.
 
 const DEFAULTS = {
-  apiBase:     'http://localhost:3000',
-  environment: 'development',
+  apiBase:     'https://grand-integrity-production-7a3c.up.railway.app',
+  environment: 'production',
 };
 
 // Production-URL – wird gesetzt sobald wir deployen
@@ -45,5 +45,5 @@ export async function switchToProduction() {
 
 // ── Auf Dev-URL zurückwechseln ────────────────────────────────────────────────
 export async function switchToDevelopment() {
-  await setConfig({ apiBase: DEFAULTS.apiBase, environment: 'development' });
+  await setConfig({ apiBase: DEFAULTS.apiBase, environment: 'production' });
 }
