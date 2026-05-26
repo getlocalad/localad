@@ -60,6 +60,14 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok', version: '0.1.0', ts: new Date().toISOString() });
 });
 
+// --- www → apex Redirect ---
+app.use((req, res, next) => {
+  if (req.hostname === 'www.getlocalad.de') {
+    return res.redirect(301, 'https://getlocalad.de' + req.originalUrl);
+  }
+  next();
+});
+
 // --- Seiten ---
 app.get('/', (req, res) => {
   res.sendFile(resolve(__dirname, '../../dashboard/landing.html'));
