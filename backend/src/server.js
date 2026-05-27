@@ -96,6 +96,9 @@ app.get('/agb', (req, res) => {
 app.get('/account', (req, res) => {
   res.sendFile(resolve(__dirname, '../../dashboard/account.html'));
 });
+app.get('/demo', (req, res) => {
+  res.sendFile(resolve(__dirname, '../../dashboard/demo.html'));
+});
 
 // Stripe Success/Cancel Redirects
 app.get('/success', (req, res) => {

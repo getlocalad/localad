@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LocalAd Demo – So funktioniert lokale Werbung</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --blue: #2563eb;
+      --border: #e2e8f0;
+      --muted: #64748b;
+      --text: #0f172a;
+      --bg: #f8fafc;
+    }
+    body { font-family: system-ui, sans-serif; background: var(--bg); color: var(--text); }
+
+    header {
+      background: #fff; border-bottom: 1px solid var(--border);
+      padding: 16px 32px; display: flex; align-items: center; gap: 16px;
+    }
+    .logo { font-size: 20px; font-weight: 800; color: var(--blue); }
+    .nav-hint { font-size: 13px; color: var(--muted); }
+
+    .page-wrapper { max-width: 900px; margin: 0 auto; padding: 40px 20px; }
+
+    /* Fake-Artikel */
+    .article-meta { font-size: 13px; color: var(--muted); margin-bottom: 8px; }
+    h1 { font-size: 28px; font-weight: 800; margin-bottom: 12px; line-height: 1.3; }
+    .article-body p { font-size: 16px; line-height: 1.8; color: #334155; margin-bottom: 16px; }
+
+    /* Ad-Slot */
+    .ad-slot {
+      margin: 32px 0;
+      min-height: 120px;
+      background: var(--border);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .ad-slot-placeholder {
+      font-size: 13px;
+      color: var(--muted);
+      text-align: center;
+      padding: 20px;
+    }
+    .ad-slot-placeholder strong { display: block; margin-bottom: 4px; }
+
+    /* LocalAd injiziertes Ad */
+    .localad-ad {
+      width: 100%;
+    }
+    .localad-ad a { display: block; }
+    .localad-ad img { width: 100%; border-radius: 8px; display: block; }
+    .localad-label {
+      display: block;
+      font-size: 10px;
+      color: var(--muted);
+      text-align: right;
+      padding: 4px 8px;
+    }
+
+    /* Info-Box */
+    .info-box {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: 10px;
+      padding: 20px 24px;
+      margin-bottom: 32px;
+    }
+    .info-box h2 { font-size: 16px; font-weight: 700; color: var(--blue); margin-bottom: 8px; }
+    .info-box p { font-size: 14px; color: #1e40af; line-height: 1.6; }
+
+    .ext-hint {
+      background: #fefce8;
+      border: 1px solid #fde68a;
+      border-radius: 8px;
+      padding: 14px 18px;
+      font-size: 14px;
+      color: #92400e;
+      margin-bottom: 32px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 32px;
+      font-size: 13px;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+      margin-top: 60px;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">LocalAd</div>
+  <span class="nav-hint">Demo-Seite &ndash; registrierter Publisher</span>
+</header>
+
+<div class="page-wrapper">
+
+  <div class="info-box">
+    <h2>&#x1F4A1; So funktioniert LocalAd</h2>
+    <p>
+      Diese Seite ist als Publisher bei LocalAd registriert. Die Extension erkennt das
+      automatisch und ersetzt den Werbeplatz unten durch eine lokale Anzeige aus deiner Region &ndash;
+      statt Werbung von Google oder Meta.
+    </p>
+  </div>
+
+  <div class="ext-hint" id="ext-hint">
+    &#x26A0;&#xFE0F; <strong>Extension nicht aktiv oder kein Abo?</strong>
+    Du siehst den grauen Platzhalter statt der lokalen Anzeige.
+    <a href="/onboarding" style="color:#92400e;font-weight:600;">Jetzt einrichten &rarr;</a>
+  </div>
+
+  <p class="article-meta">Duisburg &middot; Lokalnachrichten &middot; Demo-Artikel</p>
+  <h1>Duisburgs Innenstadt: Lokale Betriebe im Wandel</h1>
+
+  <div class="article-body">
+    <p>
+      Die Duisburger Innenstadt ver&auml;ndert sich. W&auml;hrend gro&szlig;e Ketten
+      zunehmend das Stadtbild pr&auml;gen, k&auml;mpfen lokale Gesch&auml;fte
+      um Sichtbarkeit &ndash; und um Kunden, die vorbeilaufen, aber nicht reinschauen.
+    </p>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       LocalAd Publisher-Slot
+       Die Extension sucht genau dieses Attribut.
+  ════════════════════════════════════════════ -->
+  <div data-localad-slot="banner-top" class="ad-slot">
+    <div class="ad-slot-placeholder">
+      <strong>Werbeplatz</strong>
+      Mit LocalAd-Extension siehst du hier eine lokale Anzeige.
+    </div>
+  </div>
+
+  <div class="article-body">
+    <p>
+      Genau hier setzt LocalAd an: Wer die Extension installiert hat, sieht auf dieser
+      Seite keine Konzernwerbung mehr &ndash; sondern Anzeigen von echten lokalen Betrieben
+      aus der eigenen Nachbarschaft. Der Werbeplatz bleibt, das Geld bleibt in Duisburg.
+    </p>
+    <p>
+      Das Modell ist einfach: Publisher melden ihre Website einmalig an.
+      Werbetreibende buchen eine Flatrate. Nutzer zahlen 3&nbsp;&euro; im Monat.
+      Alle drei profitieren &ndash; ohne Tracking, ohne Datenweitergabe an Konzerne.
+    </p>
+  </div>
+
+</div>
+
+<footer>
+  <a href="/" style="color:var(--muted)">LocalAd</a> &middot;
+  <a href="/onboarding" style="color:var(--muted)">Abo abschlie&szlig;en</a> &middot;
+  <a href="/impressum" style="color:var(--muted)">Impressum</a>
+</footer>
+
+<script>
+  // Hinweis ausblenden wenn Extension aktiv
+  window.addEventListener('localad:debug', function(e) {
+    if (e.detail && e.detail.step === 'slots_found' && e.detail.count > 0) {
+      var hint = document.getElementById('ext-hint');
+      if (hint) hint.style.display = 'none';
+    }
+  });
+</script>
+
+</body>
+</html>
