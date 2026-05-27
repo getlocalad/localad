@@ -25,7 +25,6 @@
       min-height: 100vh;
     }
 
-    /* ── Step-Navigation ── */
     .progress-bar {
       height: 4px; background: var(--border); position: fixed; top: 0; left: 0; right: 0; z-index: 10;
     }
@@ -34,7 +33,6 @@
       transition: width 0.4s ease;
     }
 
-    /* ── Screens ── */
     .screen { display: none; min-height: 100vh; }
     .screen.active { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 20px; }
 
@@ -44,7 +42,6 @@
     h1 { font-size: 26px; font-weight: 800; margin-bottom: 8px; line-height: 1.25; }
     .subtitle { font-size: 15px; color: var(--muted); margin-bottom: 32px; line-height: 1.6; }
 
-    /* ── Feature-Liste ── */
     .features { display: flex; flex-direction: column; gap: 14px; margin-bottom: 32px; }
     .feature {
       display: flex; align-items: flex-start; gap: 12px;
@@ -55,7 +52,6 @@
     .feature-text strong { display: block; font-size: 14px; margin-bottom: 2px; }
     .feature-text span { font-size: 13px; color: var(--muted); }
 
-    /* ── Formular ── */
     .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
     label { font-size: 13px; font-weight: 600; color: var(--muted); }
     input {
@@ -65,13 +61,11 @@
     input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px #dbeafe; }
     input.error { border-color: #ef4444; }
 
-    /* ── PLZ-Input mit großer Schrift ── */
     .plz-input {
       font-size: 28px; font-weight: 700; letter-spacing: 6px;
       text-align: center; padding: 16px;
     }
 
-    /* ── Buttons ── */
     .btn {
       display: block; width: 100%;
       padding: 13px; border: none; border-radius: 8px;
@@ -87,7 +81,6 @@
     .error-msg { color: #dc2626; font-size: 13px; margin-top: -8px; margin-bottom: 8px; display: none; }
     .error-msg.visible { display: block; }
 
-    /* ── Preis-Box ── */
     .price-box {
       background: var(--blue-lt); border: 2px solid var(--blue);
       border-radius: 12px; padding: 20px; text-align: center; margin-bottom: 24px;
@@ -96,11 +89,9 @@
     .price-period { font-size: 16px; color: var(--muted); }
     .price-note { font-size: 12px; color: var(--muted); margin-top: 6px; }
 
-    /* ── Success-Screen ── */
     .success-icon { font-size: 64px; text-align: center; margin-bottom: 16px; }
     .step-hint { font-size: 12px; color: var(--muted); text-align: center; margin-top: 24px; }
 
-    /* ── Responsive ── */
     @media (max-width: 480px) {
       h1 { font-size: 22px; }
       .price { font-size: 34px; }
@@ -111,55 +102,51 @@
 
 <div class="progress-bar"><div class="progress-fill" id="progress" style="width:25%"></div></div>
 
-<!-- ═══════════════════════════════════════════════════
-     Screen 1: Willkommen
-══════════════════════════════════════════════════════ -->
+<!-- Screen 1: Willkommen -->
 <div class="screen active" id="screen-welcome">
   <div class="screen-inner">
     <div class="logo">LocalAd</div>
-    <h1>Werbefreies Surfen.<br/>Lokale Unterstützung.</h1>
+    <h1>Werbefreies Surfen.<br/>Lokale Unterst&uuml;tzung.</h1>
     <p class="subtitle">
       LocalAd blockiert Konzernwerbung und ersetzt sie durch echte lokale Anzeigen aus deiner Region.
-      Gut für dich – gut für Duisburg.
+      Gut f&uuml;r dich &ndash; gut f&uuml;r Duisburg.
     </p>
 
     <div class="features">
       <div class="feature">
-        <div class="feature-icon">🚫</div>
+        <div class="feature-icon">&#x1F6AB;</div>
         <div class="feature-text">
           <strong>Keine Konzernwerbung mehr</strong>
           <span>Google, Meta, Amazon und Co. werden blockiert.</span>
         </div>
       </div>
       <div class="feature">
-        <div class="feature-icon">📍</div>
+        <div class="feature-icon">&#x1F4CD;</div>
         <div class="feature-text">
           <strong>Lokale Werbung stattdessen</strong>
           <span>Siehst du Werbung, kommt sie aus Duisburg.</span>
         </div>
       </div>
       <div class="feature">
-        <div class="feature-icon">🏪</div>
+        <div class="feature-icon">&#x1F3EA;</div>
         <div class="feature-text">
-          <strong>Heimische Wirtschaft stärken</strong>
-          <span>Dein Abo fließt direkt in die lokale Infrastruktur.</span>
+          <strong>Heimische Wirtschaft st&auml;rken</strong>
+          <span>Dein Abo flie&szlig;t direkt in die lokale Infrastruktur.</span>
         </div>
       </div>
     </div>
 
-    <button class="btn btn-primary" onclick="goTo('screen-register')">Jetzt starten →</button>
+    <button class="btn btn-primary" onclick="goTo('screen-register')">Jetzt starten &rarr;</button>
     <p class="step-hint">Schritt 1 von 3</p>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════
-     Screen 2: Account erstellen
-══════════════════════════════════════════════════════ -->
+<!-- Screen 2: Account erstellen -->
 <div class="screen" id="screen-register">
   <div class="screen-inner">
     <div class="logo">LocalAd</div>
     <h1>Account erstellen</h1>
-    <p class="subtitle">Damit wir dein Abo verwalten können, brauchst du einen Account.</p>
+    <p class="subtitle">Damit wir dein Abo verwalten k&ouml;nnen, brauchst du einen Account.</p>
 
     <div class="form-group">
       <label>E-Mail-Adresse</label>
@@ -167,26 +154,26 @@
     </div>
     <div class="form-group">
       <label>Passwort (min. 8 Zeichen)</label>
-      <input type="password" id="reg-password" placeholder="••••••••" autocomplete="new-password" />
+      <input type="password" id="reg-password" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" autocomplete="new-password" />
     </div>
     <div class="form-group">
       <label>Passwort wiederholen</label>
-      <input type="password" id="reg-password2" placeholder="••••••••" autocomplete="new-password" />
+      <input type="password" id="reg-password2" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" autocomplete="new-password" />
     </div>
 
     <p class="error-msg" id="reg-error"></p>
 
     <button class="btn btn-primary" id="reg-btn" onclick="handleRegister()">Account erstellen</button>
-    <button class="btn btn-ghost" onclick="goTo('screen-welcome')">← Zurück</button>
-    <p class="step-hint">Schritt 2 von 3 · Bereits einen Account? <a href="javascript:void(0)" onclick="goTo('screen-login')" style="color:var(--blue)">Anmelden</a></p>
+    <button class="btn btn-ghost" onclick="goTo('screen-welcome')">&larr; Zur&uuml;ck</button>
+    <p class="step-hint">Schritt 2 von 3 &middot; Bereits einen Account? <a href="javascript:void(0)" onclick="goTo('screen-login')" style="color:var(--blue)">Anmelden</a></p>
   </div>
 </div>
 
-<!-- Login (versteckt, für bestehende Nutzer) -->
+<!-- Login -->
 <div class="screen" id="screen-login">
   <div class="screen-inner">
     <div class="logo">LocalAd</div>
-    <h1>Willkommen zurück</h1>
+    <h1>Willkommen zur&uuml;ck</h1>
     <p class="subtitle">Melde dich an um dein Abo zu aktivieren.</p>
     <div class="form-group">
       <label>E-Mail</label>
@@ -194,22 +181,20 @@
     </div>
     <div class="form-group">
       <label>Passwort</label>
-      <input type="password" id="login-password" placeholder="••••••••" />
+      <input type="password" id="login-password" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" />
     </div>
     <p class="error-msg" id="login-error"></p>
     <button class="btn btn-primary" onclick="handleLogin()">Anmelden</button>
-    <button class="btn btn-ghost" onclick="goTo('screen-register')">← Zurück</button>
+    <button class="btn btn-ghost" onclick="goTo('screen-register')">&larr; Zur&uuml;ck</button>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════
-     Screen 3: PLZ eingeben
-══════════════════════════════════════════════════════ -->
+<!-- Screen 3: PLZ -->
 <div class="screen" id="screen-plz">
   <div class="screen-inner">
     <div class="logo">LocalAd</div>
     <h1>Deine Region</h1>
-    <p class="subtitle">Gib deine Postleitzahl ein. So können wir dir Werbung aus deiner Nachbarschaft zeigen.</p>
+    <p class="subtitle">Gib deine Postleitzahl ein. So k&ouml;nnen wir dir Werbung aus deiner Nachbarschaft zeigen.</p>
 
     <div class="form-group">
       <input type="text" id="plz-input" class="plz-input" placeholder="47051"
@@ -217,83 +202,79 @@
     </div>
     <p class="error-msg" id="plz-error"></p>
 
-    <button class="btn btn-primary" onclick="handlePlz()">Weiter →</button>
-    <p class="step-hint">Schritt 3 von 3 · Duisburg-PLZs: 47051–47279</p>
+    <button class="btn btn-primary" onclick="handlePlz()">Weiter &rarr;</button>
+    <p class="step-hint">Schritt 3 von 3 &middot; Duisburg-PLZs: 47051&ndash;47279</p>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════
-     Screen 4: Abo abschließen
-══════════════════════════════════════════════════════ -->
+<!-- Screen 4: Abo -->
 <div class="screen" id="screen-subscribe">
   <div class="screen-inner">
     <div class="logo">LocalAd</div>
     <h1>Abo aktivieren</h1>
-    <p class="subtitle">Für 3 € im Monat – weniger als ein Kaffee.</p>
+    <p class="subtitle">F&uuml;r 3 &euro; im Monat &ndash; weniger als ein Kaffee.</p>
 
     <div class="price-box">
-      <div class="price">3 €</div>
+      <div class="price">3 &euro;</div>
       <div class="price-period">pro Monat</div>
-      <div class="price-note">Jederzeit kündbar · Keine Mindestlaufzeit</div>
+      <div class="price-note">Jederzeit k&uuml;ndbar &middot; Keine Mindestlaufzeit</div>
     </div>
 
     <div class="features" style="margin-bottom:24px;">
       <div class="feature">
-        <div class="feature-icon">✓</div>
+        <div class="feature-icon">&#x2713;</div>
         <div class="feature-text">
-          <strong>Konzernwerbung vollständig blockiert</strong>
+          <strong>Konzernwerbung vollst&auml;ndig blockiert</strong>
           <span>Auf allen Websites, automatisch.</span>
         </div>
       </div>
       <div class="feature">
-        <div class="feature-icon">✓</div>
+        <div class="feature-icon">&#x2713;</div>
         <div class="feature-text">
           <strong>Lokale Werbung aus deiner PLZ</strong>
           <span>Nur auf Partnerseiten die zugestimmt haben.</span>
         </div>
       </div>
       <div class="feature">
-        <div class="feature-icon">✓</div>
+        <div class="feature-icon">&#x2713;</div>
         <div class="feature-text">
           <strong>Kein Tracking, keine Daten an Konzerne</strong>
-          <span>Deine PLZ bleibt auf deinem Gerät.</span>
+          <span>Deine PLZ bleibt auf deinem Ger&auml;t.</span>
         </div>
       </div>
     </div>
 
     <button class="btn btn-primary" id="checkout-btn" onclick="handleCheckout()">
-      Jetzt für 3 €/Monat abonnieren
+      Jetzt f&uuml;r 3 &euro;/Monat abonnieren
     </button>
-    <button class="btn btn-ghost" onclick="goTo('screen-plz')">← Zurück</button>
-    <p class="step-hint">Sichere Zahlung via Stripe · Keine Kreditkartendaten bei LocalAd gespeichert</p>
+    <button class="btn btn-ghost" onclick="goTo('screen-plz')">&larr; Zur&uuml;ck</button>
+    <p class="step-hint">Sichere Zahlung via Stripe &middot; Keine Kreditkartendaten bei LocalAd gespeichert</p>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════
-     Screen 5: Erfolg
-══════════════════════════════════════════════════════ -->
+<!-- Screen 5: Erfolg -->
 <div class="screen" id="screen-success">
   <div class="screen-inner" style="text-align:center;">
-    <div class="success-icon">🎉</div>
+    <div class="success-icon">&#x1F389;</div>
     <div class="logo" style="justify-content:center;display:flex;">LocalAd</div>
     <h1 style="margin-top:16px;">Alles bereit!</h1>
     <p class="subtitle">
-      Dein Abo ist aktiv. Die Extension ist bereits eingerichtet –
+      Dein Abo ist aktiv. Die Extension ist bereits eingerichtet &ndash;
       du kannst sofort lossurfen.
     </p>
 
     <div class="features" style="text-align:left;">
       <div class="feature">
-        <div class="feature-icon">🚫</div>
+        <div class="feature-icon">&#x1F6AB;</div>
         <div class="feature-text">
           <strong>Konzernwerbung wird blockiert</strong>
           <span>Ab sofort auf allen Seiten.</span>
         </div>
       </div>
       <div class="feature">
-        <div class="feature-icon">📍</div>
+        <div class="feature-icon">&#x1F4CD;</div>
         <div class="feature-text">
-          <strong>Lokale Ads aus PLZ <span id="success-plz">–</span></strong>
+          <strong>Lokale Ads aus PLZ <span id="success-plz">&ndash;</span></strong>
           <span>Auf registrierten Partnerseiten.</span>
         </div>
       </div>
@@ -306,13 +287,16 @@
 </div>
 
 <script>
-  const API = (location.hostname === 'localhost' || location.hostname === '127.0.0.1') ? 'http://localhost:3000/api' : '/api';
-  let accessToken = null;
-  let userId      = null;
-  let userEmail   = null;
-  let postalCode  = null;
+  var API = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+    ? 'http://localhost:3000/api'
+    : '/api';
 
-  const STEPS = {
+  var accessToken = null;
+  var userId      = null;
+  var userEmail   = null;
+  var postalCode  = null;
+
+  var STEPS = {
     'screen-welcome':   25,
     'screen-register':  50,
     'screen-login':     50,
@@ -322,31 +306,33 @@
   };
 
   function goTo(id) {
-    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
-    document.getElementById('progress').style.width = (STEPS[id] ?? 50) + '%';
+    document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
+    var el = document.getElementById(id);
+    if (el) el.classList.add('active');
+    document.getElementById('progress').style.width = (STEPS[id] || 50) + '%';
     window.scrollTo(0, 0);
   }
 
-  async function apiFetch(path, body, token) {
-    const res = await fetch(API + path, {
+  function apiFetch(path, body, token) {
+    return fetch(API + path, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      },
+      headers: Object.assign(
+        { 'Content-Type': 'application/json' },
+        token ? { 'Authorization': 'Bearer ' + token } : {}
+      ),
       body: JSON.stringify(body),
-      credentials: 'include',
+    }).then(function(res) {
+      if (!res.ok) {
+        return res.json().catch(function() { return { error: 'HTTP ' + res.status }; }).then(function(err) {
+          throw new Error(err.error || 'HTTP ' + res.status);
+        });
+      }
+      return res.json();
     });
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({ error: `HTTP ${res.status}` }));
-      throw new Error(err.error || `HTTP ${res.status}`);
-    }
-    return res.json();
   }
 
   function showError(id, msg) {
-    const el = document.getElementById(id);
+    var el = document.getElementById(id);
     el.textContent = msg;
     el.classList.add('visible');
   }
@@ -354,102 +340,126 @@
     document.getElementById(id).classList.remove('visible');
   }
 
-  // ── Registrierung ─────────────────────────────────────────────────────────
-  async function handleRegister() {
+  function handleRegister() {
     clearError('reg-error');
-    const email = document.getElementById('reg-email').value.trim();
-    const pw1   = document.getElementById('reg-password').value;
-    const pw2   = document.getElementById('reg-password2').value;
+    var email = document.getElementById('reg-email').value.trim();
+    var pw1   = document.getElementById('reg-password').value;
+    var pw2   = document.getElementById('reg-password2').value;
 
-    if (!email || !pw1) return showError('reg-error', 'Alle Felder ausfüllen.');
+    if (!email || !pw1) return showError('reg-error', 'Alle Felder ausf&uuml;llen.');
     if (pw1.length < 8) return showError('reg-error', 'Passwort muss min. 8 Zeichen haben.');
-    if (pw1 !== pw2) return showError('reg-error', 'Passwörter stimmen nicht überein.');
+    if (pw1 !== pw2) return showError('reg-error', 'Passw&ouml;rter stimmen nicht &uuml;berein.');
 
-    const btn = document.getElementById('reg-btn');
-    btn.disabled = true; btn.textContent = 'Erstelle Account…';
+    var btn = document.getElementById('reg-btn');
+    btn.disabled = true;
+    btn.textContent = 'Erstelle Account…';
 
-    try {
-      await apiFetch('/auth/register', { email, password: pw1, role: 'user' });
-      const login = await apiFetch('/auth/login', { email, password: pw1 });
-      accessToken = login.accessToken;
-      userId      = login.user.id;
-      userEmail   = email;
-      localStorage.setItem('localad_token', accessToken);
-      sendAuthToExtension(accessToken, login.refreshToken, login.user);
-      goTo('screen-plz');
-    } catch (err) {
-      showError('reg-error', err.message);
-    } finally {
-      btn.disabled = false; btn.textContent = 'Account erstellen';
-    }
-  }
-
-  // ── Login ─────────────────────────────────────────────────────────────────
-  async function handleLogin() {
-    clearError('login-error');
-    const email = document.getElementById('login-email').value.trim();
-    const pw    = document.getElementById('login-password').value;
-    if (!email || !pw) return showError('login-error', 'E-Mail und Passwort erforderlich.');
-    try {
-      const login = await apiFetch('/auth/login', { email, password: pw });
-      accessToken = login.accessToken;
-      userId      = login.user.id;
-      userEmail   = email;
-      localStorage.setItem('localad_token', accessToken);
-      sendAuthToExtension(accessToken, login.refreshToken, login.user);
-
-      if (login.user.isSubscribed) {
-        goTo('screen-success');
-      } else {
+    apiFetch('/auth/register', { email: email, password: pw1, role: 'user' })
+      .then(function() {
+        return apiFetch('/auth/login', { email: email, password: pw1 });
+      })
+      .then(function(login) {
+        accessToken = login.accessToken;
+        userId      = login.user.id;
+        userEmail   = email;
+        try { localStorage.setItem('localad_token', login.accessToken); } catch(e) {}
+        sendAuthToExtension(login.accessToken, login.refreshToken, login.user);
         goTo('screen-plz');
-      }
-    } catch (err) {
-      showError('login-error', err.message);
-    }
+      })
+      .catch(function(err) {
+        showError('reg-error', err.message);
+      })
+      .finally(function() {
+        btn.disabled = false;
+        btn.textContent = 'Account erstellen';
+      });
   }
 
-  // ── PLZ ───────────────────────────────────────────────────────────────────
+  function handleLogin() {
+    clearError('login-error');
+    var email = document.getElementById('login-email').value.trim();
+    var pw    = document.getElementById('login-password').value;
+    if (!email || !pw) return showError('login-error', 'E-Mail und Passwort erforderlich.');
+
+    apiFetch('/auth/login', { email: email, password: pw })
+      .then(function(login) {
+        accessToken = login.accessToken;
+        userId      = login.user.id;
+        userEmail   = email;
+        try { localStorage.setItem('localad_token', login.accessToken); } catch(e) {}
+        sendAuthToExtension(login.accessToken, login.refreshToken, login.user);
+        if (login.user.isSubscribed) {
+          goTo('screen-success');
+        } else {
+          goTo('screen-plz');
+        }
+      })
+      .catch(function(err) {
+        showError('login-error', err.message);
+      });
+  }
+
   function handlePlz() {
     clearError('plz-error');
-    const plz = document.getElementById('plz-input').value.trim();
-    if (!/^\d{5}$/.test(plz)) return showError('plz-error', 'Bitte eine gültige 5-stellige PLZ eingeben.');
+    var plz = document.getElementById('plz-input').value.trim();
+    if (!/^\d{5}$/.test(plz)) return showError('plz-error', 'Bitte eine g&uuml;ltige 5-stellige PLZ eingeben.');
     postalCode = plz;
-
-    // PLZ direkt in Extension-Storage schreiben (falls Seite aus Extension heraus geöffnet)
     if (typeof chrome !== 'undefined' && chrome.storage) {
       chrome.storage.local.set({ postalCode: plz });
     }
-
     goTo('screen-subscribe');
   }
 
-  // ── PLZ-Input: nur Ziffern ────────────────────────────────────────────────
-  document.getElementById('plz-input').addEventListener('input', (e) => {
+  document.getElementById('plz-input').addEventListener('input', function(e) {
     e.target.value = e.target.value.replace(/\D/g, '').slice(0, 5);
   });
 
-  // ── Checkout ──────────────────────────────────────────────────────────────
-  async function handleCheckout() {
-    const btn = document.getElementById('checkout-btn');
-    btn.disabled = true; btn.textContent = 'Weiterleitung zu Stripe…';
+  function handleCheckout() {
+    var btn = document.getElementById('checkout-btn');
+    btn.disabled = true;
+    btn.textContent = 'Weiterleitung zu Stripe…';
 
-    try {
-      const data = await apiFetch('/stripe/create-checkout',
-        { userId, email: userEmail },
-        accessToken
-      );
-
-      if (data.checkoutUrl) {
-        // Stripe Checkout in gleichem Tab öffnen
-        window.location.href = data.checkoutUrl;
-      }
-    } catch (err) {
-      btn.disabled = false;
-      btn.textContent = 'Jetzt für 3 €/Monat abonnieren';
-      alert('Fehler: ' + err.message);
-    }
+    apiFetch('/stripe/create-checkout', { userId: userId, email: userEmail }, accessToken)
+      .then(function(data) {
+        if (data.checkoutUrl) {
+          window.location.href = data.checkoutUrl;
+        }
+      })
+      .catch(function(err) {
+        btn.disabled = false;
+        btn.textContent = 'Jetzt für 3 €/Monat abonnieren';
+        alert('Fehler: ' + err.message);
+      });
   }
 
-  // ── Token an Extension weitergeben (falls Seite im Extension-Kontext läuft) ──
   function sendAuthToExtension(token, refreshToken, user) {
-    if (typeof chrome === 'undef
+    if (typeof chrome === 'undefined' || !chrome.runtime) return;
+    try {
+      chrome.runtime.sendMessage({
+        type: 'SET_AUTH',
+        payload: {
+          token:        token,
+          refreshToken: refreshToken || null,
+          userId:       user.id,
+          postalCode:   user.postal_code   || null,
+          isSubscribed: user.is_subscribed || false,
+        },
+      });
+    } catch (e) {}
+  }
+
+  // Stripe redirect-Params auswerten
+  (function() {
+    var params = new URLSearchParams(window.location.search);
+    if (params.get('success') === '1') {
+      var plzEl = document.getElementById('success-plz');
+      if (plzEl) plzEl.textContent = params.get('plz') || '–';
+      goTo('screen-success');
+    }
+    if (params.get('cancel') === '1') {
+      goTo('screen-subscribe');
+    }
+  })();
+</script>
+</body>
+</html>
