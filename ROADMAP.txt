@@ -1,0 +1,142 @@
+LocalAd – Roadmap
+Stand: Mai 2026
+============================================================
+
+LEGENDE
+  [ ] offen
+  [~] in Bearbeitung
+  [x] erledigt
+
+============================================================
+PHASE 1 – LAUNCH-BLOCKER
+(Muss vor erstem echten Nutzer fertig sein)
+============================================================
+
+  [ ] 1.1  Cookie-Banner implementieren (DSGVO-Pflicht)
+           Datei: dashboard/landing.html + alle anderen HTML-Seiten
+           Inhalt: Einwilligungsbanner mit Accept/Reject, localStorage-Flag
+
+  [ ] 1.2  robots.txt + sitemap.xml erstellen
+           Datei: dashboard/robots.txt, dashboard/sitemap.xml
+           Inhalt: alle oeffentlichen Routen, kein /account, /dashboard, /publisher indexiert
+
+  [ ] 1.3  Passwort-vergessen-Flow implementieren
+           Backend: POST /api/auth/forgot-password (Token per E-Mail)
+           Backend: POST /api/auth/reset-password (Token pruefen, PW setzen)
+           Frontend: Link auf /onboarding Login-Bereich + eigene Reset-Seite
+
+  ---- MANUELLE SCHRITTE (brauchen Nico) ----
+
+  [ ] 1.4  seed-demo.sql auf Railway Postgres ausfuehren
+           Railway -> Postgres -> Query -> Inhalt von docs/seed-demo.sql einfuegen
+
+  [ ] 1.5  Resend einrichten
+           resend.com -> Domain getlocalad.de verifizieren
+           Railway -> Environment Variables -> RESEND_API_KEY setzen
+
+  [ ] 1.6  Stripe auf Live-Mode umstellen
+           Neue Live-Keys in Railway setzen (STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET)
+           Neues Live-Produkt + Price ID anlegen, in Railway eintragen
+           Webhook-Endpunkt fuer Produktiv-URL registrieren
+
+  [ ] 1.7  Chrome Web Store: Extension v1.0.1 hochladen
+           dist/localad-extension.zip neu erstellen (npm run zip im /extension Ordner)
+           Developer Dashboard -> Neue Version hochladen -> Einreichen
+
+============================================================
+PHASE 2 – PRODUKTQUALITAET
+============================================================
+
+  [ ] 2.1  E-Mail-Verifizierung bei Registrierung
+           Backend: Verifikations-Token in DB, Mail mit Link
+           Nutzer kann erst abonnieren wenn E-Mail bestaetigt
+           Schutzt gegen Spam-Registrierungen
+
+  [ ] 2.2  Anzeigen-Moderation durch Admin
+           Backend: ads.is_approved Flag (default: false)
+           Ad-Matching ignoriert nicht genehmigte Anzeigen
+           Admin-App: Anzeigen freischalten / ablehnen
+
+  [ ] 2.3  Anzeige bearbeiten + pausieren
+           Backend: PUT /api/ads/:id (Titel, Bild-URL, PLZ, Laufzeit aendern)
+           Backend: PATCH /api/ads/:id/status (is_active toggle)
+           Frontend: Buttons im Advertiser-Dashboard
+
+  [ ] 2.4  Firefox AMO Submission vorbereiten
+           npm run build:firefox im /extension Ordner
+           Firefox-ZIP fuer addons.mozilla.org erstellen
+           AMO-Submission mit Quellcode-Upload (Pflicht bei MV3)
+
+============================================================
+PHASE 3 – WACHSTUM
+============================================================
+
+  [ ] 3.1  SEO-Optimierung Landing Page
+           og:image erstellen und einbinden (1200x630px)
+           Strukturierte Daten (schema.org/WebApplication)
+           Meta-Description fuer alle Unterseiten
+           Canonical Tags
+
+  [ ] 3.2  Bild-Upload fuer Werbetreibende
+           Backend: POST /api/ads/upload (Multer, zu Railway Volume oder S3)
+           Frontend: Datei-Upload statt URL-Feld im Advertiser-Dashboard
+           Validierung: max. 500KB, nur PNG/JPG/SVG
+
+  [ ] 3.3  Publisher-Dashboard: Earnings-Vorschau
+           Aktuelle Hochrechnung anzeigen (Impressions * Rev-Share-Rate)
+           Auszahlungshistorie einbauen
+
+  [ ] 3.4  Early-Adopter Waitlist
+           Einfaches Formular auf Landing Page ("Kein Duisburg? Trag dich ein.")
+           Backend: POST /api/waitlist (E-Mail + Stadt speichern)
+           Fuer spaetere Stadtexpansion nutzen
+
+============================================================
+PHASE 4 – SKALIERUNG
+(Nach erfolgreichem Pilotmarkt Duisburg)
+============================================================
+
+  [ ] 4.1  Multi-Stadt-Unterstuetzung
+           Regionen-Konfiguration dynamisch statt hardcoded
+           Admin kann neue Staedte mit PLZ-Ranges anlegen
+           Extension-Popup zeigt verfuegbare Staedte
+
+  [ ] 4.2  Admin-Web-Interface (statt Electron-App)
+           Passwortgeschuetzter Bereich unter /admin
+           Anzeigen freischalten, Publisher verwalten, Nutzer-Uebersicht
+           Loest die lokale Electron-App ab
+
+  [ ] 4.3  Analytics-Dashboard
+           Impressionen/Tag als Chart (letzte 30 Tage)
+           Klickrate-Vergleich pro Anzeige
+           Revenue-Entwicklung fuer Publisher und Advertiser
+
+============================================================
+BEREITS ERLEDIGT (Referenz)
+============================================================
+
+  [x] Projektstruktur und Git-Repository
+  [x] Backend: Express + PostgreSQL + Auth (JWT/bcrypt)
+  [x] Extension: Manifest V3 (Chrome + Firefox), Blocking, Content-Script
+  [x] Extension: PLZ-Sync, JWT-Refresh, Abo-Pruefung
+  [x] Ad-Matching-Service (PLZ-basiert)
+  [x] Stripe Webhook + Abo-Aktivierung
+  [x] Advertiser-Dashboard (HTML/JS)
+  [x] Publisher-Dashboard (HTML/JS)
+  [x] Nutzer-Account-Seite (/account)
+  [x] Onboarding-Flow (/onboarding)
+  [x] Landing Page (getlocalad.de)
+  [x] Rechtliche Pflichtseiten (Impressum, AGB, Datenschutz)
+  [x] Kontaktformular (/kontakt) mit Reply-To
+  [x] Demo-Seite (/demo) mit Publisher-Slot
+  [x] Promo-Banner SVG (Eigen-Anzeige als Demo-Publisher-Anzeige)
+  [x] E-Mail-Service via Resend (Welcome, Abo-Bestaetigung, Kontakt)
+  [x] Rate Limiting (auth, ads, global)
+  [x] Railway Deployment + Dockerfile
+  [x] Chrome Web Store Submission (v1.0.1, scripting-Permission entfernt)
+  [x] HDL Pitch Deck (.pptx)
+  [x] Marketing-Kit (Brand Kit, Kanal-Texte, Video-Skripte, ChatGPT-Prompts)
+  [x] Kosten-Excel (finanzen/kosten.xlsx)
+  [x] Landing Page: Ueberarbeitung (Copy, Design, FAQ, Datenschutz-Fix)
+
+============================================================
