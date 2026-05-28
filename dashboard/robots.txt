@@ -1,0 +1,28 @@
+User-agent: *
+
+# Öffentliche Seiten erlaubt
+Allow: /
+Allow: /landing.html
+Allow: /onboarding.html
+Allow: /demo.html
+Allow: /kontakt.html
+Allow: /datenschutz.html
+Allow: /agb.html
+Allow: /impressum.html
+Allow: /cookie-banner.js
+Allow: /assets/
+
+# Nicht indexieren: Dashboards, Account, interne Seiten
+Disallow: /account.html
+Disallow: /account
+Disallow: /dashboard.html
+Disallow: /dashboard
+Disallow: /publisher.html
+Disallow: /publisher
+Disallow: /index.html
+Disallow: /reset-password.html
+
+# API nie indexieren
+Disallow: /api/
+
+Sitemap: https://getlocalad.de/sitemap.xml

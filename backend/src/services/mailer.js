@@ -93,6 +93,37 @@ export async function sendContactMail({ name, email, subject, message }) {
   });
 }
 
+export async function sendPasswordResetMail(email, token) {
+  const BASE_URL  = process.env.PUBLIC_URL || 'https://getlocalad.de';
+  const resetLink = `${BASE_URL}/reset-password.html?token=${token}`;
+
+  await sendMail({
+    to:      email,
+    subject: 'Passwort zurücksetzen – LocalAd',
+    html: `
+      <div style="font-family:system-ui,sans-serif;max-width:520px;margin:0 auto;padding:24px;color:#0f172a">
+        <h1 style="color:#0C2340;margin-bottom:8px">Passwort zurücksetzen</h1>
+        <p>Du hast einen Passwort-Reset für dein LocalAd-Konto angefordert.</p>
+        <p style="margin-top:16px">
+          Klicke auf den Button, um ein neues Passwort zu vergeben.
+          Der Link ist <strong>1 Stunde</strong> gültig.
+        </p>
+        <a href="${resetLink}"
+           style="display:inline-block;margin-top:20px;padding:12px 24px;
+                  background:#E85D04;color:#fff;border-radius:8px;text-decoration:none;font-weight:600">
+          Neues Passwort vergeben
+        </a>
+        <p style="margin-top:24px;font-size:0.82rem;color:#64748b">
+          Falls du keinen Reset angefordert hast, ignoriere diese Mail – dein Passwort bleibt unverändert.
+        </p>
+        <p style="margin-top:8px;font-size:0.78rem;color:#94a3b8;word-break:break-all">
+          Link: ${resetLink}
+        </p>
+      </div>
+    `,
+  });
+}
+
 export async function sendSubscriptionConfirmMail(email, subscriptionEnd) {
   const endDate = new Date(subscriptionEnd).toLocaleDateString('de-DE', {
     day: '2-digit', month: '2-digit', year: 'numeric',
