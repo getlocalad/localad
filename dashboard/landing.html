@@ -401,24 +401,66 @@
     /* ── ADVERTISER CTA ── */
     .advertiser-cta { background: var(--white); }
     .adv-visual {
-      border: 1.5px solid var(--gray2); border-radius: var(--radius); padding: 1.75rem;
+      background: var(--navy); border-radius: var(--radius); padding: 2rem; color: var(--white);
     }
-    .adv-visual h4 { font-size: 0.75rem; color: var(--muted); margin-bottom: 1.2rem; font-weight: 500; }
-    .targeting-chip {
-      display: inline-block; background: rgba(12,35,64,0.07); color: var(--navy);
-      border-radius: 20px; padding: 0.3rem 0.85rem; font-size: 0.78rem; font-weight: 600; margin: 0.2rem;
+    .adv-header {
+      display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;
     }
-    .adv-form { margin-top: 1.2rem; padding-top: 1.2rem; border-top: 1px solid var(--gray2); }
-    .form-row { display: flex; gap: 0.5rem; margin-top: 0.8rem; }
-    .form-mock {
-      flex: 1; background: var(--gray); border: 1px solid var(--gray2);
-      border-radius: 7px; padding: 0.5rem 0.8rem; font-size: 0.8rem; color: var(--muted);
+    .adv-campaign-name { font-size: 0.88rem; font-weight: 700; color: rgba(255,255,255,0.9); }
+    .adv-live-badge {
+      font-size: 0.7rem; font-weight: 700; color: #4ade80;
+      background: rgba(34,197,94,0.13); border: 1px solid rgba(34,197,94,0.3);
+      padding: 0.2rem 0.65rem; border-radius: 20px; display: flex; align-items: center; gap: 0.35rem;
     }
-    .form-btn {
-      background: var(--orange); color: var(--white);
-      border: none; border-radius: 7px; padding: 0 1rem;
-      font-weight: 700; font-size: 0.8rem; cursor: pointer;
+    .adv-live-dot {
+      width: 6px; height: 6px; border-radius: 50%; background: #4ade80;
+      box-shadow: 0 0 0 2px rgba(74,222,128,0.3);
     }
+    .adv-section-label {
+      font-size: 0.62rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.1em; color: rgba(255,255,255,0.3); margin-bottom: 0.55rem;
+    }
+    .adv-chips { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1.4rem; }
+    .adv-chip {
+      font-size: 0.78rem; font-weight: 600;
+      padding: 0.28rem 0.75rem; border-radius: 20px;
+    }
+    .adv-chip.sel {
+      background: rgba(232,93,4,0.2); color: var(--orange2);
+      border: 1px solid rgba(232,93,4,0.4);
+    }
+    .adv-chip.add {
+      background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.4);
+      border: 1px dashed rgba(255,255,255,0.2);
+    }
+    .adv-ad-card {
+      background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.11);
+      border-radius: 10px; padding: 0.9rem 1rem;
+      display: flex; gap: 0.75rem; align-items: flex-start; margin-bottom: 1.4rem;
+    }
+    .adv-ad-icon { font-size: 1.25rem; flex-shrink: 0; margin-top: 1px; }
+    .adv-ad-title {
+      font-size: 0.88rem; font-weight: 800; color: rgba(255,255,255,0.95); margin-bottom: 0.2rem;
+    }
+    .adv-ad-desc { font-size: 0.77rem; color: rgba(255,255,255,0.5); line-height: 1.5; margin-bottom: 0.35rem; }
+    .adv-ad-cta  { font-size: 0.74rem; font-weight: 700; color: var(--orange2); }
+    .adv-stats {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.65rem; margin-bottom: 1.2rem;
+    }
+    .adv-stat {
+      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 9px; padding: 0.75rem; text-align: center;
+    }
+    .adv-stat-num  { font-size: 1.05rem; font-weight: 900; color: var(--orange2); line-height: 1; margin-bottom: 0.25rem; }
+    .adv-stat-label{ font-size: 0.66rem; color: rgba(255,255,255,0.38); }
+    .adv-footer {
+      display: flex; justify-content: space-between; align-items: center;
+      padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.08);
+      flex-wrap: wrap; gap: 0.4rem;
+    }
+    .adv-footer-label { font-size: 0.7rem; color: rgba(255,255,255,0.32); }
+    .adv-footer-val   { font-size: 0.82rem; font-weight: 700; color: rgba(255,255,255,0.8); }
+    .adv-footer-tag   { font-size: 0.7rem; font-weight: 700; color: var(--orange2); }
 
     /* ── TRUST ── */
     .trust { background: var(--gray); text-align: center; }
@@ -1044,30 +1086,56 @@ function localadLogout () {
         <a href="/dashboard" class="btn-primary">Anzeige jetzt schalten →</a>
       </div>
       <div class="adv-visual">
-        <h4>Anzeige erstellen – Beispiel</h4>
-        <div style="margin-bottom:1rem;">
-          <div style="font-size:0.75rem;color:var(--muted);margin-bottom:0.5rem;">PLZ-Targeting</div>
+
+        <!-- Header: Kampagnenname + Live-Badge -->
+        <div class="adv-header">
+          <span class="adv-campaign-name">Getränkemarkt Ruhrperle</span>
+          <span class="adv-live-badge"><span class="adv-live-dot"></span>Live</span>
+        </div>
+
+        <!-- PLZ-Targeting -->
+        <div class="adv-section-label">PLZ-Targeting</div>
+        <div class="adv-chips">
+          <span class="adv-chip sel">47051</span>
+          <span class="adv-chip sel">47053</span>
+          <span class="adv-chip sel">47055</span>
+          <span class="adv-chip add">+ PLZ hinzufügen</span>
+        </div>
+
+        <!-- Anzeigen-Vorschau -->
+        <div class="adv-section-label">Anzeigenvorschau</div>
+        <div class="adv-ad-card">
+          <div class="adv-ad-icon">🛒</div>
           <div>
-            <span class="targeting-chip">47051</span>
-            <span class="targeting-chip">47053</span>
-            <span class="targeting-chip">47055</span>
-            <span class="targeting-chip">+ PLZ hinzufügen</span>
+            <div class="adv-ad-title">Getränkemarkt Ruhrperle</div>
+            <div class="adv-ad-desc">Täglich frisch – Hol- und Lieferservice im Duisburger Norden</div>
+            <div class="adv-ad-cta">Jetzt entdecken →</div>
           </div>
         </div>
-        <div style="background:var(--gray);border-radius:9px;padding:1rem;font-size:0.85rem;color:var(--navy);">
-          <div style="font-weight:800;margin-bottom:0.25rem;">🛒 Getränkemarkt Ruhrperle</div>
-          <div style="color:var(--muted);font-size:0.8rem;">Täglich frisch – Hol- und Lieferservice im Duisburger Norden</div>
-          <div style="margin-top:0.5rem;font-size:0.75rem;color:var(--orange);font-weight:600;">Jetzt entdecken →</div>
-        </div>
-        <div class="adv-form">
-          <div style="font-size:0.75rem;color:var(--muted);margin-bottom:0.4rem;">Laufzeit</div>
-          <div class="form-row">
-            <div class="form-mock">01.06.2026</div>
-            <div style="line-height:2.2;font-size:0.8rem;color:var(--muted);">bis</div>
-            <div class="form-mock">30.06.2026</div>
-            <button class="form-btn">Speichern</button>
+
+        <!-- Statistiken -->
+        <div class="adv-stats">
+          <div class="adv-stat">
+            <div class="adv-stat-num">1.248</div>
+            <div class="adv-stat-label">Impressionen</div>
+          </div>
+          <div class="adv-stat">
+            <div class="adv-stat-num">4,2%</div>
+            <div class="adv-stat-label">Klickrate</div>
+          </div>
+          <div class="adv-stat">
+            <div class="adv-stat-num">3 PLZ</div>
+            <div class="adv-stat-label">Zielgebiet</div>
           </div>
         </div>
+
+        <!-- Laufzeit-Footer -->
+        <div class="adv-footer">
+          <span class="adv-footer-label">Laufzeit</span>
+          <span class="adv-footer-val">01.06. – 30.06.2026</span>
+          <span class="adv-footer-tag">2 Tage verbleibend</span>
+        </div>
+
       </div>
     </div>
   </div>
