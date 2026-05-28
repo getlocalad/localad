@@ -66,32 +66,57 @@
     }
     .nav-cta:hover { background: var(--orange2) !important; }
 
-    /* hamburger */
-    .hamburger {
-      display: none; flex-direction: column; gap: 5px;
-      cursor: pointer; background: none; border: none; padding: 4px;
+    /* ── NAV DROPDOWN ── */
+    .nav-right { display: flex; align-items: center; gap: 1rem; }
+    .nav-dropdown-wrap { position: relative; }
+    .nav-dropdown-btn {
+      display: flex; flex-direction: column; justify-content: center; gap: 5px;
+      cursor: pointer; background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15); border-radius: 8px;
+      padding: 9px 11px; transition: background 0.2s; width: 42px; height: 42px;
     }
-    .hamburger span {
-      display: block; width: 24px; height: 2px;
+    .nav-dropdown-btn:hover { background: rgba(255,255,255,0.16); }
+    .nav-dropdown-btn span {
+      display: block; width: 20px; height: 2px;
       background: var(--white); border-radius: 2px;
-      transition: transform 0.25s, opacity 0.25s;
     }
-    .mobile-menu {
-      display: none; position: fixed; top: 64px; left: 0; right: 0;
-      background: var(--navy); z-index: 199;
-      padding: 1.5rem 5%; border-top: 1px solid rgba(255,255,255,0.08);
+    .nav-dropdown {
+      display: none; position: absolute; top: calc(100% + 10px); right: 0;
+      background: #0e2a48; border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 14px; min-width: 250px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.45); z-index: 300; overflow: hidden;
     }
-    .mobile-menu.open { display: block; }
-    .mobile-menu a {
-      display: block; padding: 0.75rem 0;
-      color: rgba(255,255,255,0.85); text-decoration: none; font-size: 1rem;
+    .nav-dropdown.open { display: block; animation: ddFade 0.15s ease; }
+    @keyframes ddFade { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:translateY(0); } }
+    .nav-dd-section { border-bottom: 1px solid rgba(255,255,255,0.07); padding: 0.3rem 0; }
+    .nav-dd-section:last-child { border-bottom: none; }
+    .nav-dd-label {
+      font-size: 0.63rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.11em; color: rgba(255,255,255,0.3);
+      padding: 0.55rem 1.1rem 0.2rem;
+    }
+    .nav-dd-item {
+      display: flex; align-items: center; gap: 0.65rem;
+      padding: 0.55rem 1.1rem; text-decoration: none;
+      font-size: 0.87rem; font-weight: 500; color: rgba(255,255,255,0.78);
+      transition: background 0.13s, color 0.13s;
+      border: none; background: none; width: 100%; text-align: left; cursor: pointer;
+    }
+    .nav-dd-item:hover  { background: rgba(255,255,255,0.07); color: var(--white); }
+    .nav-dd-item .dd-icon { font-size: 0.9rem; width: 22px; text-align: center; flex-shrink: 0; }
+    .nav-dd-item.cta    { color: var(--orange2); font-weight: 700; }
+    .nav-dd-item.cta:hover  { background: rgba(232,93,4,0.15); }
+    .nav-dd-item.danger { color: rgba(255,140,140,0.85); }
+    .nav-dd-item.danger:hover { background: rgba(220,38,38,0.1); color: #fca5a5; }
+    .nav-dd-user {
+      padding: 0.85rem 1.1rem 0.7rem;
       border-bottom: 1px solid rgba(255,255,255,0.07);
     }
-    .mobile-menu a:last-child { border-bottom: none; }
-    .mobile-menu .mob-cta {
-      margin-top: 1rem; display: block; text-align: center;
-      background: var(--orange); color: var(--white) !important;
-      padding: 0.85rem; border-radius: 8px; font-weight: 700;
+    .nav-dd-user-name  { font-size: 0.88rem; font-weight: 700; color: var(--white); }
+    .nav-dd-user-badge {
+      display: inline-block; margin-top: 3px;
+      font-size: 0.68rem; font-weight: 700; padding: 0.15rem 0.55rem;
+      border-radius: 4px; background: rgba(232,93,4,0.25); color: var(--orange2);
     }
 
     /* ── HERO ── */
@@ -547,7 +572,7 @@
       .hero-visual { display: none; }
       .footer-inner { grid-template-columns: 1fr 1fr; }
       .nav-links { display: none; }
-      .hamburger { display: flex; }
+      .nav-cta-desktop { display: none; }
     }
   </style>
 </head>
@@ -562,37 +587,124 @@
     <li><a href="#publisher">Publisher</a></li>
     <li><a href="#werbetreibende">Werbetreibende</a></li>
     <li><a href="#kalkulator">Kalkulator</a></li>
-    <li><a href="/account" id="nav-account" style="display:none">Mein Konto</a></li>
-    <li><a href="/onboarding" class="nav-cta">Jetzt installieren</a></li>
   </ul>
-  <button class="hamburger" id="hamburger" aria-label="Menü öffnen">
-    <span></span><span></span><span></span>
-  </button>
+  <div class="nav-right">
+    <a href="/onboarding" class="nav-cta nav-cta-desktop">Jetzt installieren</a>
+    <div class="nav-dropdown-wrap">
+      <button class="nav-dropdown-btn" id="nav-dd-btn" aria-label="Menü" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="nav-dropdown" id="nav-dd" role="menu"></div>
+    </div>
+  </div>
 </nav>
 
-<div class="mobile-menu" id="mobile-menu">
-  <a href="#wie-es-funktioniert">So funktioniert's</a>
-  <a href="#preise">Preise</a>
-  <a href="#publisher">Publisher</a>
-  <a href="#werbetreibende">Werbetreibende</a>
-  <a href="#kalkulator">Kalkulator</a>
-  <a href="#faq">FAQ</a>
-  <a href="/kontakt">Kontakt</a>
-  <a href="/onboarding" class="mob-cta">Jetzt installieren</a>
-</div>
-
 <script>
-  if (localStorage.getItem('localad_token')) {
-    document.getElementById('nav-account').style.display = '';
+(function () {
+  var token = localStorage.getItem('localad_token');
+  var email = localStorage.getItem('localad_email') || '';
+  var isSubscribed = localStorage.getItem('localad_subscribed') === 'true';
+  var btn = document.getElementById('nav-dd-btn');
+  var dd  = document.getElementById('nav-dd');
+
+  function buildMenu () {
+    var html = '';
+
+    /* ── Eingeloggt ── */
+    if (token) {
+      html += '<div class="nav-dd-user">'
+        + '<div class="nav-dd-user-name">' + (email || 'Mein Konto') + '</div>'
+        + '<span class="nav-dd-user-badge">' + (isSubscribed ? '✓ Abo aktiv' : 'Kein Abo') + '</span>'
+        + '</div>';
+
+      html += section('Mein Account', [
+        { icon: '👤', label: 'Profil & Einstellungen', href: '/account' },
+        { icon: '📍', label: 'Postleitzahl ändern',    href: '/account#plz' },
+        { icon: '💳', label: 'Abo verwalten',          href: '/account#abo' },
+        { icon: '📊', label: 'Meine Statistiken',      href: '/account#stats' },
+        { icon: '🔔', label: 'Benachrichtigungen',     href: '/account#notifications' },
+        { icon: '🚪', label: 'Abmelden',               action: 'logout', cls: 'danger' }
+      ]);
+    } else {
+      /* mobile: Navigation einblenden */
+      if (window.innerWidth <= 768) {
+        html += section('Navigation', [
+          { icon: 'ℹ️',  label: "So funktioniert's", href: '#wie-es-funktioniert' },
+          { icon: '💰', label: 'Preise',             href: '#preise' },
+          { icon: '🧮', label: 'Kalkulator',         href: '#kalkulator' },
+          { icon: '❓', label: 'FAQ',                href: '#faq' }
+        ]);
+      }
+      html += section('Account', [
+        { icon: '🔑', label: 'Anmelden',         href: '/onboarding#login', cls: 'cta' },
+        { icon: '✨', label: 'Konto erstellen',   href: '/onboarding',       cls: 'cta' }
+      ]);
+    }
+
+    html += section('Produkt', [
+      { icon: '🚀', label: 'Extension installieren', href: '/onboarding' },
+      { icon: '🎬', label: 'Demo ansehen',            href: '/demo' },
+      { icon: '🧮', label: 'Kalkulator',              href: '#kalkulator' }
+    ]);
+
+    html += section('Für Unternehmen', [
+      { icon: '📣', label: 'Werbung schalten',  href: '/dashboard' },
+      { icon: '🌐', label: 'Publisher werden',  href: '/publisher' }
+    ]);
+
+    html += section('Hilfe & Rechtliches', [
+      { icon: '💬', label: 'Kontakt',     href: '/kontakt' },
+      { icon: '❓', label: 'FAQ',         href: '#faq' },
+      { icon: '🔒', label: 'Datenschutz', href: '/datenschutz' },
+      { icon: '📋', label: 'AGB',         href: '/agb' },
+      { icon: '🏢', label: 'Impressum',   href: '/impressum' }
+    ]);
+
+    dd.innerHTML = html;
   }
-  document.getElementById('hamburger').addEventListener('click', function() {
-    document.getElementById('mobile-menu').classList.toggle('open');
-  });
-  document.querySelectorAll('.mobile-menu a').forEach(function(a) {
-    a.addEventListener('click', function() {
-      document.getElementById('mobile-menu').classList.remove('open');
+
+  function section (label, items) {
+    var h = '<div class="nav-dd-section"><div class="nav-dd-label">' + label + '</div>';
+    items.forEach(function (it) {
+      var cls = it.cls ? ' ' + it.cls : '';
+      if (it.action === 'logout') {
+        h += '<button class="nav-dd-item danger" onclick="localadLogout()">'
+          + '<span class="dd-icon">' + it.icon + '</span>' + it.label + '</button>';
+      } else {
+        h += '<a class="nav-dd-item' + cls + '" href="' + it.href + '">'
+          + '<span class="dd-icon">' + it.icon + '</span>' + it.label + '</a>';
+      }
     });
+    return h + '</div>';
+  }
+
+  btn.addEventListener('click', function (e) {
+    e.stopPropagation();
+    var open = dd.classList.toggle('open');
+    btn.setAttribute('aria-expanded', open);
+    if (open) buildMenu();
   });
+
+  document.addEventListener('click', function () {
+    dd.classList.remove('open');
+    btn.setAttribute('aria-expanded', 'false');
+  });
+
+  dd.addEventListener('click', function (e) {
+    e.stopPropagation();
+    if (e.target.tagName === 'A') {
+      dd.classList.remove('open');
+      btn.setAttribute('aria-expanded', 'false');
+    }
+  });
+})();
+
+function localadLogout () {
+  ['localad_token','localad_refresh','localad_email','localad_subscribed'].forEach(function(k){
+    localStorage.removeItem(k);
+  });
+  window.location.href = '/';
+}
 </script>
 
 <!-- HERO -->
@@ -990,15 +1102,6 @@
 
         <div class="slider-row">
           <div class="slider-header">
-            <label>LocalAd-Nutzer in Duisburg</label>
-            <span class="slider-val" id="u-city-val">200</span>
-          </div>
-          <input type="range" min="50" max="5000" step="50" value="200" id="u-city" oninput="calcUser()">
-          <div class="slider-note">Beeinflusst Publisher-Abdeckung in deiner Stadt</div>
-        </div>
-
-        <div class="slider-row">
-          <div class="slider-header">
             <label>Abo-Laufzeit</label>
             <span class="slider-val" id="u-months-val">3 Mon.</span>
           </div>
@@ -1029,11 +1132,11 @@
           </div>
           <div class="result-card">
             <div class="result-num" id="u-total">9 €</div>
-            <div class="result-label">Gesamtkosten<br>in <span id="u-months-label">3 Monaten</span></div>
+            <div class="result-label">LocalAd-Abo<br>für <span id="u-months-label">3 Monate</span></div>
           </div>
           <div class="result-card highlight">
             <div class="result-num" id="u-local-economy">1,60 €</div>
-            <div class="result-label">in die Lokalwirtschaft<br>reinvestiert / Monat</div>
+            <div class="result-label">in die Lokalwirtschaft<br>reinvestiert (gesamt)</div>
           </div>
           <div class="result-card full">
             <div class="result-compare" id="u-compare">
@@ -1042,7 +1145,7 @@
           </div>
         </div>
         <div class="calc-assumption">
-          Basis: 3,2 Konzern-Ads/Seite (Branchendurchschnitt), Publisher-Hit-Rate abhängig von Nutzeranzahl und Surfverhalten, 0,04 €/lokale Impression fließt in lokale Wirtschaft.
+          Basis: 3,2 Konzern-Ads/Seite (Branchendurchschnitt DE 2024). Publisher-Hit-Rate nach Surfverhalten: Nachrichten 18 %, Gemischt 12 %, Social 5 %. 0,04 €/lokale Impression fließt in die Lokalwirtschaft.
         </div>
       </div>
     </div>
@@ -1054,20 +1157,11 @@
 
         <div class="slider-row">
           <div class="slider-header">
-            <label>Monatliche Besucher</label>
-            <span class="slider-val" id="p-visitors-val">2.000</span>
-          </div>
-          <input type="range" min="500" max="50000" step="500" value="2000" id="p-visitors" oninput="calcPublisher()">
-          <div class="slider-note">Lokale Blogs, Stadtportale, Vereinsseiten</div>
-        </div>
-
-        <div class="slider-row">
-          <div class="slider-header">
             <label>Seiten pro Besuch (Ø)</label>
             <span class="slider-val" id="p-pages-val">2,0</span>
           </div>
           <input type="range" min="10" max="50" value="20" id="p-pages" oninput="calcPublisher()">
-          <div class="slider-note">In Zehntel – 20 = 2,0 Seiten/Besuch</div>
+          <div class="slider-note">Ø 1,5 bei News, Ø 3,0 bei Magazinen und Stadtportalen</div>
         </div>
 
         <div class="slider-row">
@@ -1081,9 +1175,9 @@
         <div class="slider-row">
           <div class="slider-header">
             <label>LocalAd-Nutzer in Duisburg</label>
-            <span class="slider-val" id="p-city-val">200</span>
+            <span class="slider-val" id="p-city-val">2.000</span>
           </div>
-          <input type="range" min="50" max="5000" step="50" value="200" id="p-city" oninput="calcPublisher()">
+          <input type="range" min="50" max="5000" step="50" value="2000" id="p-city" oninput="calcPublisher()">
           <div class="slider-note">Je mehr Nutzer, desto mehr LocalAd-Traffic auf deiner Seite</div>
         </div>
 
@@ -1105,7 +1199,7 @@
         <div class="result-grid">
           <div class="result-card">
             <div class="result-num" id="p-localad-visitors">24</div>
-            <div class="result-label">LocalAd-Nutzer<br>besuchen dich/Monat</div>
+            <div class="result-label">LocalAd-Nutzer<br>auf deiner Seite / Monat</div>
           </div>
           <div class="result-card">
             <div class="result-num" id="p-impressions">96</div>
@@ -1113,20 +1207,20 @@
           </div>
           <div class="result-card highlight">
             <div class="result-num" id="p-monthly">0,14 €</div>
-            <div class="result-label">geschätzte Einnahmen<br>pro Monat</div>
+            <div class="result-label">geschätzte Einnahmen<br>pro Monat – passiv</div>
           </div>
           <div class="result-card highlight">
             <div class="result-num" id="p-yearly">1,73 €</div>
-            <div class="result-label">Hochrechnung<br>Jahresertrag</div>
+            <div class="result-label">Hochrechnung<br>Jahresertrag (ohne Aufwand)</div>
           </div>
           <div class="result-card full">
             <div class="result-compare" id="p-compare">
-              Mit <strong id="p-c1">200</strong> LocalAd-Nutzern in Duisburg und <strong id="p-c2">2.000</strong> monatlichen Besuchern erreichst du monatlich <strong id="p-c3">24</strong> LocalAd-Nutzer – und verdienst dabei ohne aktiven Aufwand.
+              Mit <strong id="p-c1">2.000</strong> LocalAd-Nutzern in deiner Stadt kommen monatlich ca. <strong id="p-c3">24</strong> davon auf deine Seite – du verdienst ohne zusätzlichen Aufwand, Redaktion oder Technik.
             </div>
           </div>
         </div>
         <div class="calc-assumption">
-          Basis: Publisher-Rev-Share 1,50 € CPM (nach LocalAds Anteil). Lokale Ausrichtung bestimmt den Anteil deiner Besucher, der aus dem LocalAd-Nutzerkreis stammt. Zahlen steigen proportional mit der Nutzerbasis.
+          Basis: Publisher-Rev-Share 10 € CPM (nach LocalAds Anteil, hyper-lokales Targeting). Regionale Ausrichtung bestimmt, wie viele LocalAd-Nutzer deine Seite besuchen. Zahlen skalieren direkt mit der Nutzerbasis in deiner Stadt.
         </div>
       </div>
     </div>
@@ -1196,8 +1290,8 @@
             <div class="result-label">Gesamtkosten<br>über <span id="a-months-label">3 Monate</span></div>
           </div>
           <div class="result-card highlight">
-            <div class="result-num" id="a-cpm">101 €</div>
-            <div class="result-label">effektiver CPM<br>(Kosten/1.000 Impressionen)</div>
+            <div class="result-num" id="a-local-pct">100 %</div>
+            <div class="result-label">lokale Sichtbarkeit –<br>kein einziger Streuverlust</div>
           </div>
           <div class="result-card full">
             <div class="result-compare" id="a-compare">
@@ -1206,7 +1300,7 @@
           </div>
         </div>
         <div class="calc-assumption">
-          Basis: LocalAd-Nutzer verteilen sich gleichmäßig auf alle 40 Duisburger PLZ. Ø 15 Seiten/Tag, 22 Tage/Monat, 12% Publisher-Hit-Rate. Zielgruppenfilter reduziert Reichweite auf den demografischen Anteil. Google Ads Vergleich: 18 € CPM (Search/Display-Mix).
+          Basis: Gleichmäßige Nutzerverteilung auf 40 Duisburger PLZ. Ø 15 Seiten/Tag, 22 Tage/Monat, 12 % Publisher-Hit-Rate. Demografiefilter basiert auf DE-Adblocker-Nutzungsstatistiken (ARD/ZDF 2024). Alle Impressionen 100 % lokal – kein überregionaler Streuverlust.
         </div>
       </div>
     </div>
@@ -1256,30 +1350,30 @@ function calcUser() {
   var pages  = +document.getElementById('u-pages').value;
   var days   = +document.getElementById('u-days').value;
   var months = +document.getElementById('u-months').value;
-  var city   = +document.getElementById('u-city').value;
 
-  set('u-pages-val',  pages);
-  set('u-days-val',   days);
-  set('u-months-val', months + ' Mon.');
-  set('u-months-label', months + (months === 1 ? ' Monat' : ' Monaten'));
+  set('u-pages-val',    pages);
+  set('u-days-val',     days);
+  set('u-months-val',   months + ' Mon.');
+  set('u-months-label', months + (months === 1 ? ' Monat' : ' Monate'));
 
   var publisherRate = { news: 0.18, mix: 0.12, social: 0.05 }[uType];
-  // scale publisher rate with city users (more users → more publishers)
-  var cityFactor = Math.min(1.0, 0.4 + (city / 5000) * 0.6);
-  var effectiveRate = publisherRate * cityFactor;
 
-  var blockedMonth  = Math.round(pages * days * 3.2);
-  var localAdsMonth = Math.round(pages * days * effectiveRate);
-  var totalCost     = months * 3;
-  var localEconomy  = localAdsMonth * 0.04;
+  var blockedMonth   = Math.round(pages * days * 3.2);
+  var localAdsMonth  = Math.round(pages * days * publisherRate);
+  var totalCost      = months * 3;
+  var localEconomy   = localAdsMonth * months * 0.04; // gesamt über Abo-Laufzeit
 
-  set('u-pages-val',   pages);
-  set('u-blocked',     fmt(blockedMonth));
-  set('u-local',       fmt(localAdsMonth));
-  set('u-total',       fmtEur(totalCost));
+  set('u-blocked',       fmt(blockedMonth));
+  set('u-local',         fmt(localAdsMonth));
+  set('u-total',         fmtEur(totalCost));
   set('u-local-economy', fmtEur(localEconomy));
   set('u-b2', fmt(blockedMonth));
   set('u-l2', fmt(localAdsMonth));
+
+  var el = document.getElementById('u-compare');
+  if (el) {
+    el.innerHTML = 'Du blockierst <strong>' + fmt(blockedMonth * months) + '</strong> Konzern-Ads in ' + months + ' ' + (months === 1 ? 'Monat' : 'Monaten') + ' – jede hätte Google, Meta oder Amazon Geld gebracht. Stattdessen siehst du <strong>' + fmt(localAdsMonth * months) + '</strong> Anzeigen echter lokaler Unternehmen aus deiner Stadt.';
+  }
 }
 
 // ── PUBLISHER CALCULATOR ──
@@ -1287,31 +1381,27 @@ function setPubReach(level) {
   pReach = level;
   document.querySelectorAll('#panel-publisher .radio-btn').forEach(function(b){ b.classList.remove('active'); });
   document.getElementById('p-reach-' + level).classList.add('active');
-  var notes = { low: 'Überregional: ~5% deiner Besucher kommen aus Duisburg', mid: 'Lokale Website: ~15% deiner Besucher kommen aus Duisburg', high: 'Hyperlokal: ~35% deiner Besucher kommen aus Duisburg' };
+  var notes = { low: 'Überregional: ~2% deiner LocalAd-Besucher kommen aus Duisburg', mid: 'Lokale Website: ~12% deiner LocalAd-Besucher kommen aus Duisburg', high: 'Hyperlokal: ~30% aller LocalAd-Nutzer in Duisburg besuchen dich' };
   set('p-reach-note', notes[level]);
   calcPublisher();
 }
 
 function calcPublisher() {
-  var visitors = +document.getElementById('p-visitors').value;
   var pagesRaw = +document.getElementById('p-pages').value;
   var pages    = pagesRaw / 10;
   var slots    = +document.getElementById('p-slots').value;
   var city     = +document.getElementById('p-city').value;
 
-  set('p-visitors-val', fmt(visitors));
-  set('p-pages-val',    pages.toFixed(1).replace('.',','));
-  set('p-slots-val',    slots);
-  set('p-city-val',     fmt(city));
+  set('p-pages-val', pages.toFixed(1).replace('.',','));
+  set('p-slots-val', slots);
+  set('p-city-val',  fmt(city));
 
-  var reachPct = { low: 0.05, mid: 0.15, high: 0.35 }[pReach];
-  var localadPenetration = city / 216000; // internet users in Duisburg
-  var localadVisitors = Math.round(visitors * reachPct * localadPenetration / reachPct * localadPenetration);
-  // simpler: how many of city-users would visit this site
-  localadVisitors = Math.round(city * reachPct * 0.08); // 8% of regional LocalAd users visit this site/month
+  // Anteil LocalAd-Nutzer die diese Seite besuchen (je nach regionaler Ausrichtung)
+  var reachPct = { low: 0.02, mid: 0.12, high: 0.30 }[pReach];
+  var localadVisitors = Math.round(city * reachPct);
 
   var impressions = Math.round(localadVisitors * pages * slots);
-  var monthlyRev  = impressions * 1.50 / 1000;
+  var monthlyRev  = impressions * 10 / 1000; // 10€ CPM hyper-lokal
   var yearlyRev   = monthlyRev * 12;
 
   set('p-localad-visitors', fmt(localadVisitors));
@@ -1319,7 +1409,6 @@ function calcPublisher() {
   set('p-monthly',          fmtEur(monthlyRev));
   set('p-yearly',           fmtEur(yearlyRev));
   set('p-c1', fmt(city));
-  set('p-c2', fmt(visitors));
   set('p-c3', fmt(localadVisitors));
 }
 
@@ -1365,16 +1454,12 @@ function calcAdvertiser() {
   set('a-users',       fmt(usersInTarget));
   set('a-impressions', fmt(impressionsMonth));
   set('a-total',       fmtEur(totalCost));
-  set('a-cpm',         fmtEur(cpm));
-  set('a-c1',          fmtEur(totalCost));
-  set('a-c2',          fmt(impressionsMonth));
-  set('a-c3',          '≈ ' + fmtEur(googleCost));
+  set('a-local-pct',   '100 %');
 
-  // update compare text
   var el = document.getElementById('a-compare');
   if (el) {
-    var cheaper = googleCost < totalCost;
-    el.innerHTML = 'Für <strong>' + fmtEur(totalCost) + '</strong> erreichst du in ' + months + ' ' + (months === 1 ? 'Monat' : 'Monaten') + ' ca. <strong>' + fmt(impressionsMonth * months) + '</strong> Impressionen in deinem Zielgebiet. Google Ads würde für dieselbe Reichweite <strong>≈ ' + fmtEur(googleCost) + '</strong> kosten – aber ohne Lokalitätsgarantie, ohne Flatrate, mit CPC-Risiko.';
+    var totalImpr = impressionsMonth * months;
+    el.innerHTML = '<strong>' + fmt(usersInTarget) + ' Menschen</strong> in deinen Ziel-PLZ haben aktiv entschieden, lokale Werbung zu sehen – kein Bot, kein Zufallsklick, null Streuverlust. Für <strong>' + fmtEur(totalCost) + '</strong> über ' + months + ' ' + (months === 1 ? 'Monat' : 'Monate') + ' erreichst du diese Zielgruppe <strong>' + fmt(totalImpr) + ' Mal</strong> direkt vor Ort – mit Flatrate statt CPC-Risiko.';
   }
 }
 
