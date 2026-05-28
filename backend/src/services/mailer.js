@@ -58,6 +58,38 @@ export async function sendWelcomeMail(email) {
   });
 }
 
+export async function sendContactMail({ name, email, subject, message }) {
+  const CONTACT_TO = process.env.CONTACT_EMAIL || 'info@getlocalad.de';
+  const subjectMap = {
+    allgemein:  'Allgemeine Anfrage',
+    abo:        'Frage zum Abo',
+    werbung:    'Werbung schalten',
+    publisher:  'Als Publisher registrieren',
+    technisch:  'Technisches Problem',
+    presse:     'Presse / Kooperation',
+  };
+  const subjectLabel = subjectMap[subject] || subject;
+
+  await sendMail({
+    to:      CONTACT_TO,
+    subject: `[LocalAd Kontakt] ${subjectLabel} – ${name}`,
+    html: `
+      <div style="font-family:system-ui,sans-serif;max-width:560px;margin:0 auto;padding:24px;color:#0f172a">
+        <h2 style="color:#2563eb;margin-bottom:16px">Neue Kontaktanfrage</h2>
+        <table style="width:100%;border-collapse:collapse;margin-bottom:20px">
+          <tr><td style="padding:6px 0;font-weight:600;width:100px">Name</td><td>${name}</td></tr>
+          <tr><td style="padding:6px 0;font-weight:600">E-Mail</td><td><a href="mailto:${email}">${email}</a></td></tr>
+          <tr><td style="padding:6px 0;font-weight:600">Betreff</td><td>${subjectLabel}</td></tr>
+        </table>
+        <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:16px;white-space:pre-wrap;line-height:1.6">${message}</div>
+        <p style="margin-top:24px;font-size:12px;color:#64748b">
+          Gesendet über getlocalad.de/kontakt
+        </p>
+      </div>
+    `,
+  });
+}
+
 export async function sendSubscriptionConfirmMail(email, subscriptionEnd) {
   const endDate = new Date(subscriptionEnd).toLocaleDateString('de-DE', {
     day: '2-digit', month: '2-digit', year: 'numeric',

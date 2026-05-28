@@ -13,6 +13,7 @@ import { usersRouter } from './routes/users.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import { requestLogger } from './middleware/requestLogger.js';
 import { authLimiter, adLimiter, globalLimiter } from './middleware/rateLimiter.js';
+import { sendContactMail } from './services/mailer.js';
 
 // __dirname-Ersatz fuer ES-Module
 const __filename = fileURLToPath(import.meta.url);
@@ -98,6 +99,28 @@ app.get('/account', (req, res) => {
 });
 app.get('/demo', (req, res) => {
   res.sendFile(resolve(__dirname, '../../dashboard/demo.html'));
+});
+app.get('/kontakt', (req, res) => {
+  res.sendFile(resolve(__dirname, '../../dashboard/kontakt.html'));
+});
+app.post('/api/contact', globalLimiter, async (req, res) => {
+  try {
+    const { name, email, subject, message } = req.body;
+    if (!name || !email || !message) {
+      return res.status(400).json({ error: 'Name, E-Mail und Nachricht sind Pflichtfelder.' });
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return res.status(400).json({ error: 'Ungültige E-Mail-Adresse.' });
+    }
+    if (message.length > 5000) {
+      return res.status(400).json({ error: 'Nachricht zu lang (max. 5000 Zeichen).' });
+    }
+    await sendContactMail({ name, email, subject: subject || 'allgemein', message });
+    res.json({ ok: true });
+  } catch (err) {
+    console.error('[Contact]', err.message);
+    res.status(500).json({ error: 'Fehler beim Senden. Bitte versuche es später erneut.' });
+  }
 });
 
 // Stripe Success/Cancel Redirects
