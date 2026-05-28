@@ -1,14 +1,13 @@
 {
   "manifest_version": 3,
   "name": "LocalAd",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Blockiert Konzernwerbung und ersetzt sie durch lokale Werbung aus deiner Region.",
 
   "permissions": [
     "storage",
     "declarativeNetRequest",
     "declarativeNetRequestWithHostAccess",
-    "scripting",
     "activeTab",
     "tabs"
   ],
