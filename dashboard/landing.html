@@ -321,14 +321,14 @@
     }
     .market-card h2 { color: var(--white); font-size: 1.35rem; font-weight: 900; margin-bottom: 0.75rem; }
     .market-card p  { color: rgba(255,255,255,0.6); font-size: 0.87rem; margin-bottom: 1.4rem; line-height: 1.65; }
-    .market-price { color: var(--orange2); font-size: 1.7rem; font-weight: 900; margin-bottom: 0.3rem; }
+    .market-price { color: var(--orange2); font-size: 1.7rem; font-weight: 900; margin-bottom: 0.3rem; margin-top: auto; padding-top: 1.3rem; }
     .market-price span { font-size: 0.85rem; font-weight: 400; color: rgba(255,255,255,0.45); }
     .market-tag {
       display: inline-block;
       background: rgba(232,93,4,0.2); color: var(--orange2);
       border-radius: 4px; padding: 0.2rem 0.65rem; font-size: 0.75rem; font-weight: 600;
     }
-    .market-card .btn-primary { margin-top: auto; padding-top: 1.3rem; display: block; text-align: center; }
+    .market-card .btn-primary { margin-top: 1.3rem; display: block; text-align: center; }
 
     /* ── PRICING ── */
     .pricing-grid {
@@ -336,7 +336,8 @@
       align-items: start;
     }
     .price-card {
-      border: 1.5px solid var(--gray2); border-radius: var(--radius); padding: 2rem; position: relative;
+      border: 1.5px solid var(--gray2); border-radius: var(--radius); padding: 2rem;
+      position: relative; display: flex; flex-direction: column;
     }
     .price-card.featured {
       border-color: var(--orange);
@@ -354,7 +355,7 @@
     .price-amount { font-size: 2.3rem; font-weight: 900; color: var(--navy); line-height: 1; }
     .price-amount span { font-size: 0.9rem; font-weight: 400; color: var(--muted); }
     .price-desc   { font-size: 0.83rem; color: var(--muted); margin: 0.75rem 0 1.2rem; line-height: 1.6; }
-    .price-features { list-style: none; margin-bottom: 1.6rem; }
+    .price-features { list-style: none; flex: 1; margin-bottom: 1.6rem; }
     .price-features li {
       font-size: 0.86rem; color: var(--text);
       padding: 0.32rem 0; display: flex; gap: 0.5rem; align-items: flex-start;
