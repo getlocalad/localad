@@ -6,19 +6,21 @@ const RESEND_API = 'https://api.resend.com/emails';
 const FROM       = process.env.MAIL_FROM || 'LocalAd <noreply@getlocalad.de>';
 const API_KEY    = process.env.RESEND_API_KEY;
 
-async function sendMail({ to, subject, html }) {
+async function sendMail({ to, subject, html, replyTo }) {
   if (!API_KEY) {
     console.log(`[Mailer] RESEND_API_KEY fehlt – Mail nicht gesendet: ${subject} → ${to}`);
     return;
   }
   try {
+    const payload = { from: FROM, to: [to], subject, html };
+    if (replyTo) payload.reply_to = replyTo;
     const res = await fetch(RESEND_API, {
       method: 'POST',
       headers: {
         'Authorization': 'Bearer ' + API_KEY,
         'Content-Type':  'application/json',
       },
-      body: JSON.stringify({ from: FROM, to: [to], subject, html }),
+      body: JSON.stringify(payload),
     });
     if (!res.ok) {
       const err = await res.text();
@@ -72,6 +74,7 @@ export async function sendContactMail({ name, email, subject, message }) {
 
   await sendMail({
     to:      CONTACT_TO,
+    replyTo: `${name} <${email}>`,
     subject: `[LocalAd Kontakt] ${subjectLabel} – ${name}`,
     html: `
       <div style="font-family:system-ui,sans-serif;max-width:560px;margin:0 auto;padding:24px;color:#0f172a">
