@@ -394,6 +394,107 @@
     .trust-item h4 { font-size: 0.95rem; font-weight: 800; color: var(--navy); margin-bottom: 0.4rem; }
     .trust-item p  { font-size: 0.83rem; color: var(--muted); line-height: 1.65; }
 
+    /* ── CALCULATOR ── */
+    .calculator { background: var(--navy); padding: 88px 5%; }
+    .calculator .section-title { color: var(--white); }
+    .calculator .section-sub   { color: rgba(255,255,255,0.55); }
+    .calculator .section-label { color: var(--orange2); }
+
+    .calc-tabs {
+      display: flex; gap: 0.5rem; margin-bottom: 2.5rem; flex-wrap: wrap;
+    }
+    .calc-tab {
+      background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.65);
+      border: 1.5px solid rgba(255,255,255,0.12); border-radius: 8px;
+      padding: 0.65rem 1.5rem; font-size: 0.92rem; font-weight: 600;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .calc-tab:hover  { background: rgba(255,255,255,0.12); color: var(--white); }
+    .calc-tab.active { background: var(--orange); border-color: var(--orange); color: var(--white); }
+
+    .calc-panel { display: none; }
+    .calc-panel.active { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start; }
+
+    .calc-inputs h3 {
+      color: rgba(255,255,255,0.5); font-size: 0.72rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 1.5rem;
+    }
+    .slider-row { margin-bottom: 1.5rem; }
+    .slider-header {
+      display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.4rem;
+    }
+    .slider-header label { font-size: 0.88rem; color: rgba(255,255,255,0.8); font-weight: 500; }
+    .slider-val {
+      font-size: 1rem; font-weight: 800; color: var(--orange2);
+      min-width: 70px; text-align: right;
+    }
+    input[type=range] {
+      width: 100%; -webkit-appearance: none; appearance: none;
+      height: 4px; border-radius: 2px;
+      background: rgba(255,255,255,0.15); outline: none;
+    }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none; appearance: none;
+      width: 18px; height: 18px; border-radius: 50%;
+      background: var(--orange); cursor: pointer;
+      transition: transform 0.15s;
+    }
+    input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.15); }
+    input[type=range]::-moz-range-thumb {
+      width: 18px; height: 18px; border-radius: 50%; border: none;
+      background: var(--orange); cursor: pointer;
+    }
+    .slider-note { font-size: 0.75rem; color: rgba(255,255,255,0.35); margin-top: 0.3rem; }
+
+    .radio-row { display: flex; gap: 0.75rem; margin-top: 0.4rem; }
+    .radio-btn {
+      flex: 1; text-align: center; padding: 0.6rem 0.5rem;
+      background: rgba(255,255,255,0.07); border: 1.5px solid rgba(255,255,255,0.12);
+      border-radius: 8px; font-size: 0.82rem; font-weight: 600; color: rgba(255,255,255,0.6);
+      cursor: pointer; transition: all 0.2s; user-select: none;
+    }
+    .radio-btn.active { background: rgba(232,93,4,0.25); border-color: var(--orange); color: var(--orange2); }
+
+    .calc-results h3 {
+      color: rgba(255,255,255,0.5); font-size: 0.72rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 1.5rem;
+    }
+    .result-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;
+    }
+    .result-card {
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px; padding: 1.2rem;
+      transition: border-color 0.3s;
+    }
+    .result-card.highlight {
+      background: rgba(232,93,4,0.15); border-color: rgba(232,93,4,0.4);
+    }
+    .result-num {
+      font-size: 1.9rem; font-weight: 900; color: var(--orange2); line-height: 1;
+      margin-bottom: 0.3rem; transition: all 0.3s;
+    }
+    .result-card.highlight .result-num { color: #ffaa66; }
+    .result-label { font-size: 0.78rem; color: rgba(255,255,255,0.5); line-height: 1.4; }
+    .result-card.full { grid-column: 1 / -1; }
+    .result-compare {
+      margin-top: 1rem; padding: 0.9rem 1rem;
+      background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.25);
+      border-radius: 10px; font-size: 0.82rem; color: rgba(255,255,255,0.7); line-height: 1.6;
+    }
+    .result-compare strong { color: #4ade80; }
+
+    .calc-assumption {
+      margin-top: 1.5rem; padding: 0.9rem 1rem;
+      background: rgba(255,255,255,0.04); border-radius: 8px;
+      font-size: 0.75rem; color: rgba(255,255,255,0.35); line-height: 1.7;
+    }
+
+    @media (max-width: 768px) {
+      .calc-panel.active { grid-template-columns: 1fr; }
+      .result-grid { grid-template-columns: 1fr; }
+    }
+
     /* ── FAQ ── */
     .faq { background: var(--white); }
     .faq-grid { max-width: 780px; }
@@ -460,6 +561,7 @@
     <li><a href="#preise">Preise</a></li>
     <li><a href="#publisher">Publisher</a></li>
     <li><a href="#werbetreibende">Werbetreibende</a></li>
+    <li><a href="#kalkulator">Kalkulator</a></li>
     <li><a href="/account" id="nav-account" style="display:none">Mein Konto</a></li>
     <li><a href="/onboarding" class="nav-cta">Jetzt installieren</a></li>
   </ul>
@@ -473,6 +575,7 @@
   <a href="#preise">Preise</a>
   <a href="#publisher">Publisher</a>
   <a href="#werbetreibende">Werbetreibende</a>
+  <a href="#kalkulator">Kalkulator</a>
   <a href="#faq">FAQ</a>
   <a href="/kontakt">Kontakt</a>
   <a href="/onboarding" class="mob-cta">Jetzt installieren</a>
@@ -849,6 +952,437 @@
     </div>
   </div>
 </section>
+
+<!-- CALCULATOR -->
+<section class="calculator" id="kalkulator">
+  <div class="section-inner">
+    <div class="section-label">Interaktiver Kalkulator</div>
+    <h2 class="section-title">Was bringt LocalAd dir konkret?</h2>
+    <p class="section-sub">Stell deine Situation ein – wir rechnen dir den geschätzten Nutzen aus. Alle Zahlen basieren auf realen Marktdaten für Duisburg.</p>
+
+    <div class="calc-tabs">
+      <button class="calc-tab active" onclick="switchTab('user',this)">👤 Ich bin Nutzer</button>
+      <button class="calc-tab" onclick="switchTab('publisher',this)">🌐 Ich bin Publisher</button>
+      <button class="calc-tab" onclick="switchTab('advertiser',this)">📣 Ich bin Werbetreibender</button>
+    </div>
+
+    <!-- ── NUTZER ── -->
+    <div class="calc-panel active" id="panel-user">
+      <div class="calc-inputs">
+        <h3>Deine Parameter</h3>
+
+        <div class="slider-row">
+          <div class="slider-header">
+            <label>Surfaktivität (Seiten/Tag)</label>
+            <span class="slider-val" id="u-pages-val">15</span>
+          </div>
+          <input type="range" min="5" max="40" value="15" id="u-pages" oninput="calcUser()">
+          <div class="slider-note">Ø Deutschland: 15 Seiten/Tag</div>
+        </div>
+
+        <div class="slider-row">
+          <div class="slider-header">
+            <label>Aktive Browsing-Tage/Monat</label>
+            <span class="slider-val" id="u-days-val">22</span>
+          </div>
+          <input type="range" min="5" max="30" value="22" id="u-days" oninput="calcUser()">
+        </div>
+
+        <div class="slider-row">
+          <div class="slider-header">
+            <label>LocalAd-Nutzer in Duisburg</label>
+            <span class="slider-val" id="u-city-val">200</span>
+          </div>
+          <input type="range" min="50" max="5000" step="50" value="200" id="u-city" oninput="calcUser()">
+          <div class="slider-note">Beeinflusst Publisher-Abdeckung in deiner Stadt</div>
+        </div>
+
+        <div class="slider-row">
+          <div class="slider-header">
+            <label>Abo-Laufzeit</label>
+            <span class="slider-val" id="u-months-val">3 Mon.</span>
+          </div>
+          <input type="range" min="1" max="24" value="3" id="u-months" oninput="calcUser()">
+        </div>
+
+        <div class="slider-row">
+          <div class="slider-header"><label>Surfverhalten</label></div>
+          <div class="radio-row">
+            <div class="radio-btn" id="u-type-news" onclick="setUserType('news')">Nachrichten</div>
+            <div class="radio-btn active" id="u-type-mix" onclick="setUserType('mix')">Gemischt</div>
+            <div class="radio-btn" id="u-type-social" onclick="setUserType('social')">Social-lastig</div>
+          </div>
+          <div class="slider-note" id="u-type-note">Gemischtes Surfen: ~12% der Seiten sind lokale Publisher</div>
+        </div>
+      </div>
+
+      <div class="calc-results">
+        <h3>Dein geschätzter Nutzen</h3>
+        <div class="result-grid">
+          <div class="result-card">
+            <div class="result-num" id="u-blocked">1.056</div>
+            <div class="result-label">blockierte Konzern-Ads<br>pro Monat</div>
+          </div>
+          <div class="result-card">
+            <div class="result-num" id="u-local">40</div>
+            <div class="result-label">lokale Anzeigen<br>pro Monat gesehen</div>
+          </div>
+          <div class="result-card">
+            <div class="result-num" id="u-total">9 €</div>
+            <div class="result-label">Gesamtkosten<br>in <span id="u-months-label">3 Monaten</span></div>
+          </div>
+          <div class="result-card highlight">
+            <div class="result-num" id="u-local-economy">1,60 €</div>
+            <div class="result-label">in die Lokalwirtschaft<br>reinvestiert / Monat</div>
+          </div>
+          <div class="result-card full">
+            <div class="result-compare" id="u-compare">
+              Du blockierst <strong id="u-b2">1.056</strong> Konzern-Ads – jede davon hätte Google, Meta oder Amazon Werbeeinnahmen gebracht. Stattdessen siehst du <strong id="u-l2">40</strong> Anzeigen lokaler Unternehmen aus deiner Stadt.
+            </div>
+          </div>
+        </div>
+        <div class="calc-assumption">
+          Basis: 3,2 Konzern-Ads/Seite (Branchendurchschnitt), Publisher-Hit-Rate abhängig von Nutzeranzahl und Surfverhalten, 0,04 €/lokale Impression fließt in lokale Wirtschaft.
+        </div>
+      </div>
+    </div>
+
+    <!-- ── PUBLISHER ── -->
+    <div class="calc-panel" id="panel-publisher">
+      <div class="calc-inputs">
+        <h3>Deine Website</h3>
+
+        <div class="slider-row">
+          <div class="slider-header">
+            <label>Monatliche Besucher</label>
+            <span class="slider-val" id="p-visitors-val">2.000</span>
+          </div>
+          <input type="range" min="500" max="50000" step="500" value="2000" id="p-visitors" oninput="calcPublisher()">
+          <div class="slider-note">Lokale Blogs, Stadtportale, Vereinsseiten</div>
+        </div>
+
+        <div class="slider-row">
+          <div class="slider-header">
+            <label>Seiten pro Besuch (Ø)</label>
+            <span class="slider-val" id="p-pages-val">2,0</span>
+          </div>
+          <input type="range" min="10" max="50" value="20" id="p-pages" oninput="calcPublisher()">
+          <div class="slider-note">In Zehntel – 20 = 2,0 Seiten/Besuch</div>
+        </div>
+
+        <div class="slider-row">
+          <div class="slider-header">
+            <label>Ad-Slots pro Seite</label>
+            <span class="slider-val" id="p-slots-val">2</span>
+          </div>
+          <input type="range" min="1" max="5" value="2" id="p-slots" oninput="calcPublisher()">
+        </div>
+
+        <div class="slider-row">
+          <div class="slider-header">
+            <label>LocalAd-Nutzer in Duisburg</label>
+            <span class="slider-val" id="p-city-val">200</span>
+          </div>
+          <input type="range" min="50" max="5000" step="50" value="200" id="p-city" oninput="calcPublisher()">
+          <div class="slider-note">Je mehr Nutzer, desto mehr LocalAd-Traffic auf deiner Seite</div>
+        </div>
+
+        <div class="slider-row">
+          <div class="slider-header">
+            <label>Regionale Ausrichtung deiner Website</label>
+          </div>
+          <div class="radio-row">
+            <div class="radio-btn" id="p-reach-low" onclick="setPubReach('low')">Überregional</div>
+            <div class="radio-btn active" id="p-reach-mid" onclick="setPubReach('mid')">Lokal</div>
+            <div class="radio-btn" id="p-reach-high" onclick="setPubReach('high')">Hyperlokal</div>
+          </div>
+          <div class="slider-note" id="p-reach-note">Lokale Website: ~15% deiner Besucher kommen aus Duisburg</div>
+        </div>
+      </div>
+
+      <div class="calc-results">
+        <h3>Dein geschätztes Einnahmepotenzial</h3>
+        <div class="result-grid">
+          <div class="result-card">
+            <div class="result-num" id="p-localad-visitors">24</div>
+            <div class="result-label">LocalAd-Nutzer<br>besuchen dich/Monat</div>
+          </div>
+          <div class="result-card">
+            <div class="result-num" id="p-impressions">96</div>
+            <div class="result-label">Impressionen<br>pro Monat</div>
+          </div>
+          <div class="result-card highlight">
+            <div class="result-num" id="p-monthly">0,14 €</div>
+            <div class="result-label">geschätzte Einnahmen<br>pro Monat</div>
+          </div>
+          <div class="result-card highlight">
+            <div class="result-num" id="p-yearly">1,73 €</div>
+            <div class="result-label">Hochrechnung<br>Jahresertrag</div>
+          </div>
+          <div class="result-card full">
+            <div class="result-compare" id="p-compare">
+              Mit <strong id="p-c1">200</strong> LocalAd-Nutzern in Duisburg und <strong id="p-c2">2.000</strong> monatlichen Besuchern erreichst du monatlich <strong id="p-c3">24</strong> LocalAd-Nutzer – und verdienst dabei ohne aktiven Aufwand.
+            </div>
+          </div>
+        </div>
+        <div class="calc-assumption">
+          Basis: Publisher-Rev-Share 1,50 € CPM (nach LocalAds Anteil). Lokale Ausrichtung bestimmt den Anteil deiner Besucher, der aus dem LocalAd-Nutzerkreis stammt. Zahlen steigen proportional mit der Nutzerbasis.
+        </div>
+      </div>
+    </div>
+
+    <!-- ── ADVERTISER ── -->
+    <div class="calc-panel" id="panel-advertiser">
+      <div class="calc-inputs">
+        <h3>Deine Kampagne</h3>
+
+        <div class="slider-row">
+          <div class="slider-header"><label>Abo-Plan</label></div>
+          <div class="radio-row">
+            <div class="radio-btn active" id="a-plan-basic" onclick="setAdvPlan('basic')">Basis – 50 €/Mon.</div>
+            <div class="radio-btn" id="a-plan-std" onclick="setAdvPlan('standard')">Standard – 100 €/Mon.</div>
+          </div>
+        </div>
+
+        <div class="slider-row">
+          <div class="slider-header">
+            <label>Ziel-Postleitzahlen</label>
+            <span class="slider-val" id="a-plz-val">3 PLZ</span>
+          </div>
+          <input type="range" min="1" max="20" value="3" id="a-plz" oninput="calcAdvertiser()">
+          <div class="slider-note">Duisburg hat ca. 40 Postleitzahlen (47051–47279)</div>
+        </div>
+
+        <div class="slider-row">
+          <div class="slider-header">
+            <label>Kampagnendauer</label>
+            <span class="slider-val" id="a-months-val">3 Mon.</span>
+          </div>
+          <input type="range" min="1" max="12" value="3" id="a-months" oninput="calcAdvertiser()">
+        </div>
+
+        <div class="slider-row">
+          <div class="slider-header">
+            <label>LocalAd-Nutzer in Duisburg</label>
+            <span class="slider-val" id="a-city-val">200</span>
+          </div>
+          <input type="range" min="50" max="5000" step="50" value="200" id="a-city" oninput="calcAdvertiser()">
+        </div>
+
+        <div class="slider-row">
+          <div class="slider-header"><label>Zielgruppe</label></div>
+          <div class="radio-row">
+            <div class="radio-btn active" id="a-type-all" onclick="setAdvType('all')">Alle Altersgruppen</div>
+            <div class="radio-btn" id="a-type-young" onclick="setAdvType('young')">18–35 Jahre</div>
+            <div class="radio-btn" id="a-type-senior" onclick="setAdvType('senior')">40+ Jahre</div>
+          </div>
+          <div class="slider-note" id="a-type-note">Alle Altersgruppen: volle Reichweite im Zielgebiet</div>
+        </div>
+      </div>
+
+      <div class="calc-results">
+        <h3>Dein geschätztes Kampagnenergebnis</h3>
+        <div class="result-grid">
+          <div class="result-card">
+            <div class="result-num" id="a-users">15</div>
+            <div class="result-label">erreichbare Nutzer<br>im Zielgebiet</div>
+          </div>
+          <div class="result-card">
+            <div class="result-num" id="a-impressions">495</div>
+            <div class="result-label">geschätzte Impressionen<br>pro Monat</div>
+          </div>
+          <div class="result-card">
+            <div class="result-num" id="a-total">150 €</div>
+            <div class="result-label">Gesamtkosten<br>über <span id="a-months-label">3 Monate</span></div>
+          </div>
+          <div class="result-card highlight">
+            <div class="result-num" id="a-cpm">101 €</div>
+            <div class="result-label">effektiver CPM<br>(Kosten/1.000 Impressionen)</div>
+          </div>
+          <div class="result-card full">
+            <div class="result-compare" id="a-compare">
+              Für <strong id="a-c1">150 €</strong> erreichst du in 3 Monaten <strong id="a-c2">495</strong> Impressionen in deinem Zielgebiet. Google Ads würde dasselbe für <strong id="a-c3">≈ 89 €</strong> ermöglichen – aber ohne Lokalität, ohne Flatrate, mit CPC-Risiko.
+            </div>
+          </div>
+        </div>
+        <div class="calc-assumption">
+          Basis: LocalAd-Nutzer verteilen sich gleichmäßig auf alle 40 Duisburger PLZ. Ø 15 Seiten/Tag, 22 Tage/Monat, 12% Publisher-Hit-Rate. Zielgruppenfilter reduziert Reichweite auf den demografischen Anteil. Google Ads Vergleich: 18 € CPM (Search/Display-Mix).
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+// ── STATE ──
+var uType = 'mix';
+var pReach = 'mid';
+var advPlan = 'basic';
+var advType = 'all';
+
+// ── HELPERS ──
+function fmt(n) {
+  if (n >= 1000000) return (n/1000000).toFixed(1).replace('.',',') + ' Mio.';
+  if (n >= 1000)    return Math.round(n).toLocaleString('de-DE');
+  if (n < 10)       return n.toFixed(2).replace('.',',');
+  return Math.round(n).toString();
+}
+function fmtEur(n) {
+  if (n < 0.01) return '< 0,01 €';
+  if (n < 10)   return n.toFixed(2).replace('.',',') + ' €';
+  return Math.round(n).toLocaleString('de-DE') + ' €';
+}
+function set(id, val) { var el = document.getElementById(id); if (el) el.textContent = val; }
+
+// ── TAB SWITCH ──
+function switchTab(name, btn) {
+  document.querySelectorAll('.calc-tab').forEach(function(b){ b.classList.remove('active'); });
+  document.querySelectorAll('.calc-panel').forEach(function(p){ p.classList.remove('active'); });
+  btn.classList.add('active');
+  document.getElementById('panel-' + name).classList.add('active');
+}
+
+// ── USER CALCULATOR ──
+function setUserType(type) {
+  uType = type;
+  document.querySelectorAll('#panel-user .radio-btn').forEach(function(b){ b.classList.remove('active'); });
+  document.getElementById('u-type-' + type).classList.add('active');
+  var notes = { news: 'Nachrichtenseiten: ~18% der Seiten sind lokale Publisher', mix: 'Gemischtes Surfen: ~12% der Seiten sind lokale Publisher', social: 'Social-lastig: ~5% der Seiten sind lokale Publisher' };
+  set('u-type-note', notes[type]);
+  calcUser();
+}
+
+function calcUser() {
+  var pages  = +document.getElementById('u-pages').value;
+  var days   = +document.getElementById('u-days').value;
+  var months = +document.getElementById('u-months').value;
+  var city   = +document.getElementById('u-city').value;
+
+  set('u-pages-val',  pages);
+  set('u-days-val',   days);
+  set('u-months-val', months + ' Mon.');
+  set('u-months-label', months + (months === 1 ? ' Monat' : ' Monaten'));
+
+  var publisherRate = { news: 0.18, mix: 0.12, social: 0.05 }[uType];
+  // scale publisher rate with city users (more users → more publishers)
+  var cityFactor = Math.min(1.0, 0.4 + (city / 5000) * 0.6);
+  var effectiveRate = publisherRate * cityFactor;
+
+  var blockedMonth  = Math.round(pages * days * 3.2);
+  var localAdsMonth = Math.round(pages * days * effectiveRate);
+  var totalCost     = months * 3;
+  var localEconomy  = localAdsMonth * 0.04;
+
+  set('u-pages-val',   pages);
+  set('u-blocked',     fmt(blockedMonth));
+  set('u-local',       fmt(localAdsMonth));
+  set('u-total',       fmtEur(totalCost));
+  set('u-local-economy', fmtEur(localEconomy));
+  set('u-b2', fmt(blockedMonth));
+  set('u-l2', fmt(localAdsMonth));
+}
+
+// ── PUBLISHER CALCULATOR ──
+function setPubReach(level) {
+  pReach = level;
+  document.querySelectorAll('#panel-publisher .radio-btn').forEach(function(b){ b.classList.remove('active'); });
+  document.getElementById('p-reach-' + level).classList.add('active');
+  var notes = { low: 'Überregional: ~5% deiner Besucher kommen aus Duisburg', mid: 'Lokale Website: ~15% deiner Besucher kommen aus Duisburg', high: 'Hyperlokal: ~35% deiner Besucher kommen aus Duisburg' };
+  set('p-reach-note', notes[level]);
+  calcPublisher();
+}
+
+function calcPublisher() {
+  var visitors = +document.getElementById('p-visitors').value;
+  var pagesRaw = +document.getElementById('p-pages').value;
+  var pages    = pagesRaw / 10;
+  var slots    = +document.getElementById('p-slots').value;
+  var city     = +document.getElementById('p-city').value;
+
+  set('p-visitors-val', fmt(visitors));
+  set('p-pages-val',    pages.toFixed(1).replace('.',','));
+  set('p-slots-val',    slots);
+  set('p-city-val',     fmt(city));
+
+  var reachPct = { low: 0.05, mid: 0.15, high: 0.35 }[pReach];
+  var localadPenetration = city / 216000; // internet users in Duisburg
+  var localadVisitors = Math.round(visitors * reachPct * localadPenetration / reachPct * localadPenetration);
+  // simpler: how many of city-users would visit this site
+  localadVisitors = Math.round(city * reachPct * 0.08); // 8% of regional LocalAd users visit this site/month
+
+  var impressions = Math.round(localadVisitors * pages * slots);
+  var monthlyRev  = impressions * 1.50 / 1000;
+  var yearlyRev   = monthlyRev * 12;
+
+  set('p-localad-visitors', fmt(localadVisitors));
+  set('p-impressions',      fmt(impressions));
+  set('p-monthly',          fmtEur(monthlyRev));
+  set('p-yearly',           fmtEur(yearlyRev));
+  set('p-c1', fmt(city));
+  set('p-c2', fmt(visitors));
+  set('p-c3', fmt(localadVisitors));
+}
+
+// ── ADVERTISER CALCULATOR ──
+function setAdvPlan(plan) {
+  advPlan = plan;
+  document.querySelectorAll('#panel-advertiser .radio-btn[id^="a-plan"]').forEach(function(b){ b.classList.remove('active'); });
+  document.getElementById('a-plan-' + plan).classList.add('active');
+  calcAdvertiser();
+}
+
+function setAdvType(type) {
+  advType = type;
+  document.querySelectorAll('#panel-advertiser .radio-btn[id^="a-type"]').forEach(function(b){ b.classList.remove('active'); });
+  document.getElementById('a-type-' + type).classList.add('active');
+  var notes = {
+    all:    'Alle Altersgruppen: volle Reichweite im Zielgebiet',
+    young:  '18–35 Jahre: ca. 28% der LocalAd-Nutzer (digital-affin, adblocker-stark)',
+    senior: '40+ Jahre: ca. 42% der LocalAd-Nutzer (wachsendes Segment)'
+  };
+  set('a-type-note', notes[type]);
+  calcAdvertiser();
+}
+
+function calcAdvertiser() {
+  var plz    = +document.getElementById('a-plz').value;
+  var months = +document.getElementById('a-months').value;
+  var city   = +document.getElementById('a-city').value;
+  var price  = advPlan === 'basic' ? 50 : 100;
+
+  set('a-plz-val',    plz + ' PLZ');
+  set('a-months-val', months + ' Mon.');
+  set('a-months-label', months + (months === 1 ? ' Monat' : ' Monate'));
+  set('a-city-val',   fmt(city));
+
+  var typeFactor = { all: 1.0, young: 0.28, senior: 0.42 }[advType];
+  var usersInTarget = Math.round(city * (plz / 40) * typeFactor);
+  var impressionsMonth = Math.round(usersInTarget * 15 * 22 * 0.12); // pages/day × days × publisher hit rate
+  var totalCost = months * price;
+  var cpm = impressionsMonth > 0 ? (price / impressionsMonth * 1000) : 0;
+  var googleCost = Math.round(impressionsMonth * months * 18 / 1000); // Google Ads 18€ CPM
+
+  set('a-users',       fmt(usersInTarget));
+  set('a-impressions', fmt(impressionsMonth));
+  set('a-total',       fmtEur(totalCost));
+  set('a-cpm',         fmtEur(cpm));
+  set('a-c1',          fmtEur(totalCost));
+  set('a-c2',          fmt(impressionsMonth));
+  set('a-c3',          '≈ ' + fmtEur(googleCost));
+
+  // update compare text
+  var el = document.getElementById('a-compare');
+  if (el) {
+    var cheaper = googleCost < totalCost;
+    el.innerHTML = 'Für <strong>' + fmtEur(totalCost) + '</strong> erreichst du in ' + months + ' ' + (months === 1 ? 'Monat' : 'Monaten') + ' ca. <strong>' + fmt(impressionsMonth * months) + '</strong> Impressionen in deinem Zielgebiet. Google Ads würde für dieselbe Reichweite <strong>≈ ' + fmtEur(googleCost) + '</strong> kosten – aber ohne Lokalitätsgarantie, ohne Flatrate, mit CPC-Risiko.';
+  }
+}
+
+// Init
+calcUser();
+calcPublisher();
+calcAdvertiser();
+</script>
 
 <!-- FAQ -->
 <section class="faq" id="faq">
