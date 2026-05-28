@@ -186,6 +186,8 @@
 
     .hero-proof {
       display: flex; gap: 2rem; flex-wrap: wrap;
+      padding-top: 1.75rem;
+      border-top: 1px solid rgba(255,255,255,0.12);
     }
     .proof-item { display: flex; flex-direction: column; }
     .proof-item .num {
@@ -261,11 +263,13 @@
     /* ── HOW ── */
     .how { background: var(--gray); }
     .steps {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem;
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem; align-items: stretch;
     }
     .step {
       background: var(--white); border-radius: var(--radius);
       padding: 1.8rem; box-shadow: var(--shadow);
+      display: flex; flex-direction: column;
     }
     .step-num {
       width: 42px; height: 42px; border-radius: 50%;
@@ -279,14 +283,20 @@
 
     /* ── FEATURES ── */
     .features-grid {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.4rem;
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.4rem;
     }
     .feature-card {
       border: 1.5px solid var(--gray2); border-radius: var(--radius); padding: 1.8rem;
       transition: border-color 0.2s, box-shadow 0.2s;
+      display: flex; flex-direction: column;
     }
     .feature-card:hover { border-color: var(--orange); box-shadow: 0 4px 24px rgba(232,93,4,0.1); }
-    .feature-icon { font-size: 1.9rem; margin-bottom: 0.9rem; display: block; }
+    .feature-icon {
+      width: 52px; height: 52px;
+      background: rgba(232,93,4,0.09); border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem; margin-bottom: 1.2rem;
+    }
     .feature-card h3 { font-size: 1rem; font-weight: 800; margin-bottom: 0.4rem; color: var(--navy); }
     .feature-card p  { font-size: 0.87rem; color: var(--muted); line-height: 1.6; }
 
@@ -296,12 +306,13 @@
     .market .section-sub { color: rgba(255,255,255,0.55); }
     .market .section-label { color: var(--orange2); }
     .market-cards {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.4rem;
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.4rem;
     }
     .market-card {
       background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.11);
       border-radius: var(--radius); padding: 2rem;
       transition: background 0.2s;
+      display: flex; flex-direction: column;
     }
     .market-card:hover { background: rgba(255,255,255,0.08); }
     .market-card h3 {
@@ -317,11 +328,11 @@
       background: rgba(232,93,4,0.2); color: var(--orange2);
       border-radius: 4px; padding: 0.2rem 0.65rem; font-size: 0.75rem; font-weight: 600;
     }
-    .market-card .btn-primary { margin-top: 1.3rem; display: block; text-align: center; }
+    .market-card .btn-primary { margin-top: auto; padding-top: 1.3rem; display: block; text-align: center; }
 
     /* ── PRICING ── */
     .pricing-grid {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem;
       align-items: start;
     }
     .price-card {
@@ -412,10 +423,20 @@
     /* ── TRUST ── */
     .trust { background: var(--gray); text-align: center; }
     .trust-grid {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; margin-top: 3rem;
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; margin-top: 3rem; align-items: stretch;
     }
-    .trust-item { padding: 1.5rem; }
-    .trust-icon { font-size: 2rem; margin-bottom: 0.8rem; }
+    .trust-item {
+      background: var(--white); border: 1.5px solid var(--gray2);
+      border-radius: var(--radius); padding: 2rem 1.75rem;
+      transition: box-shadow 0.2s;
+    }
+    .trust-item:hover { box-shadow: var(--shadow); }
+    .trust-icon {
+      width: 52px; height: 52px;
+      background: rgba(232,93,4,0.09); border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem; margin-bottom: 1.1rem;
+    }
     .trust-item h4 { font-size: 0.95rem; font-weight: 800; color: var(--navy); margin-bottom: 0.4rem; }
     .trust-item p  { font-size: 0.83rem; color: var(--muted); line-height: 1.65; }
 
@@ -522,7 +543,7 @@
 
     /* ── FAQ ── */
     .faq { background: var(--white); }
-    .faq-grid { max-width: 780px; }
+    .faq-grid { max-width: 780px; margin: 0 auto; }
     details {
       border-bottom: 1px solid var(--gray2); padding: 1.1rem 0;
     }
@@ -566,13 +587,31 @@
       padding: 0.2rem 0.7rem; border-radius: 4px; font-size: 0.7rem; font-weight: 700;
     }
 
+    /* ── ADVERTISER COLUMN ORDER (no rtl hack) ── */
+    .advertiser-cta .two-col { direction: ltr; }
+    .advertiser-cta .two-col > *:nth-child(1) { order: 2; }
+    .advertiser-cta .two-col > *:nth-child(2) { order: 1; }
+
     /* ── RESPONSIVE ── */
+    @media (max-width: 1100px) {
+      .steps { grid-template-columns: repeat(2, 1fr); }
+      .trust-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 960px) {
+      .pricing-grid { grid-template-columns: repeat(2, 1fr); }
+      .market-cards { grid-template-columns: 1fr; }
+    }
     @media (max-width: 768px) {
       .hero-inner, .two-col, .footer-inner { grid-template-columns: 1fr; }
       .hero-visual { display: none; }
       .footer-inner { grid-template-columns: 1fr 1fr; }
       .nav-links { display: none; }
       .nav-cta-desktop { display: none; }
+      .steps { grid-template-columns: 1fr; }
+      .trust-grid { grid-template-columns: 1fr; }
+      .pricing-grid { grid-template-columns: 1fr; }
+      .advertiser-cta .two-col > *:nth-child(1) { order: unset; }
+      .advertiser-cta .two-col > *:nth-child(2) { order: unset; }
     }
   </style>
 </head>
@@ -988,8 +1027,8 @@ function localadLogout () {
 <!-- ADVERTISER CTA -->
 <section class="advertiser-cta" id="werbetreibende">
   <div class="section-inner">
-    <div class="two-col" style="direction: rtl;">
-      <div style="direction: ltr;">
+    <div class="two-col">
+      <div>
         <div class="section-label">Für Werbetreibende</div>
         <h2>Deine Zielgruppe wohnt um die Ecke.</h2>
         <p>
@@ -1004,7 +1043,7 @@ function localadLogout () {
         </ul>
         <a href="/dashboard" class="btn-primary">Anzeige jetzt schalten →</a>
       </div>
-      <div class="adv-visual" style="direction: ltr;">
+      <div class="adv-visual">
         <h4>Anzeige erstellen – Beispiel</h4>
         <div style="margin-bottom:1rem;">
           <div style="font-size:0.75rem;color:var(--muted);margin-bottom:0.5rem;">PLZ-Targeting</div>
