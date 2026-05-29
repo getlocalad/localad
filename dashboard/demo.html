@@ -3,183 +3,352 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>LocalAd Demo – So funktioniert lokale Werbung</title>
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --blue: #2563eb;
-      --border: #e2e8f0;
-      --muted: #64748b;
-      --text: #0f172a;
-      --bg: #f8fafc;
-    }
-    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); }
-
-    header {
-      background: #0C2340; border-bottom: 1px solid rgba(255,255,255,0.07);
-      padding: 0 5%; height: 64px; display: flex; align-items: center; justify-content: space-between;
-    }
-    .logo { font-size: 1.3rem; font-weight: 900; color: #fff; text-decoration: none; letter-spacing: -0.5px; }
-    .logo span { color: #E85D04; }
-    .nav-hint { font-size: 0.8rem; color: rgba(255,255,255,0.45); background: rgba(232,93,4,0.15); border: 1px solid rgba(232,93,4,0.3); padding: 0.2rem 0.75rem; border-radius: 20px; }
-    .nav-right { display: flex; align-items: center; gap: 1.25rem; }
-    .nav-back { font-size: 0.88rem; color: rgba(255,255,255,0.65); text-decoration: none; font-weight: 500; }
-    .nav-back:hover { color: #fff; }
-    .nav-install { background: #E85D04; color: #fff; padding: 0.45rem 1.1rem; border-radius: 8px; font-size: 0.88rem; font-weight: 700; text-decoration: none; }
-    .nav-install:hover { background: #ff7320; }
-
-    .page-wrapper { max-width: 900px; margin: 0 auto; padding: 40px 20px; }
-
-    /* Fake-Artikel */
-    .article-meta { font-size: 13px; color: var(--muted); margin-bottom: 8px; }
-    h1 { font-size: 28px; font-weight: 800; margin-bottom: 12px; line-height: 1.3; }
-    .article-body p { font-size: 16px; line-height: 1.8; color: #334155; margin-bottom: 16px; }
-
-    /* Ad-Slot */
-    .ad-slot {
-      margin: 32px 0;
-      min-height: 120px;
-      background: var(--border);
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      overflow: hidden;
-    }
-    .ad-slot-placeholder {
-      font-size: 13px;
-      color: var(--muted);
-      text-align: center;
-      padding: 20px;
-    }
-    .ad-slot-placeholder strong { display: block; margin-bottom: 4px; }
-
-    /* LocalAd injiziertes Ad */
-    .localad-ad {
-      width: 100%;
-    }
-    .localad-ad a { display: block; }
-    .localad-ad img { width: 100%; border-radius: 8px; display: block; }
-    .localad-label {
-      display: block;
-      font-size: 10px;
-      color: var(--muted);
-      text-align: right;
-      padding: 4px 8px;
-    }
-
-    /* Info-Box */
-    .info-box {
-      background: #eff6ff;
-      border: 1px solid #bfdbfe;
-      border-radius: 10px;
-      padding: 20px 24px;
-      margin-bottom: 32px;
-    }
-    .info-box h2 { font-size: 16px; font-weight: 700; color: var(--blue); margin-bottom: 8px; }
-    .info-box p { font-size: 14px; color: #1e40af; line-height: 1.6; }
-
-    .ext-hint {
-      background: #fefce8;
-      border: 1px solid #fde68a;
-      border-radius: 8px;
-      padding: 14px 18px;
-      font-size: 14px;
-      color: #92400e;
-      margin-bottom: 32px;
-    }
-
-    footer {
-      text-align: center;
-      padding: 32px;
-      font-size: 13px;
-      color: var(--muted);
-      border-top: 1px solid var(--border);
-      margin-top: 60px;
-    }
-  </style>
+  <title>LocalAd Demo – Sieh den Unterschied</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --navy:   #0C2340;
+      --orange: #E85D04;
+      --orange2:#ff7a2e;
+      --border: #e2e8f0;
+      --muted:  #64748b;
+      --text:   #0f172a;
+      --bg:     #f8fafc;
+      --white:  #ffffff;
+    }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); }
+
+    /* ── NAV ── */
+    header {
+      background: var(--navy); border-bottom: 1px solid rgba(255,255,255,0.07);
+      padding: 0 5%; height: 64px; display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0; z-index: 100;
+    }
+    .logo { font-size: 1.3rem; font-weight: 900; color: #fff; text-decoration: none; letter-spacing: -0.5px; }
+    .logo span { color: var(--orange); }
+    .nav-badge { font-size: 0.72rem; color: rgba(255,255,255,0.5); background: rgba(232,93,4,0.15); border: 1px solid rgba(232,93,4,0.3); padding: 0.2rem 0.75rem; border-radius: 20px; font-weight: 600; }
+    .nav-right { display: flex; align-items: center; gap: 1.25rem; }
+    .nav-back { font-size: 0.85rem; color: rgba(255,255,255,0.6); text-decoration: none; font-weight: 500; }
+    .nav-back:hover { color: #fff; }
+    .nav-cta { background: var(--orange); color: #fff; padding: 0.45rem 1.1rem; border-radius: 8px; font-size: 0.85rem; font-weight: 700; text-decoration: none; }
+    .nav-cta:hover { background: var(--orange2); }
+    @media (max-width: 600px) { .nav-back, .nav-badge { display: none; } }
+
+    /* ── DEMO BANNER ── */
+    .demo-banner {
+      background: linear-gradient(90deg, var(--navy) 0%, #0f2c50 100%);
+      border-bottom: 2px solid var(--orange);
+      padding: 14px 5%;
+      display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .demo-banner-text { font-size: 0.85rem; color: rgba(255,255,255,0.8); }
+    .demo-banner-text strong { color: var(--orange2); }
+    .toggle-wrap { display: flex; align-items: center; gap: 0.75rem; font-size: 0.82rem; }
+    .toggle-label { color: rgba(255,255,255,0.6); font-weight: 500; }
+    .toggle-label.active { color: #fff; font-weight: 700; }
+    .toggle {
+      position: relative; width: 52px; height: 28px; cursor: pointer;
+    }
+    .toggle input { opacity: 0; width: 0; height: 0; }
+    .toggle-track {
+      position: absolute; inset: 0; background: rgba(255,255,255,0.15);
+      border-radius: 14px; transition: background 0.25s;
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+    .toggle input:checked + .toggle-track { background: var(--orange); border-color: var(--orange); }
+    .toggle-thumb {
+      position: absolute; top: 3px; left: 3px;
+      width: 22px; height: 22px; border-radius: 50%;
+      background: #fff; transition: transform 0.25s;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+    }
+    .toggle input:checked ~ .toggle-thumb { transform: translateX(24px); }
+
+    /* ── LAYOUT ── */
+    .page-wrap { max-width: 860px; margin: 0 auto; padding: 40px 20px 60px; }
+
+    /* ── ARTICLE ── */
+    .article-tag { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--orange); margin-bottom: 6px; }
+    .article-title { font-size: clamp(1.4rem, 3vw, 1.9rem); font-weight: 900; line-height: 1.2; margin-bottom: 10px; color: var(--text); }
+    .article-meta { font-size: 13px; color: var(--muted); margin-bottom: 24px; display: flex; gap: 1rem; flex-wrap: wrap; }
+    .article-body p { font-size: 16px; line-height: 1.8; color: #334155; margin-bottom: 18px; }
+    .article-body p:last-child { margin-bottom: 0; }
+
+    /* ── AD SLOT ── */
+    .ad-slot-wrap { margin: 32px 0; position: relative; }
+    .ad-slot-label {
+      font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em;
+      color: var(--muted); margin-bottom: 6px;
+    }
+
+    /* Konzern-Ad (OFF state) */
+    .ad-konzern {
+      border-radius: 10px; overflow: hidden;
+      border: 1px solid var(--border);
+      transition: opacity 0.4s, transform 0.4s;
+    }
+    .ad-konzern-inner {
+      background: #f1f5f9;
+      padding: 20px 24px;
+      display: flex; align-items: center; gap: 20px;
+    }
+    .konzern-logo {
+      width: 48px; height: 48px; border-radius: 8px;
+      background: linear-gradient(135deg, #4285f4, #34a853);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem; flex-shrink: 0; color: #fff; font-weight: 900;
+    }
+    .konzern-text h4 { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 3px; }
+    .konzern-text p  { font-size: 12px; color: var(--muted); }
+    .konzern-cta { margin-left: auto; background: #4285f4; color: #fff; padding: 8px 16px; border-radius: 6px; font-size: 12px; font-weight: 700; white-space: nowrap; flex-shrink: 0; }
+    .ad-konzern-footer { background: #e8ecf0; padding: 6px 24px; font-size: 10px; color: #94a3b8; }
+
+    /* Local-Ad (ON state) */
+    .ad-local {
+      border-radius: 10px; overflow: hidden;
+      border: 2px solid var(--orange);
+      box-shadow: 0 4px 24px rgba(232,93,4,0.12);
+      display: none;
+      transition: opacity 0.4s, transform 0.4s;
+    }
+    .ad-local-inner {
+      background: linear-gradient(135deg, #fff7f0 0%, #fff 60%);
+      padding: 20px 24px;
+      display: flex; align-items: center; gap: 20px;
+    }
+    .local-logo {
+      width: 48px; height: 48px; border-radius: 10px;
+      background: var(--navy);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem; flex-shrink: 0;
+    }
+    .local-text h4 { font-size: 15px; font-weight: 800; color: var(--navy); margin-bottom: 3px; }
+    .local-text p  { font-size: 12px; color: var(--muted); }
+    .local-text .local-plz { display: inline-block; margin-top: 4px; font-size: 10px; font-weight: 700; background: rgba(232,93,4,0.1); color: var(--orange); border-radius: 4px; padding: 2px 7px; }
+    .local-cta { margin-left: auto; background: var(--orange); color: #fff; padding: 8px 16px; border-radius: 6px; font-size: 12px; font-weight: 700; white-space: nowrap; flex-shrink: 0; text-decoration: none; }
+    .local-cta:hover { background: var(--orange2); }
+    .ad-local-footer {
+      background: #fff3ea; padding: 6px 24px;
+      display: flex; align-items: center; justify-content: space-between;
+      font-size: 10px; color: #c2622a;
+    }
+    .ad-local-footer span { display: flex; align-items: center; gap: 5px; }
+    .localad-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--orange); display: inline-block; }
+
+    /* Simulated badge */
+    .simulated-note {
+      font-size: 11px; color: var(--muted); margin-top: 6px; text-align: right;
+      font-style: italic;
+    }
+
+    /* ── STATUS BAR ── */
+    .status-bar {
+      background: var(--navy); border-radius: 10px;
+      padding: 14px 18px; margin: 28px 0;
+      display: flex; align-items: center; gap: 12px;
+      font-size: 13px; color: rgba(255,255,255,0.8);
+    }
+    .status-bar .s-dot {
+      width: 9px; height: 9px; border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .s-dot-off  { background: #64748b; }
+    .s-dot-on   { background: #22c55e; box-shadow: 0 0 0 4px rgba(34,197,94,0.2); animation: spulse 2s infinite; }
+    @keyframes spulse { 0%,100%{box-shadow:0 0 0 4px rgba(34,197,94,0.2)} 50%{box-shadow:0 0 0 7px rgba(34,197,94,0.08)} }
+    .status-bar .s-text-off { display: block; }
+    .status-bar .s-text-on  { display: none; color: #fff; }
+    .status-bar .s-text-on strong { color: #86efac; }
+    body.localad-on .status-bar .s-text-off { display: none; }
+    body.localad-on .status-bar .s-text-on  { display: block; }
+    body.localad-on .status-bar .s-dot-off  { display: none; }
+    body.localad-on .status-bar .s-dot-on   { display: block; }
+    .s-dot-on { display: none; }
+
+    /* ON/OFF visibility */
+    body.localad-on  .ad-konzern { display: none; }
+    body.localad-on  .ad-local   { display: block; }
+
+    /* ── CTA BLOCK ── */
+    .cta-block {
+      background: linear-gradient(135deg, var(--navy) 0%, #0f2c50 100%);
+      border-radius: 14px; padding: 32px 36px;
+      display: flex; align-items: center; justify-content: space-between; gap: 2rem;
+      flex-wrap: wrap; margin-top: 48px;
+    }
+    .cta-block h3 { font-size: 1.2rem; font-weight: 900; color: #fff; margin-bottom: 6px; }
+    .cta-block p  { font-size: 0.85rem; color: rgba(255,255,255,0.6); }
+    .cta-block a  { background: var(--orange); color: #fff; padding: 12px 28px; border-radius: 9px; font-weight: 700; font-size: 0.95rem; text-decoration: none; white-space: nowrap; flex-shrink: 0; }
+    .cta-block a:hover { background: var(--orange2); }
+
+    /* ── FOOTER ── */
+    footer {
+      text-align: center; padding: 32px 20px; font-size: 13px;
+      color: var(--muted); border-top: 1px solid var(--border); margin-top: 40px;
+    }
+    footer a { color: var(--muted); text-decoration: none; margin: 0 8px; }
+    footer a:hover { color: var(--text); }
+  </style>
 </head>
 <body>
 
 <header>
   <a href="/" class="logo">Local<span>Ad</span></a>
   <div class="nav-right">
-    <span class="nav-hint">Demo-Seite</span>
+    <span class="nav-badge">Demo-Seite</span>
     <a href="/" class="nav-back">← Startseite</a>
-    <a href="/onboarding" class="nav-install">Jetzt installieren</a>
+    <a href="/onboarding" class="nav-cta">Jetzt installieren</a>
   </div>
 </header>
 
-<div class="page-wrapper">
-
-  <div class="info-box">
-    <h2>&#x1F4A1; So funktioniert LocalAd</h2>
-    <p>
-      Diese Seite ist als Publisher bei LocalAd registriert. Die Extension erkennt das
-      automatisch und ersetzt den Werbeplatz unten durch eine lokale Anzeige aus deiner Region &ndash;
-      statt Werbung von Google oder Meta.
-    </p>
+<!-- TOGGLE BANNER -->
+<div class="demo-banner">
+  <div class="demo-banner-text">
+    Sieh den Unterschied: <strong>Konzernwerbung vs. lokale Anzeige</strong> – schalte LocalAd ein und aus.
   </div>
-
-  <div class="ext-hint" id="ext-hint">
-    &#x26A0;&#xFE0F; <strong>Extension nicht aktiv oder kein Abo?</strong>
-    Du siehst den grauen Platzhalter statt der lokalen Anzeige.
-    <a href="/onboarding" style="color:#92400e;font-weight:600;">Jetzt einrichten &rarr;</a>
+  <div class="toggle-wrap">
+    <span class="toggle-label" id="lbl-off">Ohne LocalAd</span>
+    <label class="toggle">
+      <input type="checkbox" id="demo-toggle">
+      <div class="toggle-track"></div>
+      <div class="toggle-thumb"></div>
+    </label>
+    <span class="toggle-label" id="lbl-on">Mit LocalAd</span>
   </div>
+</div>
 
-  <p class="article-meta">Duisburg &middot; Lokalnachrichten &middot; Demo-Artikel</p>
-  <h1>Duisburgs Innenstadt: Lokale Betriebe im Wandel</h1>
+<div class="page-wrap">
+
+  <!-- ARTICLE -->
+  <div class="article-tag">Lokalnachrichten · Duisburg</div>
+  <h1 class="article-title">Duisburgs Innenstadt: Lokale Betriebe kämpfen um Sichtbarkeit</h1>
+  <div class="article-meta">
+    <span>29. Mai 2026</span>
+    <span>Demo-Artikel</span>
+    <span>4 Min. Lesezeit</span>
+  </div>
 
   <div class="article-body">
     <p>
-      Die Duisburger Innenstadt ver&auml;ndert sich. W&auml;hrend gro&szlig;e Ketten
-      zunehmend das Stadtbild pr&auml;gen, k&auml;mpfen lokale Gesch&auml;fte
-      um Sichtbarkeit &ndash; und um Kunden, die vorbeilaufen, aber nicht reinschauen.
+      Die Duisburger Innenstadt verändert sich. Während große Ketten
+      zunehmend das Stadtbild prägen, kämpfen lokale Geschäfte um Sichtbarkeit –
+      und um Kunden, die vorbeigehen, aber nicht reinschauen. Das Kernproblem:
+      Digitale Werbung ist teuer und läuft hauptsächlich über Google und Meta –
+      Konzerne, die den Löwenanteil der Budgets einbehalten.
     </p>
   </div>
 
-  <!-- ═══════════════════════════════════════════
-       LocalAd Publisher-Slot
-       Die Extension sucht genau dieses Attribut.
-  ════════════════════════════════════════════ -->
-  <div data-localad-slot="banner-top" class="ad-slot">
-    <div class="ad-slot-placeholder">
-      <strong>Werbeplatz</strong>
-      Mit LocalAd-Extension siehst du hier eine lokale Anzeige.
+  <!-- STATUS BAR -->
+  <div class="status-bar">
+    <div class="s-dot s-dot-off"></div>
+    <div class="s-dot s-dot-on"></div>
+    <div>
+      <span class="s-text-off">LocalAd inaktiv – Konzernwerbung wird ausgespielt.</span>
+      <span class="s-text-on"><strong>LocalAd aktiv</strong> · 3 Konzern-Ads blockiert · PLZ 47051 · 1 lokale Anzeige gefunden</span>
     </div>
   </div>
 
+  <!-- AD SLOT -->
+  <div class="ad-slot-wrap" data-localad-slot="banner-top">
+    <div class="ad-slot-label">Werbung</div>
+
+    <!-- Konzern-Ad -->
+    <div class="ad-konzern">
+      <div class="ad-konzern-inner">
+        <div class="konzern-logo">G</div>
+        <div class="konzern-text">
+          <h4>Google Shopping – Jetzt bis zu 50 % sparen</h4>
+          <p>Entdecke Millionen Produkte. Preise vergleichen, direkt bestellen.</p>
+        </div>
+        <div class="konzern-cta">Jetzt ansehen</div>
+      </div>
+      <div class="ad-konzern-footer">Anzeige · Google LLC, 1600 Amphitheatre Parkway, Mountain View, CA</div>
+    </div>
+
+    <!-- Local Ad -->
+    <div class="ad-local">
+      <div class="ad-local-inner">
+        <div class="local-logo">🥐</div>
+        <div class="local-text">
+          <h4>Bäckerei Müller · Duisburg-Mitte</h4>
+          <p>Frische Brötchen, Kuchen & Brot – täglich ab 6 Uhr. Jetzt Torte vorbestellen.</p>
+          <span class="local-plz">📍 47051 Duisburg</span>
+        </div>
+        <a href="#" class="local-cta" onclick="return false;">Mehr erfahren</a>
+      </div>
+      <div class="ad-local-footer">
+        <span><span class="localad-dot"></span> LocalAd · Lokale Anzeige aus deiner Region</span>
+        <span>Kein Tracking · Kein Konzern</span>
+      </div>
+    </div>
+
+    <div class="simulated-note" id="sim-note">Diese Ansicht ist simuliert – mit echter Extension erscheint hier eine echte lokale Anzeige.</div>
+  </div>
+
   <div class="article-body">
     <p>
-      Genau hier setzt LocalAd an: Wer die Extension installiert hat, sieht auf dieser
-      Seite keine Konzernwerbung mehr &ndash; sondern Anzeigen von echten lokalen Betrieben
-      aus der eigenen Nachbarschaft. Der Werbeplatz bleibt, das Geld bleibt in Duisburg.
+      Genau hier setzt LocalAd an: Wer die Extension installiert hat, sieht auf
+      registrierten Partnerseiten keine Konzernwerbung mehr – sondern Anzeigen
+      echter lokaler Betriebe. Der Werbeplatz bleibt. Das Geld bleibt in der Stadt.
     </p>
     <p>
-      Das Modell ist einfach: Publisher melden ihre Website einmalig an.
-      Werbetreibende buchen eine Flatrate. Nutzer zahlen 3&nbsp;&euro; im Monat.
-      Alle drei profitieren &ndash; ohne Tracking, ohne Datenweitergabe an Konzerne.
+      Das Modell funktioniert für alle drei Seiten: Publisher melden ihre Website
+      einmalig an. Werbetreibende buchen eine Flatrate. Nutzer zahlen 3&nbsp;€ im Monat.
+      Keine Klickpreise, kein Tracking, kein Umweg über Konzernserver.
     </p>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-block">
+    <div>
+      <h3>Überzeugend? Dann installier die Extension.</h3>
+      <p>3 €/Monat · Chrome & Firefox · jederzeit kündbar</p>
+    </div>
+    <a href="/onboarding">Jetzt starten &rarr;</a>
   </div>
 
 </div>
 
 <footer>
-  <a href="/" style="color:var(--muted)">LocalAd</a> &middot;
-  <a href="/onboarding" style="color:var(--muted)">Abo abschlie&szlig;en</a> &middot;
-  <a href="/impressum" style="color:var(--muted)">Impressum</a>
+  <a href="/">LocalAd</a>
+  <a href="/onboarding">Abo abschließen</a>
+  <a href="/impressum">Impressum</a>
+  <a href="/datenschutz">Datenschutz</a>
 </footer>
 
 <script>
-  // Hinweis ausblenden wenn Extension aktiv
+  var toggle = document.getElementById('demo-toggle');
+  var lblOff = document.getElementById('lbl-off');
+  var lblOn  = document.getElementById('lbl-on');
+  var simNote = document.getElementById('sim-note');
+
+  function applyState(on) {
+    if (on) {
+      document.body.classList.add('localad-on');
+      lblOff.classList.remove('active');
+      lblOn.classList.add('active');
+      simNote.style.display = 'block';
+    } else {
+      document.body.classList.remove('localad-on');
+      lblOn.classList.remove('active');
+      lblOff.classList.add('active');
+      simNote.style.display = 'none';
+    }
+  }
+
+  toggle.addEventListener('change', function() { applyState(this.checked); });
+
+  // Start in OFF state, but highlight ON label if real extension fires
+  applyState(false);
+  lblOff.classList.add('active');
+
   window.addEventListener('localad:debug', function(e) {
     if (e.detail && e.detail.step === 'slots_found' && e.detail.count > 0) {
-      var hint = document.getElementById('ext-hint');
-      if (hint) hint.style.display = 'none';
+      toggle.checked = true;
+      applyState(true);
     }
   });
 </script>
