@@ -311,10 +311,17 @@
         </div>
         <div class="form-group full">
           <div class="field-label-row">
-            <label>Bild-URL</label>
+            <label>Bild</label>
             <button class="copy-prev-btn" onclick="copyPrev('ad-image-url')">↩ Letzte übernehmen</button>
           </div>
-          <input type="url" id="ad-image-url" placeholder="https://..." />
+          <div style="display:flex;gap:8px;align-items:center;">
+            <input type="url" id="ad-image-url" placeholder="https://... oder Datei hochladen →" style="flex:1;" />
+            <label style="cursor:pointer;background:#f1f5f9;border:1px solid #e2e8f0;border-radius:6px;padding:7px 12px;font-size:12px;font-weight:600;color:#334155;white-space:nowrap;" title="Bild hochladen">
+              📁 Hochladen
+              <input type="file" id="ad-image-file" accept="image/*" style="display:none;" onchange="uploadImage(this)" />
+            </label>
+          </div>
+          <div id="upload-status" style="font-size:11px;color:#64748b;margin-top:3px;display:none;"></div>
         </div>
         <div class="form-group full">
           <div class="field-label-row">
@@ -748,6 +755,40 @@
     }
 
     document.getElementById('preview-modal').classList.add('open');
+  }
+
+  // ── Bild-Upload ───────────────────────────────────────────────────────────
+  async function uploadImage(input) {
+    const file = input.files[0];
+    if (!file) return;
+    const statusEl = document.getElementById('upload-status');
+    statusEl.style.display = 'block';
+    statusEl.textContent = '⏳ Wird hochgeladen…';
+
+    const formData = new FormData();
+    formData.append('image', file);
+
+    try {
+      const res = await fetch(API + '/upload', {
+        method: 'POST',
+        headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : {},
+        body: formData,
+        credentials: 'include',
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({ error: 'Upload fehlgeschlagen' }));
+        throw new Error(err.error);
+      }
+      const { url } = await res.json();
+      document.getElementById('ad-image-url').value = url;
+      statusEl.textContent = '✓ Bild hochgeladen';
+      statusEl.style.color = '#16a34a';
+    } catch (err) {
+      statusEl.textContent = '✗ ' + err.message;
+      statusEl.style.color = '#dc2626';
+    }
+    // Input zurücksetzen damit dasselbe Bild nochmal gewählt werden kann
+    input.value = '';
   }
 
   // ── Escape helper ─────────────────────────────────────────────────────────

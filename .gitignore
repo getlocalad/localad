@@ -1,5 +1,8 @@
 # Dependencies
 node_modules/
+
+# Hochgeladene Bilder (lokal gespeichert, nicht ins Repo)
+uploads/
 .pnp
 .pnp.js
 
