@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { requireAuth } from '../middleware/auth.js';
+import { requireAuth, requirePublisherProfile } from '../middleware/auth.js';
 import { pool } from '../db/db.js';
 import {
   generateVerificationToken,
@@ -72,7 +72,7 @@ publishersRouter.post('/register', requireAuth, async (req, res, next) => {
 
 // ── POST /api/publishers/verify ───────────────────────────────────────────────
 // Prüft ob Token gesetzt wurde, markiert Publisher als verifiziert
-publishersRouter.post('/verify', requireAuth, async (req, res, next) => {
+publishersRouter.post('/verify', requireAuth, requirePublisherProfile, async (req, res, next) => {
   try {
     const { domain } = req.body;
     if (!domain) return res.status(400).json({ error: 'domain erforderlich' });
@@ -120,7 +120,7 @@ publishersRouter.post('/verify', requireAuth, async (req, res, next) => {
 });
 
 // ── GET /api/publishers/me ────────────────────────────────────────────────────
-publishersRouter.get('/me', requireAuth, async (req, res, next) => {
+publishersRouter.get('/me', requireAuth, requirePublisherProfile, async (req, res, next) => {
   try {
     const result = await pool.query(
       `SELECT p.id, p.domain, p.is_verified, p.verified_at, p.revenue_share_pct,
@@ -139,7 +139,7 @@ publishersRouter.get('/me', requireAuth, async (req, res, next) => {
 
 // ── GET /api/publishers/me/stats ─────────────────────────────────────────────
 // Query-Params: ?days=30 (default 30, max 365)
-publishersRouter.get('/me/stats', requireAuth, async (req, res, next) => {
+publishersRouter.get('/me/stats', requireAuth, requirePublisherProfile, async (req, res, next) => {
   try {
     const days = Math.min(parseInt(req.query.days ?? '30', 10) || 30, 365);
 

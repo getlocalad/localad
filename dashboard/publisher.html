@@ -435,7 +435,8 @@
 
       setStatus('verified');
       loadStats();
-    } catch {
+    } catch (err) {
+      // 403 = kein Publisher-Profil → normaler Zustand, User kann sich registrieren
       setStatus('unregistered');
     }
   }

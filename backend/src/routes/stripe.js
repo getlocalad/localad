@@ -122,7 +122,13 @@ async function handleCheckoutCompleted(session) {
        WHERE id = $4`,
       [plan, subscriptionEnd, customerId, advertiserId]
     );
-    console.log('[Stripe] Advertiser ' + advertiserId + ' Abo aktiviert (Plan: ' + plan + ')');
+    // Extension-Abo für Werbetreibende inklusive: is_subscribed = TRUE setzen
+    await pool.query(
+      `UPDATE users SET is_subscribed = TRUE, stripe_customer_id = $1, updated_at = NOW()
+       WHERE id = (SELECT user_id FROM advertisers WHERE id = $2)`,
+      [customerId, advertiserId]
+    );
+    console.log('[Stripe] Advertiser ' + advertiserId + ' Abo aktiviert (Plan: ' + plan + ') – Extension inklusive');
   }
 }
 
