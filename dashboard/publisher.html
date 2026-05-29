@@ -3,6 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta property="og:image" content="/assets/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
   <title>LocalAd – Publisher-Dashboard</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -227,6 +230,9 @@
     </div>
 
     <!-- Verifizierungsanleitung (nach Registrierung sichtbar) -->
+    <div style="margin:1.5rem 0 2rem;text-align:center;">
+      <img src="/assets/publisher-verify.png" alt="Publisher-Verifizierung mit LocalAd" style="width:100%;max-width:560px;border-radius:12px;border:1px solid #e2e8f0;display:inline-block;" />
+    </div>
     <div class="card" id="verify-section" style="display:none;">
       <div class="card-title">Verifizierung</div>
       <div id="verify-instructions"></div>
