@@ -1479,7 +1479,7 @@ function localadLogout () {
             <label>Surfaktivität (Seiten/Tag)</label>
             <span class="slider-val" id="u-pages-val">15</span>
           </div>
-          <input type="range" min="5" max="40" value="15" id="u-pages" oninput="calcUser()">
+          <input type="range" min="5" max="25" value="15" id="u-pages" oninput="calcUser()">
           <div class="slider-note">Ø Deutschland: 15 Seiten/Tag</div>
         </div>
 
@@ -1635,7 +1635,7 @@ function localadLogout () {
             <span class="slider-val" id="a-plz-val">3 PLZ</span>
           </div>
           <input type="range" min="1" max="20" value="3" id="a-plz" oninput="calcAdvertiser()">
-          <div class="slider-note">Duisburg hat ca. 40 Postleitzahlen (47051–47279)</div>
+          <div class="slider-note">Duisburg hat 25 Postleitzahlen (47051–47279)</div>
         </div>
 
         <div class="slider-row">
@@ -1836,7 +1836,7 @@ function calcAdvertiser() {
   set('a-city-val',   fmt(city));
 
   var typeFactor = { all: 1.0, young: 0.28, senior: 0.42 }[advType];
-  var usersInTarget = Math.round(city * (plz / 40) * typeFactor);
+  var usersInTarget = Math.round(city * (plz / 25) * typeFactor);
   var impressionsMonth = Math.round(usersInTarget * 15 * 22 * 0.12); // pages/day × days × publisher hit rate
   var totalCost = months * price;
   var cpm = impressionsMonth > 0 ? (price / impressionsMonth * 1000) : 0;

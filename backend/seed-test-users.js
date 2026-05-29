@@ -7,8 +7,21 @@
 
 import bcrypt from 'bcrypt';
 import pg from 'pg';
-import * as dotenv from 'dotenv';
-dotenv.config();
+import { readFileSync } from 'fs';
+import { resolve, dirname } from 'path';
+import { fileURLToPath } from 'url';
+
+// .env manuell laden (kein dotenv-Paket nötig)
+const __dirname = dirname(fileURLToPath(import.meta.url));
+try {
+  const env = readFileSync(resolve(__dirname, '.env'), 'utf8');
+  for (const line of env.split('\n')) {
+    const [key, ...vals] = line.split('=');
+    if (key && !key.startsWith('#') && vals.length) {
+      process.env[key.trim()] = vals.join('=').trim().replace(/^["']|["']$/g, '');
+    }
+  }
+} catch { /* .env nicht gefunden – Umgebungsvariablen bereits gesetzt */ }
 
 const { Pool } = pg;
 
@@ -120,8 +133,8 @@ async function seed() {
       );
       if (pubEntryExists.rows.length === 0) {
         await client.query(
-          `INSERT INTO publishers (user_id, domain, contact_email, is_verified, verification_method)
-           VALUES ($1, 'demo.localad.de', 'publisher@test.localad', true, 'dns')`,
+          `INSERT INTO publishers (user_id, domain, verification_token, is_verified, verified_at, verification_method)
+           VALUES ($1, 'demo.localad.de', 'test-token-seed', true, NOW(), 'dns')`,
           [pubUserId]
         );
       }
