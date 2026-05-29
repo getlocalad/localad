@@ -169,7 +169,7 @@
 
     <button class="btn btn-primary" id="reg-btn" onclick="handleRegister()">Account erstellen</button>
     <button class="btn btn-ghost" onclick="goTo('screen-welcome')">&larr; Zur&uuml;ck</button>
-    <p class="step-hint">Schritt 2 von 3 &middot; Bereits einen Account? <a href="javascript:void(0)" onclick="goTo('screen-login')" style="color:var(--blue)">Anmelden</a></p>
+    <p class="step-hint">Schritt 2 von 3 &middot; Bereits einen Account? <a href="javascript:void(0)" onclick="goTo('screen-login')" style="color:var(--orange)">Anmelden</a></p>
   </div>
 </div>
 
@@ -462,9 +462,15 @@
       var plzEl = document.getElementById('success-plz');
       if (plzEl) plzEl.textContent = params.get('plz') || '–';
       goTo('screen-success');
+      return;
     }
     if (params.get('cancel') === '1') {
       goTo('screen-subscribe');
+      return;
+    }
+    // Hash-basiertes Routing: /onboarding#login → direkt Login-Screen
+    if (window.location.hash === '#login') {
+      goTo('screen-login');
     }
   })();
 </script>
