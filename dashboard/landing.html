@@ -263,9 +263,14 @@
     /* ── HOW ── */
     .how { background: var(--gray); }
     .steps {
-      display: grid; grid-template-columns: repeat(4, 1fr);
-      gap: 1.5rem; align-items: stretch;
+      display: grid; grid-template-columns: 1fr 40px 1fr 40px 1fr 40px 1fr;
+      gap: 0; align-items: center;
     }
+    .step-connector {
+      display: flex; align-items: center; justify-content: center;
+      padding-bottom: 2.5rem; /* align with step-num center approx */
+    }
+    .step-connector svg { opacity: 0.55; }
     .step {
       background: var(--white); border-radius: var(--radius);
       padding: 1.8rem; box-shadow: var(--shadow);
@@ -285,17 +290,38 @@
     .features-grid {
       display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.4rem;
     }
-    .feature-card {
-      border: 1.5px solid var(--gray2); border-radius: var(--radius); padding: 1.8rem;
-      transition: border-color 0.2s, box-shadow 0.2s;
-      display: flex; flex-direction: column;
+    .flip-card { perspective: 1000px; min-height: 260px; cursor: pointer; }
+    .flip-card-inner {
+      position: relative; width: 100%; height: 100%; min-height: 260px;
+      transition: transform 0.55s cubic-bezier(0.4, 0.2, 0.2, 1);
+      transform-style: preserve-3d;
     }
-    .feature-card:hover { border-color: var(--orange); box-shadow: 0 4px 24px rgba(232,93,4,0.1); }
+    .flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
+    .flip-card-front, .flip-card-back {
+      position: absolute; width: 100%; min-height: 260px;
+      backface-visibility: hidden; -webkit-backface-visibility: hidden;
+      border-radius: var(--radius); padding: 1.8rem;
+      box-sizing: border-box;
+    }
+    .flip-card-front {
+      background: var(--white); border: 1.5px solid var(--gray2);
+      display: flex; flex-direction: column;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .flip-card:hover .flip-card-front { border-color: var(--orange); box-shadow: 0 4px 24px rgba(232,93,4,0.1); transform: translateY(-2px); transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s; }
+    .flip-card-back {
+      background: var(--navy); color: var(--white);
+      transform: rotateY(180deg);
+      display: flex; flex-direction: column; justify-content: space-between;
+    }
+    .flip-back-title { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--orange2); margin-bottom: 0.75rem; }
+    .flip-back-text  { font-size: 0.86rem; color: rgba(255,255,255,0.78); line-height: 1.7; flex: 1; }
+    .flip-back-hint  { font-size: 0.72rem; color: rgba(255,255,255,0.3); margin-top: 1rem; text-align: right; }
     .feature-icon {
       width: 52px; height: 52px;
       background: rgba(232,93,4,0.09); border-radius: 12px;
       display: flex; align-items: center; justify-content: center;
-      font-size: 1.5rem; margin-bottom: 1.2rem;
+      margin-bottom: 1.2rem; flex-shrink: 0;
     }
     .feature-card h3 { font-size: 1rem; font-weight: 800; margin-bottom: 0.4rem; color: var(--navy); }
     .feature-card p  { font-size: 0.87rem; color: var(--muted); line-height: 1.6; }
@@ -329,6 +355,23 @@
       border-radius: 4px; padding: 0.2rem 0.65rem; font-size: 0.75rem; font-weight: 600;
     }
     .market-card .btn-primary { margin-top: 1.3rem; display: block; text-align: center; }
+    .market-card.featured-card {
+      border: 2px solid var(--orange);
+      background: rgba(255,255,255,0.07);
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0 0 0 1px var(--orange), 0 8px 40px rgba(232,93,4,0.2);
+      position: relative;
+    }
+    .market-card.featured-card:hover { background: rgba(255,255,255,0.1); }
+    .market-featured-badge {
+      position: absolute; top: -13px; left: 50%; transform: translateX(-50%);
+      background: var(--orange); color: #fff;
+      font-size: 0.7rem; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase;
+      padding: 3px 12px; border-radius: 20px; white-space: nowrap;
+    }
+    @media (max-width: 900px) {
+      .market-card.featured-card { transform: none; box-shadow: 0 0 0 1px var(--orange), 0 4px 20px rgba(232,93,4,0.15); }
+    }
 
     /* ── PRICING ── */
     .pricing-grid {
@@ -477,7 +520,7 @@
       width: 52px; height: 52px;
       background: rgba(232,93,4,0.09); border-radius: 12px;
       display: flex; align-items: center; justify-content: center;
-      font-size: 1.5rem; margin-bottom: 1.1rem;
+      margin-bottom: 1.1rem;
     }
     .trust-item h4 { font-size: 0.95rem; font-weight: 800; color: var(--navy); margin-bottom: 0.4rem; }
     .trust-item p  { font-size: 0.83rem; color: var(--muted); line-height: 1.65; }
@@ -636,7 +679,8 @@
 
     /* ── RESPONSIVE ── */
     @media (max-width: 1100px) {
-      .steps { grid-template-columns: repeat(2, 1fr); }
+      .steps { grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+      .step-connector { display: none; }
       .trust-grid { grid-template-columns: repeat(2, 1fr); }
     }
     @media (max-width: 960px) {
@@ -862,15 +906,33 @@ function localadLogout () {
         <h3>Extension installieren</h3>
         <p>LocalAd aus dem Chrome Web Store oder Firefox Add-ons herunterladen – ein Klick, kein Neustart.</p>
       </div>
+      <div class="step-connector">
+        <svg width="40" height="20" viewBox="0 0 40 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <line x1="2" y1="10" x2="29" y2="10" stroke="#E85D04" stroke-width="2" stroke-dasharray="4 3"/>
+          <polyline points="25,5 33,10 25,15" stroke="#E85D04" stroke-width="2" fill="none" stroke-linejoin="round" stroke-linecap="round"/>
+        </svg>
+      </div>
       <div class="step">
         <div class="step-num">2</div>
         <h3>Postleitzahl eingeben</h3>
         <p>Deine PLZ bestimmt, welche lokalen Anzeigen du siehst. Nur die PLZ – kein Standort, kein Profil.</p>
       </div>
+      <div class="step-connector">
+        <svg width="40" height="20" viewBox="0 0 40 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <line x1="2" y1="10" x2="29" y2="10" stroke="#E85D04" stroke-width="2" stroke-dasharray="4 3"/>
+          <polyline points="25,5 33,10 25,15" stroke="#E85D04" stroke-width="2" fill="none" stroke-linejoin="round" stroke-linecap="round"/>
+        </svg>
+      </div>
       <div class="step">
         <div class="step-num">3</div>
         <h3>Für 3 €/Monat abonnieren</h3>
         <p>Sichere Zahlung über Stripe. Kein Jahresvertrag, jederzeit kündbar – direkt über dein Konto.</p>
+      </div>
+      <div class="step-connector">
+        <svg width="40" height="20" viewBox="0 0 40 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <line x1="2" y1="10" x2="29" y2="10" stroke="#E85D04" stroke-width="2" stroke-dasharray="4 3"/>
+          <polyline points="25,5 33,10 25,15" stroke="#E85D04" stroke-width="2" fill="none" stroke-linejoin="round" stroke-linecap="round"/>
+        </svg>
       </div>
       <div class="step">
         <div class="step-num">4</div>
@@ -887,36 +949,103 @@ function localadLogout () {
     <div class="section-label">Features</div>
     <h2 class="section-title">Kein gewöhnlicher Werbeblocker</h2>
     <p class="section-sub">LocalAd blockiert nicht nur – er gibt der Werbefläche einen Sinn zurück.</p>
+    <p style="font-size:0.78rem;color:var(--muted);margin-bottom:2rem;display:flex;align-items:center;gap:0.4rem;"><svg xmlns='http://www.w3.org/2000/svg' width="14" height="14" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.042 21.672L13.684 16.6m0 0l-2.51 2.225.569-9.47 5.227 7.917-3.286-.672zm-7.518-.267A8.25 8.25 0 1120.25 10.5M8.288 14.212A5.25 5.25 0 1117.25 10.5"/></svg> Kacheln anklicken für mehr Details</p>
     <div class="features-grid">
-      <div class="feature-card">
-        <span class="feature-icon">🚫</span>
-        <h3>Konzernwerbung blockieren</h3>
-        <p>Google Ads, Meta, Amazon, Taboola und 40+ weitere Netzwerke werden automatisch blockiert – auf Basis von EasyList, dem Standard der Branche.</p>
+      <div class="flip-card" onclick="this.classList.toggle('flipped')">
+        <div class="flip-card-inner">
+          <div class="flip-card-front feature-card">
+            <span class="feature-icon"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="none" viewBox="0 0 24 24" stroke-width="1.6" stroke="#E85D04"><path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/></svg></span>
+            <h3>Konzernwerbung blockieren</h3>
+            <p>Google Ads, Meta, Amazon, Taboola und 40+ weitere Netzwerke werden automatisch blockiert – auf Basis von EasyList, dem Standard der Branche.</p>
+          </div>
+          <div class="flip-card-back">
+            <div>
+              <div class="flip-back-title">Konzernwerbung blockieren</div>
+              <div class="flip-back-text">LocalAd nutzt EasyList – dieselbe Filterliste wie uBlock Origin und AdGuard. Über 40 Netzwerke blockiert: Google Ads, Meta Pixel, Amazon DSP, Taboola, Criteo und mehr. Die Liste wird wöchentlich aktualisiert. Auf nicht registrierten Seiten wirkt LocalAd wie ein normaler Werbeblocker – ohne Ersatz-Anzeige.</div>
+            </div>
+            <div class="flip-back-hint">Nochmal klicken zum Schließen ↩</div>
+          </div>
+        </div>
       </div>
-      <div class="feature-card">
-        <span class="feature-icon">📍</span>
-        <h3>PLZ-genaues Targeting</h3>
-        <p>Du siehst Anzeigen von Betrieben aus deiner Postleitzahl – nicht aus Düsseldorf, nicht aus München. Nur aus deiner Ecke.</p>
+      <div class="flip-card" onclick="this.classList.toggle('flipped')">
+        <div class="flip-card-inner">
+          <div class="flip-card-front feature-card">
+            <span class="feature-icon"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="none" viewBox="0 0 24 24" stroke-width="1.6" stroke="#E85D04"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/></svg></span>
+            <h3>PLZ-genaues Targeting</h3>
+            <p>Du siehst Anzeigen von Betrieben aus deiner Postleitzahl – nicht aus Düsseldorf, nicht aus München. Nur aus deiner Ecke.</p>
+          </div>
+          <div class="flip-card-back">
+            <div>
+              <div class="flip-back-title">PLZ-genaues Targeting</div>
+              <div class="flip-back-text">Deine PLZ wird einmalig gesetzt und lokal in der Extension gespeichert – nie direkt auf unseren Servern. Wenn du eine Publisher-Seite besuchst, fragt die Extension anonym: "Gibt es Anzeigen für diese PLZ?" – und bekommt nur das Ergebnis. Kein GPS, kein Standort, keine IP-Auswertung.</div>
+            </div>
+            <div class="flip-back-hint">Nochmal klicken zum Schließen ↩</div>
+          </div>
+        </div>
       </div>
-      <div class="feature-card">
-        <span class="feature-icon">🔒</span>
-        <h3>Kein Tracking, keine Profile</h3>
-        <p>Nur deine PLZ wird für die Anzeigenauswahl genutzt. Keine Geräte-ID, kein Verhaltensprofil, keine Weitergabe an Dritte.</p>
+      <div class="flip-card" onclick="this.classList.toggle('flipped')">
+        <div class="flip-card-inner">
+          <div class="flip-card-front feature-card">
+            <span class="feature-icon"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="none" viewBox="0 0 24 24" stroke-width="1.6" stroke="#E85D04"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"/></svg></span>
+            <h3>Kein Tracking, keine Profile</h3>
+            <p>Nur deine PLZ wird für die Anzeigenauswahl genutzt. Keine Geräte-ID, kein Verhaltensprofil, keine Weitergabe an Dritte.</p>
+          </div>
+          <div class="flip-card-back">
+            <div>
+              <div class="flip-back-title">Kein Tracking, keine Profile</div>
+              <div class="flip-back-text">LocalAd verwendet kein Cookie-Tracking, kein Fingerprinting, keine User-IDs. Nur deine PLZ fließt in die Anzeigenauswahl ein – und verlässt dein Gerät nie direkt. Keine Weitergabe an Dritte. Details: getlocalad.de/datenschutz</div>
+            </div>
+            <div class="flip-back-hint">Nochmal klicken zum Schließen ↩</div>
+          </div>
+        </div>
       </div>
-      <div class="feature-card">
-        <span class="feature-icon">🏪</span>
-        <h3>Lokale Wirtschaft stärken</h3>
-        <p>Jeder Euro für Werbung geht direkt an ein Unternehmen aus deiner Stadt – nicht an einen Konzern in Irland.</p>
+      <div class="flip-card" onclick="this.classList.toggle('flipped')">
+        <div class="flip-card-inner">
+          <div class="flip-card-front feature-card">
+            <span class="feature-icon"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="none" viewBox="0 0 24 24" stroke-width="1.6" stroke="#E85D04"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 21v-7.5a.75.75 0 01.75-.75h3a.75.75 0 01.75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.349m-16.5 11.65V9.35m0 0a3.001 3.001 0 003.75-.615A2.993 2.993 0 009.75 9.75c.896 0 1.7-.393 2.25-1.016a2.993 2.993 0 002.25 1.016c.896 0 1.7-.393 2.25-1.016a3.001 3.001 0 003.75.614m-16.5 0a3.004 3.004 0 01-.621-4.72L4.318 3.44A1.5 1.5 0 015.378 3h13.243a1.5 1.5 0 011.06.44l1.19 1.189a3 3 0 01-.621 4.72m-13.5 8.65h3.75a.75.75 0 00.75-.75V13.5a.75.75 0 00-.75-.75H6.75a.75.75 0 00-.75.75v3.75c0 .415.336.75.75.75z"/></svg></span>
+            <h3>Lokale Wirtschaft stärken</h3>
+            <p>Jeder Euro für Werbung geht direkt an ein Unternehmen aus deiner Stadt – nicht an einen Konzern in Irland.</p>
+          </div>
+          <div class="flip-card-back">
+            <div>
+              <div class="flip-back-title">Lokale Wirtschaft stärken</div>
+              <div class="flip-back-text">Google und Meta vereinnahmen ~60 % aller digitalen Werbebudgets – Geld, das lokalen Betrieben fehlt. Mit LocalAd zahlen Werbetreibende eine Flatrate, ein Teil davon geht als Rev-Share an Publisher in der Region. Kein Umweg über Konzernserver in Irland oder den USA.</div>
+            </div>
+            <div class="flip-back-hint">Nochmal klicken zum Schließen ↩</div>
+          </div>
+        </div>
       </div>
-      <div class="feature-card">
-        <span class="feature-icon">✅</span>
-        <h3>Nur auf Opt-in-Websites</h3>
-        <p>Anzeigen werden ausschließlich auf Domains ausgespielt, die sich aktiv als Publisher registriert haben. Transparent und rechtlich sauber.</p>
+      <div class="flip-card" onclick="this.classList.toggle('flipped')">
+        <div class="flip-card-inner">
+          <div class="flip-card-front feature-card">
+            <span class="feature-icon"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="none" viewBox="0 0 24 24" stroke-width="1.6" stroke="#E85D04"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></span>
+            <h3>Nur auf Opt-in-Websites</h3>
+            <p>Anzeigen werden ausschließlich auf Domains ausgespielt, die sich aktiv als Publisher registriert haben. Transparent und rechtlich sauber.</p>
+          </div>
+          <div class="flip-card-back">
+            <div>
+              <div class="flip-back-title">Nur auf Opt-in-Websites</div>
+              <div class="flip-back-text">Ein Publisher muss seine Domain aktiv verifizieren – per DNS-TXT-Eintrag oder HTML-Meta-Tag. Nur dann werden LocalAd-Anzeigen ausgespielt. Das schützt vor Missbrauch und stellt sicher, dass jede beteiligte Website bewusst zugestimmt hat.</div>
+            </div>
+            <div class="flip-back-hint">Nochmal klicken zum Schließen ↩</div>
+          </div>
+        </div>
       </div>
-      <div class="feature-card">
-        <span class="feature-icon">🦊</span>
-        <h3>Chrome & Firefox</h3>
-        <p>Manifest V3, kompatibel mit Chrome (ab v88) und Firefox (ab v109). Plattformübergreifend, regelmäßig aktualisiert.</p>
+      <div class="flip-card" onclick="this.classList.toggle('flipped')">
+        <div class="flip-card-inner">
+          <div class="flip-card-front feature-card">
+            <span class="feature-icon"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="none" viewBox="0 0 24 24" stroke-width="1.6" stroke="#E85D04"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418"/></svg></span>
+            <h3>Chrome & Firefox</h3>
+            <p>Manifest V3, kompatibel mit Chrome (ab v88) und Firefox (ab v109). Plattformübergreifend, regelmäßig aktualisiert.</p>
+          </div>
+          <div class="flip-card-back">
+            <div>
+              <div class="flip-back-title">Chrome & Firefox</div>
+              <div class="flip-back-text">LocalAd nutzt Manifest V3 – den aktuellen Extension-Standard. Kompatibel mit Chrome ab v88, Firefox ab v109 sowie allen Chromium-Browsern (Edge, Brave, Opera). Vertrieb über die offiziellen Store-Kanäle, regelmäßig auf neue Browser-Versionen getestet.</div>
+            </div>
+            <div class="flip-back-hint">Nochmal klicken zum Schließen ↩</div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -929,7 +1058,8 @@ function localadLogout () {
     <h2 class="section-title">Ein Markt. Drei Gewinner.</h2>
     <p class="section-sub">LocalAd verbindet Nutzer, lokale Betriebe und Website-Betreiber in einem fairen Ökosystem – ohne Konzern in der Mitte.</p>
     <div class="market-cards">
-      <div class="market-card">
+      <div class="market-card featured-card">
+        <div class="market-featured-badge">Für dich</div>
         <h3>Endnutzer</h3>
         <h2>Sauber surfen</h2>
         <p>Keine Konzernwerbung mehr. Stattdessen relevante Anzeigen von echten Betrieben aus deiner Stadt – überall, wo LocalAd aktiv ist.</p>
@@ -1160,22 +1290,22 @@ function localadLogout () {
     <p class="section-sub" style="margin:0 auto;">LocalAd folgt dem Opt-in-Prinzip: Nur wer zustimmt, nimmt teil. Auf allen drei Seiten.</p>
     <div class="trust-grid">
       <div class="trust-item">
-        <div class="trust-icon">📡</div>
+        <div class="trust-icon"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="none" viewBox="0 0 24 24" stroke-width="1.6" stroke="#E85D04"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"/></svg></div>
         <h4>Kein Eingriff in deinen Traffic</h4>
         <p>Keine TLS-Interception. LocalAd liest oder manipuliert deinen verschlüsselten Datenverkehr nicht.</p>
       </div>
       <div class="trust-item">
-        <div class="trust-icon">🎯</div>
+        <div class="trust-icon"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="none" viewBox="0 0 24 24" stroke-width="1.6" stroke="#E85D04"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/></svg></div>
         <h4>Nur PLZ. Kein Profil.</h4>
         <p>Für die Anzeigenauswahl wird ausschließlich deine Postleitzahl genutzt. Keine Geräte-ID, kein Surf-Verlauf, keine Weitergabe.</p>
       </div>
       <div class="trust-item">
-        <div class="trust-icon">✅</div>
+        <div class="trust-icon"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="none" viewBox="0 0 24 24" stroke-width="1.6" stroke="#E85D04"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z"/></svg></div>
         <h4>Nur verifizierte Publisher</h4>
         <p>Anzeigen werden ausschließlich auf Domains ausgespielt, die aktiv zugestimmt und ihre Domain verifiziert haben.</p>
       </div>
       <div class="trust-item">
-        <div class="trust-icon">🇩🇪</div>
+        <div class="trust-icon"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="none" viewBox="0 0 24 24" stroke-width="1.6" stroke="#E85D04"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008z"/></svg></div>
         <h4>Made in Duisburg</h4>
         <p>Entwickelt in Deutschland, nach deutschem Datenschutzrecht – DSGVO-konform by design, nicht als Nachgedanke.</p>
       </div>
