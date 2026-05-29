@@ -133,6 +133,51 @@
       .stats { grid-template-columns: 1fr; }
       .form-grid { grid-template-columns: 1fr; }
     }
+
+    /* ── Confetti ── */
+    @keyframes confetti-fall {
+      0%   { transform: translateY(-20px) rotate(0deg);   opacity: 1; }
+      100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+    }
+    .confetti-piece { position:fixed; width:10px; height:10px; top:-20px; border-radius:2px; animation:confetti-fall linear forwards; pointer-events:none; z-index:9999; }
+    /* Success overlay */
+    .success-overlay { position:fixed; inset:0; background:rgba(12,35,64,0.7); display:flex; align-items:center; justify-content:center; z-index:9000; opacity:0; transition:opacity 0.3s; pointer-events:none; }
+    .success-overlay.visible { opacity:1; pointer-events:all; }
+    .success-box { background:#fff; border-radius:16px; padding:40px 48px; text-align:center; max-width:420px; box-shadow:0 20px 60px rgba(0,0,0,0.2); }
+    .success-box .s-icon { font-size:3rem; margin-bottom:12px; }
+    .success-box h2 { font-size:1.4rem; font-weight:800; color:#0C2340; margin-bottom:8px; }
+    .success-box p  { font-size:0.9rem; color:#64748b; margin-bottom:24px; }
+    .success-box button { background:#E85D04; color:#fff; border:none; padding:12px 28px; border-radius:9px; font-weight:700; cursor:pointer; font-size:0.95rem; }
+    /* Copy-from-prev */
+    .field-label-row { display:flex; align-items:center; justify-content:space-between; }
+    .copy-prev-btn { font-size:10px; color:#94a3b8; background:none; border:1px solid #e2e8f0; border-radius:4px; padding:1px 6px; cursor:pointer; }
+    .copy-prev-btn:hover { color:#E85D04; border-color:#E85D04; }
+    /* Preview modal */
+    .preview-modal { position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:8000; display:none; overflow-y:auto; }
+    .preview-modal.open { display:block; }
+    .preview-inner { max-width:860px; margin:40px auto; background:#f8fafc; border-radius:14px; overflow:hidden; box-shadow:0 20px 60px rgba(0,0,0,0.3); }
+    .preview-nav { background:#1e293b; padding:12px 20px; display:flex; align-items:center; justify-content:space-between; }
+    .preview-nav span { color:rgba(255,255,255,0.5); font-size:0.8rem; }
+    .preview-close { background:none; border:1px solid rgba(255,255,255,0.2); color:#fff; border-radius:6px; padding:4px 12px; cursor:pointer; font-size:0.8rem; }
+    .preview-body { padding:28px 32px; }
+    .preview-site-header { border-bottom:2px solid #0C2340; padding-bottom:12px; margin-bottom:20px; }
+    .preview-site-name { font-size:1.5rem; font-weight:900; color:#0C2340; }
+    .preview-site-tagline { font-size:0.72rem; color:#64748b; margin-top:2px; }
+    .preview-article-title { font-size:1.3rem; font-weight:800; color:#0f172a; margin-bottom:6px; line-height:1.3; }
+    .preview-article-meta { font-size:12px; color:#94a3b8; margin-bottom:14px; }
+    .preview-article-body p { font-size:15px; line-height:1.8; color:#334155; margin-bottom:14px; }
+    .preview-ad-label { font-size:10px; color:#94a3b8; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:6px; }
+    .preview-ad-card { border:2px solid #E85D04; border-radius:10px; overflow:hidden; margin:20px 0; background:linear-gradient(135deg,#fff7f0,#fff); }
+    .preview-ad-inner { display:flex; align-items:center; gap:16px; padding:16px 20px; }
+    .preview-ad-thumb { width:80px; height:60px; border-radius:6px; background:#e2e8f0; flex-shrink:0; object-fit:cover; display:flex; align-items:center; justify-content:center; font-size:1.6rem; }
+    .preview-ad-body h4 { font-size:14px; font-weight:800; color:#0C2340; margin-bottom:3px; }
+    .preview-ad-body p  { font-size:12px; color:#64748b; }
+    .preview-plz { font-size:10px; font-weight:700; background:rgba(232,93,4,0.1); color:#E85D04; border-radius:4px; padding:2px 7px; display:inline-block; margin-top:4px; }
+    .preview-ad-cta { margin-left:auto; background:#E85D04; color:#fff; padding:8px 16px; border-radius:6px; font-size:12px; font-weight:700; white-space:nowrap; flex-shrink:0; }
+    .preview-ad-footer { background:#fff3ea; padding:5px 20px; font-size:10px; color:#c2622a; display:flex; justify-content:space-between; }
+    /* Edit btn */
+    .btn-edit { background:#f1f5f9; color:#334155; border:1px solid #e2e8f0; padding:4px 10px; border-radius:6px; font-size:12px; cursor:pointer; margin-right:4px; }
+    .btn-edit:hover { background:#e2e8f0; }
   </style>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -255,26 +300,41 @@
 
     <!-- Neue Ad: Formular (versteckt bis Klick) -->
     <div class="card" id="new-ad-form" style="display:none;">
-      <div class="card-title">Neue Anzeige erstellen</div>
+      <div class="card-title" id="form-card-title">Neue Anzeige erstellen</div>
       <div class="form-grid">
         <div class="form-group full">
-          <label>Titel</label>
+          <div class="field-label-row">
+            <label>Titel</label>
+            <button class="copy-prev-btn" onclick="copyPrev('ad-title')">↩ Letzte übernehmen</button>
+          </div>
           <input type="text" id="ad-title" placeholder="z.B. Muster GmbH – Frühlingsangebot" />
         </div>
         <div class="form-group full">
-          <label>Bild-URL</label>
+          <div class="field-label-row">
+            <label>Bild-URL</label>
+            <button class="copy-prev-btn" onclick="copyPrev('ad-image-url')">↩ Letzte übernehmen</button>
+          </div>
           <input type="url" id="ad-image-url" placeholder="https://..." />
         </div>
         <div class="form-group full">
-          <label>Ziel-URL (Klick-Link)</label>
+          <div class="field-label-row">
+            <label>Ziel-URL (Klick-Link)</label>
+            <button class="copy-prev-btn" onclick="copyPrev('ad-target-url')">↩ Letzte übernehmen</button>
+          </div>
           <input type="url" id="ad-target-url" placeholder="https://deine-website.de" />
         </div>
         <div class="form-group full">
-          <label>Alt-Text (Barrierefreiheit)</label>
+          <div class="field-label-row">
+            <label>Alt-Text (Barrierefreiheit)</label>
+            <button class="copy-prev-btn" onclick="copyPrev('ad-alt-text')">↩ Letzte übernehmen</button>
+          </div>
           <input type="text" id="ad-alt-text" placeholder="Kurze Beschreibung des Bildes" />
         </div>
         <div class="form-group full">
-          <label>Ziel-Postleitzahlen (Kommagetrennt)</label>
+          <div class="field-label-row">
+            <label>Ziel-Postleitzahlen (Kommagetrennt)</label>
+            <button class="copy-prev-btn" onclick="copyPrev('ad-postal-codes')">↩ Letzte übernehmen</button>
+          </div>
           <input type="text" id="ad-postal-codes" placeholder="47051, 47053, 47055" />
         </div>
         <div class="form-group">
@@ -287,12 +347,63 @@
         </div>
       </div>
       <p class="error-msg" id="ad-error"></p>
-      <div style="display:flex;gap:10px;margin-top:16px;">
+      <div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;">
         <button class="btn-primary" id="create-ad-btn">Anzeige erstellen</button>
+        <button class="btn-ghost" id="preview-ad-btn" onclick="showPreview()">👁 Vorschau</button>
         <button class="btn-ghost" id="cancel-ad-btn">Abbrechen</button>
       </div>
     </div>
   </main>
+</div>
+
+<!-- Success Overlay -->
+<div class="success-overlay" id="success-overlay">
+  <div class="success-box">
+    <div class="s-icon">🎉</div>
+    <h2>Anzeige ist online!</h2>
+    <p>Deine Anzeige wird ab sofort auf allen LocalAd-Partnerseiten in deinen Ziel-PLZs ausgespielt.</p>
+    <button onclick="document.getElementById('success-overlay').classList.remove('visible')">Super, danke!</button>
+  </div>
+</div>
+
+<!-- Preview Modal -->
+<div class="preview-modal" id="preview-modal">
+  <div class="preview-inner">
+    <div class="preview-nav">
+      <span>🗞 Vorschau – Duisburger Nachrichten (simuliert)</span>
+      <button class="preview-close" onclick="document.getElementById('preview-modal').classList.remove('open')">✕ Schließen</button>
+    </div>
+    <div class="preview-body">
+      <div class="preview-site-header">
+        <div class="preview-site-name">Duisburger Nachrichten</div>
+        <div class="preview-site-tagline">Alles aus Duisburg – außer Langeweile</div>
+      </div>
+      <div class="preview-article-title">Duisburger erfindet Wecker, der nur klingelt, wenn Brötchen fertig sind</div>
+      <div class="preview-article-meta">29. Mai 2026 · Lokales · 2 Min. Lesezeit</div>
+      <div class="preview-article-body">
+        <p>Der Duisburger Tüftler Klaus-Dieter M. hat jahrelang an einem Problem gearbeitet, das die Menschheit seit Jahrhunderten beschäftigt: Wie wacht man auf, ohne aufwachen zu wollen? Die Lösung: ein Wecker, der mit der Bäckerei um die Ecke verbunden ist und erst klingelt, wenn frische Brötchen im Regal liegen.</p>
+      </div>
+      <div class="preview-ad-label">Anzeige · LocalAd</div>
+      <div class="preview-ad-card" id="preview-ad-card">
+        <div class="preview-ad-inner">
+          <div class="preview-ad-thumb" id="preview-thumb">📢</div>
+          <div class="preview-ad-body">
+            <h4 id="preview-title">Deine Anzeige</h4>
+            <p id="preview-url">–</p>
+            <span class="preview-plz" id="preview-plz">📍 PLZ</span>
+          </div>
+          <div class="preview-ad-cta">Mehr erfahren</div>
+        </div>
+        <div class="preview-ad-footer">
+          <span>LocalAd · Lokale Anzeige aus deiner Region</span>
+          <span>Kein Tracking</span>
+        </div>
+      </div>
+      <div class="preview-article-body">
+        <p>Die Stadtwerke Duisburg prüfen unterdessen, ob der Wecker ins Stromnetz integriert werden kann. Bürgermeister Sören Link soll bereits einen Prototyp im Büro stehen haben – allerdings klingelt dieser bisher nur beim Lieferservice.</p>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -446,6 +557,36 @@
     } catch { /* Fehler still ignorieren – evtl. noch kein Advertiser-Account */ }
   }
 
+  // ── Edit-State ────────────────────────────────────────────────────────────
+  let editMode = false;        // true = PATCH, false = POST
+  let editAdId = null;         // ID der zu bearbeitenden Anzeige
+  let prevValues = {};         // Letzte gespeicherte Formularwerte für copy-from-prev
+
+  const FIELDS = ['ad-title','ad-image-url','ad-target-url','ad-alt-text','ad-postal-codes','ad-starts-at','ad-ends-at'];
+
+  function getFormValues() {
+    return Object.fromEntries(FIELDS.map(id => [id, document.getElementById(id).value]));
+  }
+
+  function setFormValues(vals) {
+    FIELDS.forEach(id => { document.getElementById(id).value = vals[id] || ''; });
+  }
+
+  function resetForm() {
+    FIELDS.forEach(id => { document.getElementById(id).value = ''; });
+    clearError(document.getElementById('ad-error'));
+    editMode = false;
+    editAdId = null;
+    document.getElementById('form-card-title').textContent = 'Neue Anzeige erstellen';
+    document.getElementById('create-ad-btn').textContent = 'Anzeige erstellen';
+  }
+
+  function copyPrev(fieldId) {
+    if (prevValues[fieldId] !== undefined) {
+      document.getElementById(fieldId).value = prevValues[fieldId];
+    }
+  }
+
   // ── Ad-Liste ──────────────────────────────────────────────────────────────
   async function loadAds() {
     const tbody = document.getElementById('ads-table-body');
@@ -470,7 +611,8 @@
               ${ad.is_active ? 'Aktiv' : 'Inaktiv'}
             </span>
           </td>
-          <td>
+          <td style="white-space:nowrap;">
+            <button class="btn-edit btn-sm" onclick='editAd(${JSON.stringify(ad)})'>Bearbeiten</button>
             <button class="btn-danger btn-sm" onclick="deleteAd('${ad.id}')">Löschen</button>
           </td>
         </tr>
@@ -478,6 +620,25 @@
     } catch (err) {
       tbody.innerHTML = `<tr><td colspan="6" class="no-ads" style="color:#dc2626">${esc(err.message)}</td></tr>`;
     }
+  }
+
+  function editAd(ad) {
+    editMode = true;
+    editAdId = ad.id;
+    // Formular befüllen
+    document.getElementById('ad-title').value        = ad.title        || '';
+    document.getElementById('ad-image-url').value    = ad.image_url    || '';
+    document.getElementById('ad-target-url').value   = ad.target_url   || '';
+    document.getElementById('ad-alt-text').value     = ad.alt_text     || '';
+    document.getElementById('ad-postal-codes').value = (ad.postal_codes || []).join(', ');
+    document.getElementById('ad-starts-at').value    = (ad.starts_at   || '').slice(0,10);
+    document.getElementById('ad-ends-at').value      = (ad.ends_at     || '').slice(0,10);
+    clearError(document.getElementById('ad-error'));
+    document.getElementById('form-card-title').textContent = 'Anzeige bearbeiten';
+    document.getElementById('create-ad-btn').textContent   = 'Änderungen speichern';
+    document.getElementById('new-ad-form').style.display = 'block';
+    document.getElementById('new-ad-btn').style.display  = 'none';
+    document.getElementById('new-ad-form').scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
   async function deleteAd(id) {
@@ -493,14 +654,17 @@
 
   // ── Neue Ad ───────────────────────────────────────────────────────────────
   document.getElementById('new-ad-btn').addEventListener('click', () => {
+    prevValues = getFormValues();  // aktuellen Stand speichern für copy-from-prev
+    resetForm();
     document.getElementById('new-ad-form').style.display = 'block';
     document.getElementById('new-ad-btn').style.display  = 'none';
   });
 
   document.getElementById('cancel-ad-btn').addEventListener('click', () => {
+    prevValues = getFormValues();  // auch beim Abbrechen sichern
+    resetForm();
     document.getElementById('new-ad-form').style.display = 'none';
     document.getElementById('new-ad-btn').style.display  = 'block';
-    clearError(document.getElementById('ad-error'));
   });
 
   document.getElementById('create-ad-btn').addEventListener('click', async () => {
@@ -520,20 +684,71 @@
       endsAt:      document.getElementById('ad-ends-at').value   || null,
     };
 
-    if (!payload.title || !payload.imageUrl || !payload.targetUrl || postalCodes.length === 0) {
-      showError(errorEl, 'Bitte alle Pflichtfelder ausfüllen (inkl. mindestens eine gültige PLZ).');
+    if (!payload.title || !payload.targetUrl || postalCodes.length === 0) {
+      showError(errorEl, 'Bitte Titel, Ziel-URL und mindestens eine gültige PLZ angeben.');
       return;
     }
 
     try {
-      await apiFetch('/ads', { method: 'POST', body: JSON.stringify(payload) });
-      document.getElementById('cancel-ad-btn').click();
+      if (editMode && editAdId) {
+        await apiFetch(`/ads/${editAdId}`, { method: 'PATCH', body: JSON.stringify(payload) });
+        prevValues = getFormValues();
+        resetForm();
+        document.getElementById('new-ad-form').style.display = 'none';
+        document.getElementById('new-ad-btn').style.display  = 'block';
+      } else {
+        await apiFetch('/ads', { method: 'POST', body: JSON.stringify(payload) });
+        prevValues = getFormValues();
+        resetForm();
+        document.getElementById('new-ad-form').style.display = 'none';
+        document.getElementById('new-ad-btn').style.display  = 'block';
+        launchConfetti();
+        document.getElementById('success-overlay').classList.add('visible');
+      }
       loadAds();
       loadStats();
     } catch (err) {
       showError(errorEl, err.message);
     }
   });
+
+  // ── Confetti ──────────────────────────────────────────────────────────────
+  function launchConfetti() {
+    const colors = ['#E85D04','#ff7320','#0C2340','#16a34a','#2563eb','#f59e0b'];
+    for (let i = 0; i < 80; i++) {
+      const el = document.createElement('div');
+      el.className = 'confetti-piece';
+      el.style.left     = Math.random() * 100 + 'vw';
+      el.style.background = colors[Math.floor(Math.random() * colors.length)];
+      el.style.width    = (8 + Math.random() * 8) + 'px';
+      el.style.height   = (8 + Math.random() * 8) + 'px';
+      el.style.animationDuration  = (1.5 + Math.random() * 2) + 's';
+      el.style.animationDelay     = (Math.random() * 0.8) + 's';
+      document.body.appendChild(el);
+      el.addEventListener('animationend', () => el.remove());
+    }
+  }
+
+  // ── Vorschau ──────────────────────────────────────────────────────────────
+  function showPreview() {
+    const title   = document.getElementById('ad-title').value.trim()       || 'Deine Anzeige';
+    const imgUrl  = document.getElementById('ad-image-url').value.trim();
+    const tgtUrl  = document.getElementById('ad-target-url').value.trim()  || '–';
+    const plz     = document.getElementById('ad-postal-codes').value.trim()|| 'PLZ';
+
+    document.getElementById('preview-title').textContent = title;
+    document.getElementById('preview-url').textContent   = tgtUrl;
+    document.getElementById('preview-plz').textContent   = '📍 ' + plz;
+
+    const thumb = document.getElementById('preview-thumb');
+    if (imgUrl) {
+      thumb.innerHTML = `<img src="${imgUrl}" style="width:80px;height:60px;object-fit:cover;border-radius:6px;" onerror="this.parentElement.innerHTML='📢'">`;
+    } else {
+      thumb.innerHTML = '📢';
+    }
+
+    document.getElementById('preview-modal').classList.add('open');
+  }
 
   // ── Escape helper ─────────────────────────────────────────────────────────
   function esc(str) {
