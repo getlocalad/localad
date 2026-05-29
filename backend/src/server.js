@@ -123,6 +123,11 @@ app.post('/api/contact', globalLimiter, async (req, res) => {
   }
 });
 
+// Catch-all: unbekannte Routen → Landing Page (verhindert Railway-Fallback)
+app.get('*', (req, res) => {
+  res.sendFile(resolve(__dirname, '../../dashboard/landing.html'));
+});
+
 // Stripe Success/Cancel Redirects
 app.get('/success', (req, res) => {
   res.redirect('/onboarding?success=1&plz=' + (req.query.plz ?? ''));

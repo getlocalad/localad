@@ -323,6 +323,10 @@
     });
 
     if (res.status === 401) {
+      if (path.startsWith('/auth/')) {
+        const err = await res.json().catch(() => ({ error: 'E-Mail oder Passwort falsch' }));
+        throw new Error(err.error || 'E-Mail oder Passwort falsch');
+      }
       const refreshed = await fetch(API + '/auth/refresh', { method: 'POST', credentials: 'include' });
       if (refreshed.ok) {
         const data = await refreshed.json();
