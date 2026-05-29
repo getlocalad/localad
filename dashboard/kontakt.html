@@ -20,14 +20,17 @@
 
     /* Nav */
     nav {
-      background: #fff; border-bottom: 1px solid var(--border);
-      padding: 0 32px; height: 60px;
+      background: #0C2340; border-bottom: 1px solid rgba(255,255,255,0.07);
+      padding: 0 5%; height: 64px;
       display: flex; align-items: center; justify-content: space-between;
     }
-    .logo { font-size: 20px; font-weight: 800; color: var(--blue); text-decoration: none; }
-    .nav-links { display: flex; gap: 24px; list-style: none; }
-    .nav-links a { font-size: 14px; color: var(--muted); text-decoration: none; }
-    .nav-links a:hover { color: var(--text); }
+    .logo { font-size: 1.3rem; font-weight: 900; color: #fff; text-decoration: none; letter-spacing: -0.5px; }
+    .logo span { color: #E85D04; }
+    .nav-links { display: flex; gap: 2rem; list-style: none; align-items: center; }
+    .nav-links a { font-size: 0.9rem; color: rgba(255,255,255,0.7); text-decoration: none; font-weight: 500; transition: color 0.2s; }
+    .nav-links a:hover { color: #fff; }
+    .nav-links a.nav-cta { background: #E85D04; color: #fff !important; padding: 0.5rem 1.25rem; border-radius: 8px; font-weight: 700; }
+    .nav-links a.nav-cta:hover { background: #ff7320; }
 
     /* Main */
     main { max-width: 560px; margin: 60px auto; padding: 0 20px; }
@@ -44,7 +47,7 @@
       color: var(--text);
     }
     input:focus, textarea:focus, select:focus {
-      border-color: var(--blue); box-shadow: 0 0 0 3px #dbeafe;
+      border-color: #E85D04; box-shadow: 0 0 0 3px rgba(232,93,4,0.15);
     }
     textarea { resize: vertical; min-height: 140px; }
 
@@ -52,9 +55,9 @@
       width: 100%; padding: 13px; border: none; border-radius: 8px;
       font-size: 15px; font-weight: 700; cursor: pointer; font-family: inherit;
     }
-    .btn-primary { background: var(--blue); color: #fff; }
-    .btn-primary:hover { background: var(--blue-dk); }
-    .btn-primary:disabled { background: #93c5fd; cursor: not-allowed; }
+    .btn-primary { background: #E85D04; color: #fff; }
+    .btn-primary:hover { background: #ff7320; }
+    .btn-primary:disabled { background: #f4a88a; cursor: not-allowed; }
 
     /* Feedback */
     .feedback {
@@ -76,11 +79,11 @@
 <body>
 
 <nav>
-  <a href="/" class="logo">LocalAd</a>
+  <a href="/" class="logo">Local<span>Ad</span></a>
   <ul class="nav-links">
     <li><a href="/">Startseite</a></li>
-    <li><a href="/onboarding">Jetzt starten</a></li>
-    <li><a href="/impressum">Impressum</a></li>
+    <li><a href="#preise">Preise</a></li>
+    <li><a href="/onboarding" class="nav-cta">Jetzt installieren</a></li>
   </ul>
 </nav>
 
@@ -187,5 +190,6 @@
   });
 </script>
 
+<script src="/cookie-banner.js" defer></script>
 </body>
 </html>

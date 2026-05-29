@@ -30,25 +30,27 @@
 
     /* ── Header ── */
     .header {
-      background: #fff;
-      border-bottom: 1px solid var(--border);
-      padding: 0 24px;
-      height: 60px;
+      background: #0C2340;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      padding: 0 5%;
+      height: 64px;
       display: flex;
       align-items: center;
       justify-content: space-between;
     }
-    .logo { font-weight: 700; font-size: 1.1rem; color: var(--blue); text-decoration: none; }
+    .logo { font-weight: 900; font-size: 1.25rem; color: #fff; text-decoration: none; letter-spacing: -0.5px; }
+    .logo span { color: #E85D04; }
     .btn-logout {
       background: none;
-      border: 1px solid var(--border);
-      color: var(--muted);
+      border: 1px solid rgba(255,255,255,0.25);
+      color: rgba(255,255,255,0.7);
       padding: 6px 14px;
       border-radius: 6px;
       cursor: pointer;
       font-size: 0.85rem;
+      font-family: inherit;
     }
-    .btn-logout:hover { background: var(--bg); color: var(--text); }
+    .btn-logout:hover { background: rgba(255,255,255,0.1); color: #fff; }
 
     /* ── Layout ── */
     .container {
@@ -138,7 +140,7 @@
       outline: none;
       transition: border-color 0.15s;
     }
-    .form-group input:focus { border-color: var(--blue); }
+    .form-group input:focus { border-color: #E85D04; }
     .form-group input.error { border-color: var(--red); }
 
     .btn {
@@ -150,8 +152,8 @@
       border: none;
       transition: background 0.15s;
     }
-    .btn-primary { background: var(--blue); color: #fff; }
-    .btn-primary:hover { background: var(--blue-dk); }
+    .btn-primary { background: #E85D04; color: #fff; }
+    .btn-primary:hover { background: #ff7320; }
     .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
     .btn-danger { background: var(--red-lt); color: var(--red); border: 1px solid #fca5a5; }
     .btn-danger:hover { background: #fee2e2; }
@@ -222,7 +224,7 @@
 <body>
 
 <header class="header">
-  <a href="/" class="logo">LocalAd</a>
+  <a href="/" class="logo">Local<span>Ad</span></a>
   <button class="btn-logout" onclick="logout()">Abmelden</button>
 </header>
 
@@ -433,5 +435,6 @@
 
   init();
 </script>
+<script src="/cookie-banner.js" defer></script>
 </body>
 </html>

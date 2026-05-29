@@ -8,6 +8,9 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
+      --orange:  #E85D04;
+      --orange2: #ff7320;
+      --navy:    #0C2340;
       --blue:    #2563eb;
       --blue-dk: #1d4ed8;
       --blue-lt: #eff6ff;
@@ -29,7 +32,7 @@
       height: 4px; background: var(--border); position: fixed; top: 0; left: 0; right: 0; z-index: 10;
     }
     .progress-fill {
-      height: 100%; background: var(--blue);
+      height: 100%; background: var(--orange);
       transition: width 0.4s ease;
     }
 
@@ -38,7 +41,8 @@
 
     .screen-inner { width: 100%; max-width: 480px; }
 
-    .logo { font-size: 22px; font-weight: 800; color: var(--blue); margin-bottom: 32px; }
+    .logo { font-size: 1.4rem; font-weight: 900; color: var(--navy); margin-bottom: 32px; letter-spacing: -0.5px; }
+    .logo span { color: var(--orange); }
     h1 { font-size: 26px; font-weight: 800; margin-bottom: 8px; line-height: 1.25; }
     .subtitle { font-size: 15px; color: var(--muted); margin-bottom: 32px; line-height: 1.6; }
 
@@ -58,7 +62,7 @@
       padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px;
       font-size: 15px; outline: none; font-family: inherit;
     }
-    input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px #dbeafe; }
+    input:focus { border-color: var(--orange); box-shadow: 0 0 0 3px #dbeafe; }
     input.error { border-color: #ef4444; }
 
     .plz-input {
@@ -72,9 +76,9 @@
       font-size: 15px; font-weight: 700; cursor: pointer;
       font-family: inherit; text-align: center; text-decoration: none;
     }
-    .btn-primary { background: var(--blue); color: #fff; }
-    .btn-primary:hover { background: var(--blue-dk); }
-    .btn-primary:disabled { background: #93c5fd; cursor: not-allowed; }
+    .btn-primary { background: var(--orange); color: #fff; }
+    .btn-primary:hover { background: var(--orange2); }
+    .btn-primary:disabled { background: #f4a88a; cursor: not-allowed; }
     .btn-ghost { background: transparent; color: var(--muted); margin-top: 10px; font-size: 13px; }
     .btn-ghost:hover { color: var(--text); }
 
@@ -82,10 +86,10 @@
     .error-msg.visible { display: block; }
 
     .price-box {
-      background: var(--blue-lt); border: 2px solid var(--blue);
+      background: rgba(232,93,4,0.07); border: 2px solid var(--blue);
       border-radius: 12px; padding: 20px; text-align: center; margin-bottom: 24px;
     }
-    .price { font-size: 42px; font-weight: 800; color: var(--blue); }
+    .price { font-size: 42px; font-weight: 800; color: var(--orange); }
     .price-period { font-size: 16px; color: var(--muted); }
     .price-note { font-size: 12px; color: var(--muted); margin-top: 6px; }
 
@@ -105,7 +109,7 @@
 <!-- Screen 1: Willkommen -->
 <div class="screen active" id="screen-welcome">
   <div class="screen-inner">
-    <div class="logo">LocalAd</div>
+    <div class="logo">Local<span>Ad</span></div>
     <h1>Werbefreies Surfen.<br/>Lokale Unterst&uuml;tzung.</h1>
     <p class="subtitle">
       LocalAd blockiert Konzernwerbung und ersetzt sie durch echte lokale Anzeigen aus deiner Region.
@@ -144,7 +148,7 @@
 <!-- Screen 2: Account erstellen -->
 <div class="screen" id="screen-register">
   <div class="screen-inner">
-    <div class="logo">LocalAd</div>
+    <div class="logo">Local<span>Ad</span></div>
     <h1>Account erstellen</h1>
     <p class="subtitle">Damit wir dein Abo verwalten k&ouml;nnen, brauchst du einen Account.</p>
 
@@ -172,7 +176,7 @@
 <!-- Login -->
 <div class="screen" id="screen-login">
   <div class="screen-inner">
-    <div class="logo">LocalAd</div>
+    <div class="logo">Local<span>Ad</span></div>
     <h1>Willkommen zur&uuml;ck</h1>
     <p class="subtitle">Melde dich an um dein Abo zu aktivieren.</p>
     <div class="form-group">
@@ -195,7 +199,7 @@
 <!-- Screen 3: PLZ -->
 <div class="screen" id="screen-plz">
   <div class="screen-inner">
-    <div class="logo">LocalAd</div>
+    <div class="logo">Local<span>Ad</span></div>
     <h1>Deine Region</h1>
     <p class="subtitle">Gib deine Postleitzahl ein. So k&ouml;nnen wir dir Werbung aus deiner Nachbarschaft zeigen.</p>
 
@@ -213,7 +217,7 @@
 <!-- Screen 4: Abo -->
 <div class="screen" id="screen-subscribe">
   <div class="screen-inner">
-    <div class="logo">LocalAd</div>
+    <div class="logo">Local<span>Ad</span></div>
     <h1>Abo aktivieren</h1>
     <p class="subtitle">F&uuml;r 3 &euro; im Monat &ndash; weniger als ein Kaffee.</p>
 
