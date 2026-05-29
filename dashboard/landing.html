@@ -310,6 +310,49 @@
       line-height: 1.7;
     }
 
+    /* ── VISUAL CHARACTER ── */
+    /* Dot-grid texture for white sections */
+    #features, #preise, #faq, #trust {
+      background-image: radial-gradient(circle, rgba(15,23,42,0.055) 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+    /* Diagonal stripe accent for .how section */
+    .how {
+      position: relative; overflow: hidden;
+    }
+    .how::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+      background-image: repeating-linear-gradient(
+        -45deg,
+        transparent,
+        transparent 28px,
+        rgba(15,23,42,0.028) 28px,
+        rgba(15,23,42,0.028) 29px
+      );
+      pointer-events: none;
+    }
+    /* Orange left-border accent on section-label */
+    .section-label {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+    }
+    .section-label::before {
+      content: '';
+      display: inline-block; width: 14px; height: 3px;
+      background: var(--orange); border-radius: 2px; flex-shrink: 0;
+    }
+    /* Decorative orange underline on section-title */
+    .section-title-accent {
+      display: inline-block; position: relative;
+    }
+    .section-title-accent::after {
+      content: '';
+      position: absolute; bottom: -6px; left: 0;
+      width: 48px; height: 4px;
+      background: linear-gradient(90deg, var(--orange), transparent);
+      border-radius: 2px;
+    }
+
     /* ── HOW ── */
     .how { background: var(--gray); }
     .steps {
@@ -961,7 +1004,7 @@ function localadLogout () {
 <section class="how" id="wie-es-funktioniert">
   <div class="section-inner">
     <div class="section-label">So funktioniert's</div>
-    <h2 class="section-title">In 4 Schritten – unter 2 Minuten</h2>
+    <h2 class="section-title"><span class="section-title-accent">In 4 Schritten – unter 2 Minuten</span></h2>
     <p class="section-sub">Keine technischen Kenntnisse nötig. Einmal einrichten, dauerhaft profitieren.</p>
     <div class="steps">
       <div class="step">
@@ -1010,7 +1053,7 @@ function localadLogout () {
 <section id="features">
   <div class="section-inner">
     <div class="section-label">Features</div>
-    <h2 class="section-title">Kein gewöhnlicher Werbeblocker</h2>
+    <h2 class="section-title"><span class="section-title-accent">Kein gewöhnlicher Werbeblocker</span></h2>
     <p class="section-sub">LocalAd blockiert nicht nur – er gibt der Werbefläche einen Sinn zurück.</p>
     <p style="font-size:0.78rem;color:var(--muted);margin-bottom:2rem;display:flex;align-items:center;gap:0.4rem;"><svg xmlns='http://www.w3.org/2000/svg' width="14" height="14" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.042 21.672L13.684 16.6m0 0l-2.51 2.225.569-9.47 5.227 7.917-3.286-.672zm-7.518-.267A8.25 8.25 0 1120.25 10.5M8.288 14.212A5.25 5.25 0 1117.25 10.5"/></svg> Kacheln anklicken für mehr Details</p>
     <div class="features-grid">
@@ -1154,7 +1197,7 @@ function localadLogout () {
 <section id="preise">
   <div class="section-inner">
     <div class="section-label">Preise</div>
-    <h2 class="section-title">Transparent. Fair. Keine Tricks.</h2>
+    <h2 class="section-title"><span class="section-title-accent">Transparent. Fair. Keine Tricks.</span></h2>
     <p class="section-sub">Kein Jahresvertrag. Keine versteckten Kosten. Keine Datenweitergabe als Gegenleistung.</p>
     <div class="pricing-grid">
       <div class="price-card featured">
@@ -1783,7 +1826,7 @@ calcAdvertiser();
 <!-- FAQ -->
 <section class="faq" id="faq">
   <div class="section-inner">
-    <div class="section-label">Häufige Fragen</div>
+    <div class="section-label"><span class="section-title-accent">Häufige Fragen</span></div>
     <h2 class="section-title">Noch Fragen?</h2>
     <div class="faq-grid">
 
