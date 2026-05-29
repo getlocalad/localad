@@ -370,7 +370,7 @@
     btn.disabled = true;
     btn.textContent = 'Erstelle Account…';
 
-    apiFetch('/auth/register', { email: email, password: pw1, role: 'user' })
+    apiFetch('/auth/register', { email: email, password: pw1 })
       .then(function() {
         return apiFetch('/auth/login', { email: email, password: pw1 });
       })
@@ -380,7 +380,8 @@
         userEmail   = email;
         try { localStorage.setItem('localad_token', login.accessToken); } catch(e) {}
         sendAuthToExtension(login.accessToken, login.refreshToken, login.user);
-        goTo('screen-plz');
+        // Nach Registrierung → Account-Seite (dort Upgrade wählen)
+        window.location.href = '/account';
       })
       .catch(function(err) {
         showError('reg-error', err.message);

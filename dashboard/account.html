@@ -174,6 +174,29 @@
       display: none;
     }
 
+    /* ── Upgrade-Karten ── */
+    .upgrade-grid { display: grid; grid-template-columns: 1fr; gap: 14px; }
+    .upgrade-card {
+      border: 1px solid var(--border); border-radius: 10px; padding: 20px;
+      display: flex; align-items: flex-start; gap: 16px;
+    }
+    .upgrade-card.active-card { border-color: #16a34a; background: #f0fdf4; }
+    .upgrade-icon { font-size: 1.8rem; flex-shrink: 0; margin-top: 2px; }
+    .upgrade-body { flex: 1; }
+    .upgrade-body h3 { font-size: 1rem; font-weight: 700; margin-bottom: 4px; }
+    .upgrade-body p  { font-size: 0.83rem; color: var(--muted); line-height: 1.5; margin-bottom: 12px; }
+    .upgrade-price { font-size: 0.8rem; font-weight: 700; color: #E85D04; margin-bottom: 10px; }
+    .btn-upgrade { background: #E85D04; color: #fff; border: none; padding: 8px 18px; border-radius: 7px; font-size: 0.85rem; font-weight: 700; cursor: pointer; font-family: inherit; }
+    .btn-upgrade:hover { background: #ff7320; }
+    .btn-upgrade:disabled { opacity: 0.5; cursor: not-allowed; }
+    .badge-active { display: inline-block; background: #dcfce7; color: #166534; font-size: 0.75rem; font-weight: 700; padding: 3px 10px; border-radius: 20px; }
+    /* Advertiser-Formular (inline) */
+    .adv-form { display: none; margin-top: 12px; border-top: 1px solid var(--border); padding-top: 14px; }
+    .adv-form.open { display: block; }
+    .adv-form .form-group { margin-bottom: 10px; }
+    .adv-form select { width:100%; padding:9px 12px; border:1px solid var(--border); border-radius:8px; font-size:0.9rem; outline:none; font-family:inherit; }
+    .adv-form select:focus { border-color:#E85D04; }
+
     /* ── Cancel Dialog ── */
     .overlay {
       position: fixed; inset: 0;
@@ -278,6 +301,70 @@
     <div class="error-msg" id="plz-error"></div>
   </div>
 
+  <!-- Upgrade-Optionen -->
+  <div class="card" id="upgrade-section">
+    <div class="card-title">Mehr aus LocalAd herausholen</div>
+    <div class="upgrade-grid">
+
+      <!-- Extension-Abo -->
+      <div class="upgrade-card" id="uc-sub">
+        <div class="upgrade-icon">🔌</div>
+        <div class="upgrade-body">
+          <h3>Extension aktivieren</h3>
+          <p>Blockiere Konzernwerbung im Browser und lass dir stattdessen lokale Anzeigen aus deiner Region anzeigen.</p>
+          <div class="upgrade-price">3 €/Monat</div>
+          <span id="sub-upgrade-badge" style="display:none" class="badge-active">✓ Bereits aktiv</span>
+          <button class="btn-upgrade" id="sub-upgrade-btn" onclick="startSubCheckout()">Jetzt aktivieren</button>
+        </div>
+      </div>
+
+      <!-- Werbetreibender werden -->
+      <div class="upgrade-card" id="uc-adv">
+        <div class="upgrade-icon">📢</div>
+        <div class="upgrade-body">
+          <h3>Werbetreibender werden</h3>
+          <p>Schalte lokale Anzeigen in Duisburg – Flatrate, kein CPC, kein Algorithmus. Extension-Zugang inklusive.</p>
+          <div class="upgrade-price">50 €/Monat (Basis) · 100 €/Monat (Standard)</div>
+          <span id="adv-upgrade-badge" style="display:none" class="badge-active">✓ Bereits aktiv</span>
+          <button class="btn-upgrade" id="adv-upgrade-btn" onclick="toggleAdvForm()">Jetzt starten</button>
+          <!-- Inline-Formular -->
+          <div class="adv-form" id="adv-form">
+            <div class="form-group">
+              <label>Firmenname</label>
+              <input type="text" id="adv-company" placeholder="z.B. Bäckerei Müller" />
+            </div>
+            <div class="form-group">
+              <label>PLZ (Firmenstandort)</label>
+              <input type="text" id="adv-plz" placeholder="47051" maxlength="5" />
+            </div>
+            <div class="form-group">
+              <label>Plan</label>
+              <select id="adv-plan">
+                <option value="basic">Basis – 50 €/Monat (1 Anzeige, bis 3 PLZ)</option>
+                <option value="standard">Standard – 100 €/Monat (3 Anzeigen, bis 10 PLZ)</option>
+              </select>
+            </div>
+            <div class="error-msg" id="adv-error" style="display:none"></div>
+            <button class="btn-upgrade" id="adv-checkout-btn" onclick="startAdvCheckout()">Weiter zur Zahlung →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Publisher werden -->
+      <div class="upgrade-card" id="uc-pub">
+        <div class="upgrade-icon">🌐</div>
+        <div class="upgrade-body">
+          <h3>Publisher werden</h3>
+          <p>Binde LocalAd auf deiner Website ein und erhalte Umsatzbeteiligung für jede angezeigte lokale Anzeige.</p>
+          <div class="upgrade-price">Kostenlos – du erhältst eine Umsatzbeteiligung</div>
+          <span id="pub-upgrade-badge" style="display:none" class="badge-active">✓ Domain verifiziert</span>
+          <a href="/publisher" class="btn-upgrade" id="pub-upgrade-btn" style="text-decoration:none;display:inline-block;">Domain registrieren →</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
   <!-- Abo kündigen -->
   <div class="card" id="cancel-section">
     <div class="card-title">Abonnement kündigen</div>
@@ -330,25 +417,47 @@
     }
 
     try {
-      const res = await authFetch('/api/users/me');
-      if (res.status === 401) {
+      const [userRes, advRes, pubRes] = await Promise.all([
+        authFetch('/api/users/me'),
+        authFetch('/api/advertisers/me'),
+        authFetch('/api/publishers/me'),
+      ]);
+
+      if (userRes.status === 401) {
         localStorage.removeItem('localad_token');
         window.location.href = '/onboarding';
         return;
       }
-      const data = await res.json();
-      if (!data.user) throw new Error('Keine Daten');
+      const userData = await userRes.json();
+      if (!userData.user) throw new Error('Keine Daten');
 
-      renderUser(data.user);
+      const advData = advRes.ok ? await advRes.json() : { advertiser: null };
+      const pubData = pubRes.ok ? await pubRes.json() : { publisher: null };
+
+      renderUser(userData.user, advData.advertiser, pubData.publisher);
       document.getElementById('loading').style.display = 'none';
       document.getElementById('main').style.display = 'flex';
+
+      // URL-Parameter prüfen
+      const params = new URLSearchParams(location.search);
+      if (params.get('upgraded') === '1') {
+        showNotice('🎉 Willkommen! Dein Account wurde erfolgreich aktiviert.');
+      }
     } catch (e) {
       document.getElementById('loading').innerHTML =
         '<p style="color:var(--red)">Fehler beim Laden: ' + e.message + '</p>';
     }
   }
 
-  function renderUser(user) {
+  function showNotice(msg) {
+    const el = document.createElement('div');
+    el.style.cssText = 'position:fixed;top:20px;right:20px;background:#0C2340;color:#fff;padding:14px 20px;border-radius:10px;font-size:0.9rem;font-weight:600;z-index:999;box-shadow:0 4px 20px rgba(0,0,0,0.3)';
+    el.textContent = msg;
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 5000);
+  }
+
+  function renderUser(user, advertiser, publisher) {
     document.getElementById('user-email').textContent = user.email;
     document.getElementById('plz-display').textContent = user.postal_code || '–';
     document.getElementById('plz-input').value = user.postal_code || '';
@@ -367,6 +476,77 @@
       const d = new Date(user.subscription_end);
       document.getElementById('sub-end').textContent =
         d.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    }
+
+    // Upgrade-Karten anpassen
+    if (user.is_subscribed) {
+      document.getElementById('sub-upgrade-badge').style.display = 'inline-block';
+      document.getElementById('sub-upgrade-btn').style.display = 'none';
+    }
+
+    if (advertiser) {
+      document.getElementById('adv-upgrade-badge').style.display = 'inline-block';
+      document.getElementById('adv-upgrade-btn').style.display = 'none';
+      document.getElementById('uc-adv').classList.add('active-card');
+      const body = document.querySelector('#uc-adv .upgrade-body');
+      body.insertAdjacentHTML('beforeend',
+        `<div style="margin-top:8px;"><a href="/dashboard" style="font-size:0.85rem;color:#E85D04;font-weight:700;text-decoration:none;">→ Zum Werbetreibenden-Dashboard</a></div>`
+      );
+    }
+
+    if (publisher && publisher.is_verified) {
+      document.getElementById('pub-upgrade-badge').style.display = 'inline-block';
+      document.getElementById('pub-upgrade-btn').textContent = '→ Publisher-Dashboard';
+      document.getElementById('uc-pub').classList.add('active-card');
+    }
+  }
+
+  // ── Upgrade-Aktionen ──────────────────────────────────────────────────────
+  async function startSubCheckout() {
+    const btn = document.getElementById('sub-upgrade-btn');
+    btn.disabled = true; btn.textContent = 'Weiterleitung…';
+    try {
+      const res = await authFetch('/api/stripe/checkout/user', { method: 'POST' });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Fehler');
+      window.location.href = data.url;
+    } catch (e) {
+      btn.disabled = false; btn.textContent = 'Jetzt aktivieren';
+      showNotice('⚠ ' + e.message);
+    }
+  }
+
+  function toggleAdvForm() {
+    const form = document.getElementById('adv-form');
+    form.classList.toggle('open');
+  }
+
+  async function startAdvCheckout() {
+    const btn     = document.getElementById('adv-checkout-btn');
+    const errEl   = document.getElementById('adv-error');
+    const company = document.getElementById('adv-company').value.trim();
+    const plz     = document.getElementById('adv-plz').value.trim();
+    const plan    = document.getElementById('adv-plan').value;
+    errEl.style.display = 'none';
+
+    if (!company || !/^\d{5}$/.test(plz)) {
+      errEl.textContent = 'Bitte Firmenname und gültige PLZ angeben.';
+      errEl.style.display = 'block'; return;
+    }
+
+    btn.disabled = true; btn.textContent = 'Weiterleitung…';
+    try {
+      const res = await authFetch('/api/advertisers/upgrade', {
+        method: 'POST',
+        body: JSON.stringify({ companyName: company, postalCode: plz, plan }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Fehler');
+      window.location.href = data.checkoutUrl;
+    } catch (e) {
+      errEl.textContent = e.message;
+      errEl.style.display = 'block';
+      btn.disabled = false; btn.textContent = 'Weiter zur Zahlung →';
     }
   }
 

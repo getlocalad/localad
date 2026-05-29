@@ -7,12 +7,11 @@ import { pool } from '../db/db.js';
 export const authRouter = Router();
 
 // ── POST /api/auth/register ───────────────────────────────────────────────────
-// Body: { email, password, role?, companyName?, postalCode?, plan? }
-// role: 'user' (default) | 'advertiser' | 'publisher'
-// Bei 'advertiser': companyName + postalCode erforderlich → Transaktion legt beides an
+// Body: { email, password }
+// Erstellt immer einen normalen User-Account. Upgrades (Advertiser, Publisher) separat.
 authRouter.post('/register', async (req, res, next) => {
   try {
-    const { email, password, role = 'user', companyName, postalCode, plan } = req.body;
+    const { email, password } = req.body;
 
     if (!email || !password) {
       return res.status(400).json({ error: 'E-Mail und Passwort erforderlich' });
@@ -23,29 +22,11 @@ authRouter.post('/register', async (req, res, next) => {
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       return res.status(400).json({ error: 'Ungültige E-Mail-Adresse' });
     }
-    if (!['user', 'advertiser', 'publisher'].includes(role)) {
-      return res.status(400).json({ error: 'Ungültige Rolle' });
-    }
 
-    const user = await createUser({
-      email: email.toLowerCase().trim(),
-      password,
-      role,
-      companyName,
-      postalCode,
-      plan,
-    });
-
-    // Willkommensmail asynchron senden (kein await – blockiert Response nicht)
+    const user = await createUser({ email: email.toLowerCase().trim(), password });
     sendWelcomeMail(email.toLowerCase().trim()).catch(() => {});
 
-    res.status(201).json({
-      message: role === 'advertiser'
-        ? 'Account + Werbetreibenden-Profil erstellt'
-        : 'Account erstellt',
-      userId: user.id,
-      role:   user.role,
-    });
+    res.status(201).json({ message: 'Account erstellt', userId: user.id });
   } catch (err) {
     next(err);
   }

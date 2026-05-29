@@ -108,22 +108,56 @@ advertisersRouter.get('/me/stats', requireAuth, async (req, res, next) => {
   }
 });
 
-// ── POST /api/advertisers/register ────────────────────────────────────────────
-// Wird jetzt primär über /api/auth/register?role=advertiser abgewickelt.
-// Dieser Endpoint bleibt für direkte API-Nutzung ohne Auth.
-advertisersRouter.post('/register', async (req, res, next) => {
+// ── POST /api/advertisers/upgrade ─────────────────────────────────────────────
+// Eingeloggter User → Advertiser-Profil anlegen + Stripe-Checkout starten
+// Body: { companyName, postalCode, plan }
+advertisersRouter.post('/upgrade', requireAuth, async (req, res, next) => {
   try {
-    const { companyName, email, postalCode, plan = 'basic' } = req.body;
-    if (!companyName || !email || !postalCode) {
-      return res.status(400).json({ error: 'companyName, email und postalCode erforderlich' });
+    const { companyName, postalCode, plan = 'basic' } = req.body;
+    if (!companyName || !postalCode) {
+      return res.status(400).json({ error: 'Firmenname und PLZ erforderlich' });
     }
-    const result = await pool.query(
-      `INSERT INTO advertisers (company_name, contact_email, postal_code, plan)
-       VALUES ($1, $2, $3, $4)
-       RETURNING id`,
-      [companyName, email, postalCode, plan]
+
+    // Prüfen ob bereits Advertiser-Profil existiert
+    const existing = await pool.query(
+      'SELECT id FROM advertisers WHERE user_id = $1', [req.user.id]
     );
-    res.status(201).json({ advertiserId: result.rows[0].id });
+    if (existing.rows.length > 0) {
+      return res.status(409).json({ error: 'Advertiser-Profil bereits vorhanden' });
+    }
+
+    // User-E-Mail für Stripe holen
+    const userRow = await pool.query('SELECT email FROM users WHERE id = $1', [req.user.id]);
+    const email   = userRow.rows[0]?.email;
+
+    // Advertiser-Eintrag anlegen (noch nicht aktiv – wird nach Zahlung aktiviert)
+    const advResult = await pool.query(
+      `INSERT INTO advertisers (user_id, company_name, contact_email, postal_code, plan, is_active)
+       VALUES ($1, $2, $3, $4, $5, false)
+       RETURNING id`,
+      [req.user.id, companyName, email, postalCode, plan]
+    );
+    const advertiserId = advResult.rows[0].id;
+
+    // Stripe-Checkout-Session erstellen
+    const stripe   = (await import('stripe')).default(process.env.STRIPE_SECRET_KEY);
+    const priceMap = {
+      basic:    process.env.STRIPE_PRICE_ADVERTISER_BASIC,
+      standard: process.env.STRIPE_PRICE_ADVERTISER_STANDARD,
+    };
+    const priceId = priceMap[plan] || priceMap.basic;
+
+    const session = await stripe.checkout.sessions.create({
+      mode:           'subscription',
+      payment_method_types: ['card'],
+      customer_email: email,
+      line_items: [{ price: priceId, quantity: 1 }],
+      metadata:   { advertiserId, plan },
+      success_url: (process.env.DASHBOARD_URL || '') + '/dashboard?upgraded=1',
+      cancel_url:  (process.env.DASHBOARD_URL || '') + '/account?upgrade=cancelled',
+    });
+
+    res.json({ checkoutUrl: session.url, advertiserId });
   } catch (err) {
     next(err);
   }

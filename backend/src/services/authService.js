@@ -26,9 +26,8 @@ export function verifyRefreshToken(token) {
 }
 
 // ── User anlegen ──────────────────────────────────────────────────────────────
-// role: 'user' | 'advertiser' | 'publisher'
-// Bei 'advertiser' wird in derselben Transaktion ein advertisers-Eintrag angelegt.
-export async function createUser({ email, password, role = 'user', companyName, postalCode, plan = 'basic' }) {
+// Erstellt immer einen plain User. Upgrades (Advertiser, Publisher) laufen separat.
+export async function createUser({ email, password }) {
   const existing = await pool.query('SELECT id FROM users WHERE email = $1', [email]);
   if (existing.rows.length > 0) {
     const err = new Error('E-Mail bereits registriert');
@@ -37,43 +36,14 @@ export async function createUser({ email, password, role = 'user', companyName, 
   }
 
   const password_hash = await hashPassword(password);
-  const client = await pool.connect();
 
-  try {
-    await client.query('BEGIN');
-
-    const userResult = await client.query(
-      `INSERT INTO users (email, password_hash)
-       VALUES ($1, $2)
-       RETURNING id, email`,
-      [email, password_hash]
-    );
-    const user = userResult.rows[0];
-
-    if (role === 'advertiser') {
-      if (!companyName || !postalCode) {
-        throw Object.assign(new Error('companyName und postalCode für Werbetreibende erforderlich'), { status: 400 });
-      }
-      await client.query(
-        `INSERT INTO advertisers (user_id, company_name, contact_email, postal_code, plan)
-         VALUES ($1, $2, $3, $4, $5)`,
-        [user.id, companyName, email, postalCode, plan]
-      );
-    }
-
-    if (role === 'publisher') {
-      // Publisher-Eintrag wird separat per /publishers/register angelegt (braucht Domain-Angabe)
-      // Hier nur User anlegen – kein extra Eintrag nötig
-    }
-
-    await client.query('COMMIT');
-    return { ...user, role };
-  } catch (err) {
-    await client.query('ROLLBACK');
-    throw err;
-  } finally {
-    client.release();
-  }
+  const result = await pool.query(
+    `INSERT INTO users (email, password_hash)
+     VALUES ($1, $2)
+     RETURNING id, email`,
+    [email, password_hash]
+  );
+  return result.rows[0];
 }
 
 // ── Login ─────────────────────────────────────────────────────────────────────
