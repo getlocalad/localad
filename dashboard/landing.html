@@ -842,6 +842,7 @@
     <li><a href="#preise">Preise</a></li>
     <li><a href="#publisher">Publisher</a></li>
     <li><a href="#werbetreibende">Werbetreibende</a></li>
+    <li><a href="#spiel">🎯 Game</a></li>
     <li><a href="#kalkulator">Kalkulator</a></li>
   </ul>
   <div class="nav-right">
@@ -1455,6 +1456,280 @@ function localadLogout () {
     </div>
   </div>
 </section>
+
+<!-- GAME -->
+<section id="spiel" style="background:#0C2340;padding:88px 5%;overflow:hidden;position:relative;">
+  <div class="section-inner" style="position:relative;z-index:1;">
+    <div class="section-label" style="color:#ff7320;">Mini-Game</div>
+    <h2 class="section-title" style="color:#fff;margin-bottom:0.5rem;"><span class="section-title-accent">Konzern-Ads wegklicken.</span></h2>
+    <p class="section-sub" style="color:rgba(255,255,255,0.55);margin-bottom:2rem;">Genau das macht LocalAd – nur automatisch. Klick die Werbung weg und sieh was danach kommt.</p>
+
+    <!-- Spielfeld -->
+    <div id="game-arena" style="
+      position:relative; width:100%; height:420px;
+      background:rgba(255,255,255,0.03);
+      border:1px solid rgba(255,255,255,0.08);
+      border-radius:16px; overflow:hidden; cursor:crosshair;
+      user-select:none;
+    ">
+      <!-- Score-Bar -->
+      <div style="position:absolute;top:16px;left:16px;right:16px;display:flex;justify-content:space-between;align-items:center;z-index:10;">
+        <div style="display:flex;gap:12px;align-items:center;">
+          <span style="font-size:0.75rem;color:rgba(255,255,255,0.4);font-weight:600;text-transform:uppercase;letter-spacing:0.08em;">Blockiert</span>
+          <span id="game-score" style="font-size:1.6rem;font-weight:900;color:#ff7320;line-height:1;">0</span>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <span id="game-streak" style="font-size:0.8rem;font-weight:700;color:#fbbf24;display:none;">🔥 <span id="streak-num">0</span>er-Serie!</span>
+          <button id="game-start-btn" onclick="startGame()" style="
+            background:#E85D04;color:#fff;border:none;border-radius:8px;
+            padding:8px 20px;font-size:0.85rem;font-weight:700;cursor:pointer;font-family:inherit;
+          ">▶ Spielen</button>
+        </div>
+      </div>
+
+      <!-- Startscreen -->
+      <div id="game-startscreen" style="
+        position:absolute;inset:0;display:flex;flex-direction:column;
+        align-items:center;justify-content:center;gap:16px;
+      ">
+        <div style="font-size:3rem;">🎯</div>
+        <div style="color:rgba(255,255,255,0.7);font-size:1rem;text-align:center;max-width:300px;line-height:1.5;">
+          Klick die fliegenden Konzern-Ads weg.<br/>
+          <span style="color:#ff7320;font-weight:700;">Schaffst du 20?</span>
+        </div>
+      </div>
+
+      <!-- Local Ad Reveal (erscheint nach Sieg) -->
+      <div id="game-win" style="
+        position:absolute;inset:0;display:none;flex-direction:column;
+        align-items:center;justify-content:center;gap:12px;
+        background:rgba(12,35,64,0.95);
+      ">
+        <div style="font-size:2.5rem;">🎉</div>
+        <div style="color:#fff;font-weight:900;font-size:1.2rem;">Du hast alles geblockt!</div>
+        <div style="color:rgba(255,255,255,0.6);font-size:0.85rem;margin-bottom:8px;">Jetzt siehst du das, was LocalAd stattdessen zeigt:</div>
+        <!-- Lokale Anzeige -->
+        <div style="
+          background:#fff;border-radius:12px;padding:16px 20px;
+          display:flex;align-items:center;gap:14px;max-width:380px;width:90%;
+          box-shadow:0 8px 32px rgba(232,93,4,0.3);border:2px solid #E85D04;
+        ">
+          <div style="font-size:2.2rem;flex-shrink:0;">🥐</div>
+          <div>
+            <div style="font-size:0.65rem;color:#94a3b8;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:2px;">Lokale Anzeige · LocalAd</div>
+            <div style="font-size:1rem;font-weight:800;color:#0C2340;margin-bottom:2px;">Bäckerei Müller – Duisburg</div>
+            <div style="font-size:0.8rem;color:#64748b;">Frische Brötchen täglich ab 6 Uhr · 47051</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:8px;">
+          <button onclick="startGame()" style="background:#E85D04;color:#fff;border:none;border-radius:8px;padding:9px 20px;font-size:0.85rem;font-weight:700;cursor:pointer;font-family:inherit;">Nochmal</button>
+          <a href="/onboarding" style="background:rgba(255,255,255,0.1);color:#fff;border:none;border-radius:8px;padding:9px 20px;font-size:0.85rem;font-weight:700;cursor:pointer;font-family:inherit;text-decoration:none;display:inline-flex;align-items:center;">Jetzt installieren →</a>
+        </div>
+      </div>
+
+    </div>
+    <!-- Highscore -->
+    <div style="margin-top:12px;text-align:right;font-size:0.78rem;color:rgba(255,255,255,0.3);">
+      Bestzeit: <span id="game-best" style="color:#ff7320;font-weight:700;">–</span>
+    </div>
+  </div>
+</section>
+
+<style>
+@keyframes adFloat {
+  0%   { transform: translateY(0) rotate(var(--r)); opacity:1; }
+  100% { transform: translateY(var(--dy)) rotate(calc(var(--r) + 20deg)); opacity:0.85; }
+}
+@keyframes adPop {
+  0%   { transform: scale(1); opacity:1; }
+  40%  { transform: scale(1.35); opacity:0.8; }
+  100% { transform: scale(0); opacity:0; }
+}
+@keyframes floatCross {
+  0%   { left: -120px; }
+  100% { left: calc(100% + 120px); }
+}
+.game-ad {
+  position: absolute;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+  transition: transform 0.05s;
+  animation: floatCross linear forwards;
+}
+.game-ad:hover { transform: scale(1.06); }
+.game-ad.popped {
+  animation: adPop 0.28s ease-out forwards !important;
+  pointer-events: none;
+}
+.hit-text {
+  position: absolute;
+  font-size: 1.1rem;
+  font-weight: 900;
+  color: #4ade80;
+  pointer-events: none;
+  animation: hitFloat 0.7s ease-out forwards;
+}
+@keyframes hitFloat {
+  0%   { opacity:1; transform:translateY(0) scale(1); }
+  100% { opacity:0; transform:translateY(-40px) scale(1.3); }
+}
+</style>
+
+<script>
+(function() {
+  const ADS = [
+    { label: 'Google Retargeting', bg:'#4285f4', color:'#fff', emoji:'🔵' },
+    { label: 'Meta Pixel Ad',       bg:'#1877f2', color:'#fff', emoji:'👁' },
+    { label: 'Amazon DSP',          bg:'#ff9900', color:'#fff', emoji:'📦' },
+    { label: 'Taboola',             bg:'#3c3c3c', color:'#fff', emoji:'💀' },
+    { label: 'TikTok Ads',          bg:'#010101', color:'#ff0050', emoji:'🎵' },
+    { label: 'Criteo',              bg:'#f35b21', color:'#fff', emoji:'📊' },
+    { label: 'LinkedIn Ads',        bg:'#0a66c2', color:'#fff', emoji:'💼' },
+    { label: 'Outbrain',            bg:'#ff6622', color:'#fff', emoji:'🕸' },
+    { label: 'Snapchat Ads',        bg:'#fffc00', color:'#000', emoji:'👻' },
+    { label: 'Spotify Ads',         bg:'#1db954', color:'#fff', emoji:'🎧' },
+  ];
+
+  let score = 0, running = false, spawnTimer, streak = 0, startTime, bestTime = null;
+  const arena   = document.getElementById('game-arena');
+  const scoreEl = document.getElementById('game-score');
+  const winEl   = document.getElementById('game-win');
+  const startEl = document.getElementById('game-startscreen');
+  const streakEl = document.getElementById('game-streak');
+  const streakNum = document.getElementById('streak-num');
+  const bestEl   = document.getElementById('game-best');
+  const TARGET = 20;
+
+  window.startGame = function() {
+    score = 0; streak = 0; running = true; startTime = Date.now();
+    scoreEl.textContent = '0';
+    streakEl.style.display = 'none';
+    winEl.style.display = 'none';
+    startEl.style.display = 'none';
+    // Alle alten Ads entfernen
+    arena.querySelectorAll('.game-ad,.hit-text').forEach(el => el.remove());
+    clearInterval(spawnTimer);
+    spawnTimer = setInterval(spawnAd, 900);
+    spawnAd();
+  };
+
+  function spawnAd() {
+    if (!running) return;
+    const ad = ADS[Math.floor(Math.random() * ADS.length)];
+    const el = document.createElement('div');
+    el.className = 'game-ad';
+    el.textContent = ad.emoji + ' ' + ad.label;
+    el.style.background = ad.bg;
+    el.style.color = ad.color;
+
+    const arenaH = arena.clientHeight;
+    const top = 60 + Math.random() * (arenaH - 120);
+    const duration = 2.8 + Math.random() * 2.4;
+    const goLeft = Math.random() > 0.5;
+
+    el.style.top = top + 'px';
+    el.style.animationDuration = duration + 's';
+    el.style.animationName = 'none'; // reset
+
+    if (goLeft) {
+      el.style.right = '-120px';
+      el.style.left = 'auto';
+      el.style.animation = `floatCrossRev ${duration}s linear forwards`;
+    } else {
+      el.style.left = '-120px';
+      el.style.animation = `floatCross ${duration}s linear forwards`;
+    }
+
+    el.addEventListener('click', function(e) {
+      if (el.classList.contains('popped')) return;
+      el.classList.add('popped');
+      score++;
+      streak++;
+      scoreEl.textContent = score;
+
+      // Streak anzeigen
+      if (streak >= 3) {
+        streakEl.style.display = 'flex';
+        streakNum.textContent = streak;
+      }
+
+      // Hit-Text
+      const hit = document.createElement('div');
+      hit.className = 'hit-text';
+      hit.textContent = ['Geblockt!','Weg damit!','Nein danke!','Blockiert!','✓'][Math.floor(Math.random()*5)];
+      hit.style.left = (e.clientX - arena.getBoundingClientRect().left - 30) + 'px';
+      hit.style.top  = (e.clientY - arena.getBoundingClientRect().top  - 20) + 'px';
+      arena.appendChild(hit);
+      setTimeout(() => hit.remove(), 800);
+
+      setTimeout(() => el.remove(), 300);
+
+      if (score >= TARGET) {
+        running = false;
+        clearInterval(spawnTimer);
+        streak = 0;
+        streakEl.style.display = 'none';
+        const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
+        if (!bestTime || elapsed < bestTime) {
+          bestTime = elapsed;
+          bestEl.textContent = elapsed + 's';
+          localStorage.setItem('localad_game_best', elapsed);
+        }
+        setTimeout(() => {
+          arena.querySelectorAll('.game-ad,.hit-text').forEach(el => el.remove());
+          winEl.style.display = 'flex';
+          launchMiniConfetti();
+        }, 400);
+      }
+    });
+
+    el.addEventListener('animationend', function() {
+      el.remove();
+      if (running) streak = 0;
+      streakEl.style.display = 'none';
+    });
+
+    arena.appendChild(el);
+  }
+
+  function launchMiniConfetti() {
+    const colors = ['#E85D04','#ff7320','#22c55e','#fbbf24','#60a5fa'];
+    for (let i = 0; i < 40; i++) {
+      const c = document.createElement('div');
+      c.style.cssText = `position:absolute;width:8px;height:8px;border-radius:2px;
+        background:${colors[i%colors.length]};
+        left:${10+Math.random()*80}%;top:${10+Math.random()*60}%;
+        opacity:1;transition:all ${0.8+Math.random()*0.8}s ease-out;
+        transform:translateY(0) rotate(0deg);pointer-events:none;`;
+      winEl.appendChild(c);
+      setTimeout(() => {
+        c.style.transform = `translateY(${60+Math.random()*80}px) rotate(${Math.random()*360}deg)`;
+        c.style.opacity = '0';
+      }, 50);
+      setTimeout(() => c.remove(), 1800);
+    }
+  }
+
+  // CSS für Gegenrichtung
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes floatCrossRev {
+      0%   { right: -120px; left:auto; }
+      100% { right: calc(100% + 120px); left:auto; }
+    }
+  `;
+  document.head.appendChild(style);
+
+  // Bestzeit aus localStorage laden
+  const saved = localStorage.getItem('localad_game_best');
+  if (saved) { bestTime = saved; bestEl.textContent = saved + 's'; }
+})();
+</script>
 
 <!-- CALCULATOR -->
 <section class="calculator" id="kalkulator">
