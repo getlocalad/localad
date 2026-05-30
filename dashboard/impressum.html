@@ -109,5 +109,143 @@
   </footer-bar>
 </div>
 <script src="/cookie-banner.js" defer></script>
+<script>
+(function () {
+
+  // ── 1. Alle Textknoten einsammeln und in <span> pro Zeichen aufteilen ─────
+  function wrapChars(node) {
+    if (node.nodeType === 3) { // Textknoten
+      const text = node.textContent;
+      if (!text.trim()) return;
+      const frag = document.createDocumentFragment();
+      for (const ch of text) {
+        const s = document.createElement('span');
+        s.className = 'ch';
+        s.textContent = ch;
+        s.style.display = 'inline-block';
+        frag.appendChild(s);
+      }
+      node.parentNode.replaceChild(frag, node);
+    } else if (
+      node.nodeType === 1 &&
+      node.tagName !== 'SCRIPT' &&
+      node.tagName !== 'STYLE'
+    ) {
+      [...node.childNodes].forEach(wrapChars);
+    }
+  }
+
+  wrapChars(document.body);
+
+  // ── 2. Zielpositionen aller Spans einlesen ────────────────────────────────
+  const spans = [...document.querySelectorAll('.ch')];
+  const targets = spans.map(s => {
+    const r = s.getBoundingClientRect();
+    return {
+      x: r.left + window.scrollX,
+      y: r.top  + window.scrollY,
+    };
+  });
+
+  // ── 3. Spans als fixed positionieren, verstreuen ──────────────────────────
+  const W = window.innerWidth;
+  const H = document.documentElement.scrollHeight;
+
+  // Kleine Grüppchen: Anker-Punkte zufällig verteilen
+  const GROUPS = 18;
+  const anchors = Array.from({ length: GROUPS }, () => ({
+    x: 40 + Math.random() * (W - 80),
+    y: 60 + Math.random() * (Math.min(H, window.innerHeight) - 120),
+  }));
+
+  spans.forEach((s, i) => {
+    const anchor = anchors[i % GROUPS];
+    const sx = anchor.x + (Math.random() - 0.5) * 120;
+    const sy = anchor.y + (Math.random() - 0.5) * 80;
+
+    s.style.cssText += `
+      position: fixed;
+      left: ${sx}px;
+      top:  ${sy}px;
+      opacity: 1;
+      transition: none;
+      z-index: 9999;
+      pointer-events: none;
+      will-change: transform, left, top;
+    `;
+    // Originale Stelle unsichtbar machen damit Layout nicht springt
+    s.dataset.tx = targets[i].x;
+    s.dataset.ty = targets[i].y;
+    s.dataset.sx = sx;
+    s.dataset.sy = sy;
+  });
+
+  // Seite selbst temporär unsichtbar (verhindert Layout-Flash)
+  document.body.style.visibility = 'visible';
+
+  // ── 4. Nach 1.4s: Erschrecken (kurzes Hochspringen) ──────────────────────
+  setTimeout(() => {
+    spans.forEach((s, i) => {
+      const delay = Math.random() * 120;
+      s.style.transition = `transform ${80 + Math.random()*60}ms ease-out ${delay}ms`;
+      s.style.transform  = `translateY(-${6 + Math.random() * 14}px) scale(1.15)`;
+    });
+
+    // ── 5. Nach weiteren 200ms: an Zielposition rasen ────────────────────────
+    setTimeout(() => {
+      // Bobbing-Keyframes einmalig einfügen
+      if (!document.getElementById('bob-style')) {
+        const st = document.createElement('style');
+        st.id = 'bob-style';
+        st.textContent = `
+          @keyframes charBob {
+            0%,100% { transform: translateY(0px); }
+            25%      { transform: translateY(-5px) rotate(-2deg); }
+            75%      { transform: translateY(3px)  rotate(2deg); }
+          }
+        `;
+        document.head.appendChild(st);
+      }
+
+      spans.forEach((s, i) => {
+        const tx = parseFloat(s.dataset.tx);
+        const ty = parseFloat(s.dataset.ty);
+        const sx = parseFloat(s.dataset.sx);
+        const sy = parseFloat(s.dataset.sy);
+
+        const dist  = Math.hypot(tx - sx, ty - sy);
+        const dur   = 320 + dist * 0.55;
+        const delay = Math.random() * 80;
+        const bobSpeed = (80 + Math.random() * 60) + 'ms';
+        const bobDelay = (Math.random() * 60) + 'ms';
+
+        // Bobbing während des Laufens
+        s.style.animation = `charBob ${bobSpeed} ease-in-out ${bobDelay} infinite`;
+
+        s.style.transition = `left ${dur}ms cubic-bezier(.4,0,.2,1) ${delay}ms,
+                               top  ${dur}ms cubic-bezier(.4,0,.2,1) ${delay}ms`;
+        s.style.left = tx + 'px';
+        s.style.top  = ty + 'px';
+
+        // Bobbing stoppen sobald angekommen
+        setTimeout(() => {
+          s.style.animation = 'none';
+          s.style.transform = 'none';
+        }, delay + dur);
+      });
+
+      // ── 6. Aufräumen: zurück in den normalen Dokumentfluss ─────────────────
+      const maxDur = 280 + Math.hypot(W, H) * 0.55 + 80 + 200;
+      setTimeout(() => {
+        spans.forEach(s => {
+          s.style.cssText = 'display:inline;';
+        });
+      }, maxDur);
+
+    }, 220);
+  }, 1400);
+
+})();
+</script>
 </body>
 </html>
