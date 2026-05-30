@@ -615,6 +615,7 @@
   }
 
   function logout() {
+    fetch('/api/auth/logout', { method: 'POST', credentials: 'include' }).catch(() => {});
     localStorage.removeItem('localad_token');
     window.location.href = '/';
   }
