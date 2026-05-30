@@ -2289,19 +2289,65 @@ calcAdvertiser();
 
     // Punkte
     particles.forEach(p => {
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(232,93,4,${p.opacity})`;
-      ctx.fill();
+      if (p.popping) {
+        // Pop-Flash: kurz aufleuchten und größer werden, dann verschwinden
+        const t = p.popAge / 10; // 0 → 1
+        const flashR = p.r * (1 + t * 2.5);
+        const flashA = (1 - t) * 0.7;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, flashR, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255,255,255,${flashA})`;
+        ctx.fill();
+      } else {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(232,93,4,${p.opacity})`;
+        ctx.fill();
+      }
     });
   }
 
+  let popping = false; // globaler Pop läuft gerade
+
   function update() {
+    // Alle Partikel eingesammelt? → alle platzen gleichzeitig
+    if (!popping) {
+      const allCollected = particles.every(p => {
+        const dx = mouse.x - p.x, dy = mouse.y - p.y;
+        return Math.sqrt(dx*dx + dy*dy) < MOUSE_PULL;
+      });
+      if (allCollected && mouse.x > 0) {
+        popping = true;
+        // Nach Distanz zur Maus sortieren: nächste platzen zuerst
+        const sorted = [...particles].sort((a, b) => {
+          const da = Math.hypot(mouse.x - a.x, mouse.y - a.y);
+          const db = Math.hypot(mouse.x - b.x, mouse.y - b.y);
+          return da - db;
+        });
+        sorted.forEach((p, i) => {
+          p.popping = true;
+          p.popAge  = -(i * 2.2); // gleichmäßige Staffelung, nächste zuerst
+        });
+      }
+    }
+
     particles.forEach(p => {
-      // Sanfte Anziehung zur Maus
       const dx = mouse.x - p.x;
       const dy = mouse.y - p.y;
       const dist = Math.sqrt(dx * dx + dy * dy);
+
+      if (p.popping) {
+        p.popAge++;
+        if (p.popAge > 12) {
+          Object.assign(p, mkParticle());
+          p.popping = false;
+          // Wenn alle neu gespawnt → globalen Pop zurücksetzen
+          if (particles.every(q => !q.popping)) popping = false;
+        }
+        return; // kein Movement während des Platzens
+      }
+
+      // Sanfte Anziehung zur Maus
       if (dist < MOUSE_PULL && dist > 1) {
         const force = (1 - dist / MOUSE_PULL) * 0.012;
         p.vx += dx / dist * force;
@@ -2314,19 +2360,16 @@ calcAdvertiser();
 
       // Mindestgeschwindigkeit
       const speed = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
-      if (speed < SPEED * 0.3) {
-        p.vx *= 1.04;
-        p.vy *= 1.04;
-      }
+      if (speed < SPEED * 0.3) { p.vx *= 1.04; p.vy *= 1.04; }
 
       p.x += p.vx;
       p.y += p.vy;
 
       // Weich an Kanten abprallen
-      if (p.x < 0)  { p.x = 0;  p.vx *= -1; }
-      if (p.x > W)  { p.x = W;  p.vx *= -1; }
-      if (p.y < 0)  { p.y = 0;  p.vy *= -1; }
-      if (p.y > H)  { p.y = H;  p.vy *= -1; }
+      if (p.x < 0) { p.x = 0; p.vx *= -1; }
+      if (p.x > W) { p.x = W; p.vx *= -1; }
+      if (p.y < 0) { p.y = 0; p.vy *= -1; }
+      if (p.y > H) { p.y = H; p.vy *= -1; }
     });
   }
 
