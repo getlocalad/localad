@@ -269,9 +269,9 @@
           const sy   = parseFloat(s.style.top);
           const dist = Math.hypot(charData[i].tx - sx, charData[i].ty - sy);
 
-          // langsam – wie über einen großen Platz
-          const dur   = 900 + dist * 1.1;
-          const delay = 80 + Math.random() * 220;
+          // langer Weg – wie eine echte Strecke
+          const dur   = 1800 + dist * 2.8;
+          const delay = 120 + Math.random() * 400;
 
           maxArrival = Math.max(maxArrival, delay + dur);
 
