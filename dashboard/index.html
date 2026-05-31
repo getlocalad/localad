@@ -2,6 +2,7 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta property="og:image" content="/assets/og-image.png" />
   <meta property="og:image:width" content="1200" />
@@ -380,7 +381,7 @@
 
 <script>
   const API = (location.hostname === 'localhost' || location.hostname === '127.0.0.1') ? 'http://localhost:3000/api' : '/api';
-  let accessToken = sessionStorage.getItem('localad_token') || null;
+  let accessToken = localStorage.getItem('localad_token') || null;
 
   // ── Helpers ───────────────────────────────────────────────────────────────
   async function apiFetch(path, options = {}) {
@@ -407,7 +408,7 @@
       if (refreshed.ok) {
         const data = await refreshed.json();
         accessToken = data.accessToken;
-        sessionStorage.setItem('localad_token', accessToken);
+        localStorage.setItem('localad_token', accessToken);
         return apiFetch(path, options); // Retry
       } else {
         logout();
@@ -442,7 +443,7 @@
         body: JSON.stringify({ email, password }),
       });
       accessToken = data.accessToken;
-      sessionStorage.setItem('localad_token', accessToken);
+      localStorage.setItem('localad_token', accessToken);
       // Prüfen ob Advertiser-Profil vorhanden
       const advCheck = await apiFetch('/advertisers/me');
       if (!advCheck || !advCheck.advertiser) {
@@ -462,7 +463,7 @@
   function logout() {
     fetch(API + '/auth/logout', { method: 'POST', credentials: 'include' });
     accessToken = null;
-    sessionStorage.removeItem('localad_token');
+    localStorage.removeItem('localad_token');
     document.getElementById('app').style.display = 'none';
     document.getElementById('auth-screen').style.display = 'flex';
   }
@@ -732,7 +733,7 @@
         window.location.href = '/account';
       }
     }).catch(() => {
-      sessionStorage.removeItem('localad_token');
+      localStorage.removeItem('localad_token');
       accessToken = null;
     });
   }
@@ -740,3 +741,4 @@
 <script src="/cookie-banner.js" defer></script>
 </body>
 </html>
+          

@@ -127,9 +127,13 @@ app.post('/api/contact', globalLimiter, async (req, res) => {
   }
 });
 
-// Catch-all: unbekannte Routen → Landing Page (verhindert Railway-Fallback)
+// 404-Seite für unbekannte Routen
 app.get('*', (req, res) => {
-  res.sendFile(resolve(__dirname, '../../dashboard/landing.html'));
+  // API-Routen bekommen JSON-404
+  if (req.path.startsWith('/api/')) {
+    return res.status(404).json({ error: 'Nicht gefunden' });
+  }
+  res.status(404).sendFile(resolve(__dirname, '../../dashboard/404.html'));
 });
 
 // Stripe Success/Cancel Redirects

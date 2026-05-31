@@ -2,6 +2,7 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta property="og:image" content="/assets/og-image.png" />
   <meta property="og:image:width" content="1200" />
@@ -12,6 +13,41 @@
   <meta property="og:description" content="Schluss mit Amazon-Bannern auf lokalen Websites. LocalAd zeigt echte Anzeigen aus deiner Nachbarschaft." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://getlocalad.de" />
+  <link rel="canonical" href="https://getlocalad.de" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="LocalAd – Werbung, die bleibt." />
+  <meta name="twitter:description" content="Schluss mit Amazon-Bannern auf lokalen Websites. LocalAd zeigt echte Anzeigen aus deiner Nachbarschaft." />
+  <meta name="twitter:image" content="https://getlocalad.de/assets/og-image.png" />
+
+  <!-- JSON-LD: Organization -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "LocalAd",
+    "url": "https://getlocalad.de",
+    "logo": "https://getlocalad.de/assets/og-image.png",
+    "description": "LocalAd blockiert Konzernwerbung und ersetzt sie durch lokale Anzeigen aus deiner Stadt.",
+    "areaServed": { "@type": "City", "name": "Duisburg" },
+    "contactPoint": { "@type": "ContactPoint", "email": "info@getlocalad.de", "contactType": "customer support" }
+  }
+  </script>
+
+  <!-- JSON-LD: FAQ -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      { "@type": "Question", "name": "Wie unterscheidet sich LocalAd von uBlock Origin?", "acceptedAnswer": { "@type": "Answer", "text": "uBlock Origin blockiert Werbung und lässt die Fläche leer. LocalAd ersetzt sie aktiv durch lokale Anzeigen aus deiner Stadt – du siehst statt Google-Bannern echte Angebote aus deiner Nachbarschaft." } },
+      { "@type": "Question", "name": "Welche Daten werden gespeichert?", "acceptedAnswer": { "@type": "Answer", "text": "Nur deine Postleitzahl wird für die Anzeigenauswahl genutzt. Kein Browserverlauf, kein Standort, kein Fingerprinting, keine Weitergabe an Dritte." } },
+      { "@type": "Question", "name": "Was kostet LocalAd für Nutzer?", "acceptedAnswer": { "@type": "Answer", "text": "3 € pro Monat, jederzeit kündbar. Kein Jahresvertrag." } },
+      { "@type": "Question", "name": "Funktioniert LocalAd auch auf Firefox?", "acceptedAnswer": { "@type": "Answer", "text": "Ja. LocalAd unterstützt Chrome (ab v88), Firefox (ab v109) sowie alle Chromium-Browser wie Edge, Brave und Opera." } }
+    ]
+  }
+  </script>
 
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -830,7 +866,7 @@
   </style>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap&font-display=swap" rel="stylesheet">
 </head>
 <body>
 
@@ -842,7 +878,6 @@
     <li><a href="#preise">Preise</a></li>
     <li><a href="#publisher">Publisher</a></li>
     <li><a href="#werbetreibende">Werbetreibende</a></li>
-    <li><a href="#spiel">🎯 Game</a></li>
     <li><a href="#kalkulator">Kalkulator</a></li>
   </ul>
   <div class="nav-right">
@@ -964,6 +999,39 @@ function localadLogout () {
 }
 </script>
 
+<script>
+// ── Scroll-Spy: aktiver Nav-Link ─────────────────────────────────────────────
+(function () {
+  const sections = ['wie-es-funktioniert','preise','publisher','werbetreibende','kalkulator'];
+  const links = {};
+  sections.forEach(id => {
+    const a = document.querySelector(`.nav-links a[href="#${id}"]`);
+    if (a) links[id] = a;
+  });
+
+  const NAV_H = 64;
+  let ticking = false;
+
+  function update() {
+    let active = null;
+    sections.forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      if (el.getBoundingClientRect().top <= NAV_H + 40) active = id;
+    });
+    Object.entries(links).forEach(([id, a]) => {
+      a.style.color = id === active ? 'var(--orange2)' : '';
+      a.style.fontWeight = id === active ? '700' : '';
+    });
+    ticking = false;
+  }
+
+  window.addEventListener('scroll', () => {
+    if (!ticking) { requestAnimationFrame(update); ticking = true; }
+  }, { passive: true });
+})();
+</script>
+
 <!-- HERO -->
 <section class="hero">
   <canvas id="hero-canvas" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;opacity:0.45;"></canvas>
@@ -1008,7 +1076,7 @@ function localadLogout () {
       <div class="blocked-badge">
         <span>3×</span>blockiert
       </div>
-      <img src="/assets/hero-illustration.png" alt="LocalAd – Konzernwerbung blockiert, lokale Anzeige aktiv" style="width:100%;display:block;" />
+      <img src="/assets/hero-illustration.png" alt="LocalAd – Konzernwerbung blockiert, lokale Anzeige aktiv" width="520" height="400" style="width:100%;display:block;" />
     </div>
 
       <!-- Mobile-only status strip -->
@@ -1431,7 +1499,7 @@ function localadLogout () {
     <h2 class="section-title">Kein Konzernmodell. Kein Datenschatten.</h2>
     <p class="section-sub" style="margin:0 auto;">LocalAd folgt dem Opt-in-Prinzip: Nur wer zustimmt, nimmt teil. Auf allen drei Seiten.</p>
     <div style="margin:2.5rem 0 0;">
-      <img src="/assets/konzern-vs-lokal.png" alt="Konzernwerbung vs. lokale Werbung mit LocalAd" style="width:100%;border-radius:12px;display:block;" />
+      <img src="/assets/konzern-vs-lokal.png" alt="Konzernwerbung vs. lokale Werbung mit LocalAd" loading="lazy" width="600" height="400" style="width:100%;border-radius:12px;display:block;" />
     </div>
     <div class="trust-grid">
       <div class="trust-item">
@@ -2222,10 +2290,38 @@ calcAdvertiser();
     </div>
   </div>
   <div class="footer-bottom">
-    <span>© 2026 LocalAd – Alle Rechte vorbehalten</span>
+    <span>© <span id="footer-year">2026</span> LocalAd – Alle Rechte vorbehalten</span>
     <span>Made in Duisburg 🇩🇪</span>
   </div>
 </footer>
+
+<!-- Scroll-to-top Button -->
+<button id="scroll-top" aria-label="Nach oben" onclick="window.scrollTo({top:0,behavior:'smooth'})" style="
+  position:fixed; bottom:28px; right:28px; z-index:500;
+  width:44px; height:44px; border-radius:50%;
+  background:#E85D04; color:#fff; border:none; cursor:pointer;
+  font-size:1.1rem; box-shadow:0 4px 16px rgba(232,93,4,0.4);
+  opacity:0; transform:translateY(12px);
+  transition:opacity 0.25s, transform 0.25s;
+  display:flex; align-items:center; justify-content:center;
+">↑</button>
+
+<script>
+// Footer-Jahr dynamisch
+document.getElementById('footer-year').textContent = new Date().getFullYear();
+
+// Scroll-to-top sichtbar ab 400px
+(function(){
+  var btn = document.getElementById('scroll-top');
+  window.addEventListener('scroll', function(){
+    if (window.scrollY > 400) {
+      btn.style.opacity = '1'; btn.style.transform = 'translateY(0)';
+    } else {
+      btn.style.opacity = '0'; btn.style.transform = 'translateY(12px)';
+    }
+  }, { passive: true });
+})();
+</script>
 
 <script src="/cookie-banner.js" defer></script>
 
@@ -2340,74 +2436,4 @@ calcAdvertiser();
         p.popAge++;
         if (p.popAge > 12) {
           Object.assign(p, mkParticle());
-          p.popping = false;
-          // Wenn alle neu gespawnt → globalen Pop zurücksetzen
-          if (particles.every(q => !q.popping)) popping = false;
-        }
-        return; // kein Movement während des Platzens
-      }
-
-      // Sanfte Anziehung zur Maus
-      if (dist < MOUSE_PULL && dist > 1) {
-        const force = (1 - dist / MOUSE_PULL) * 0.012;
-        p.vx += dx / dist * force;
-        p.vy += dy / dist * force;
-      }
-
-      // Dämpfung
-      p.vx *= 0.992;
-      p.vy *= 0.992;
-
-      // Mindestgeschwindigkeit
-      const speed = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
-      if (speed < SPEED * 0.3) { p.vx *= 1.04; p.vy *= 1.04; }
-
-      p.x += p.vx;
-      p.y += p.vy;
-
-      // Weich an Kanten abprallen
-      if (p.x < 0) { p.x = 0; p.vx *= -1; }
-      if (p.x > W) { p.x = W; p.vx *= -1; }
-      if (p.y < 0) { p.y = 0; p.vy *= -1; }
-      if (p.y > H) { p.y = H; p.vy *= -1; }
-    });
-  }
-
-  function loop() {
-    update();
-    draw();
-    requestAnimationFrame(loop);
-  }
-
-  // Mausposition relativ zum Canvas
-  canvas.parentElement.addEventListener('mousemove', e => {
-    const rect = canvas.getBoundingClientRect();
-    mouse.x = e.clientX - rect.left;
-    mouse.y = e.clientY - rect.top;
-  });
-  canvas.parentElement.addEventListener('mouseleave', () => {
-    mouse.x = -9999; mouse.y = -9999;
-  });
-
-  window.addEventListener('resize', () => { resize(); });
-
-  init();
-  loop();
-})();
-
-// ── Console Easter Egg ────────────────────────────────────────────────────────
-(function () {
-  const s = [
-    'color:#E85D04;font-size:18px;font-weight:900;letter-spacing:-0.5px',
-    'color:#64748b;font-size:12px;',
-    'color:#0C2340;font-size:12px;font-weight:700;',
-  ];
-  console.log('%cLocal%cAd', 'color:#0C2340;font-size:22px;font-weight:900;', 'color:#E85D04;font-size:22px;font-weight:900;');
-  console.log('%c📍 Pilotstart Duisburg', s[0]);
-  console.log('%cDu schaust hinter die Kulissen. Gut. Dann weißt du, dass wir Manifest V3, Node.js, PostgreSQL und Railway nutzen.', s[1]);
-  console.log('%cKein Tracking. Kein Bullshit. Nur lokale Werbung.', s[2]);
-  console.log('%c→ github.com/localad  ·  getlocalad.de', s[1]);
-})();
-</script>
-</body>
-</html>
+    

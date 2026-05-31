@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>404 – Seite nicht gefunden · LocalAd</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #0C2340;
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+      text-align: center;
+    }
+    .logo { font-size: 1.4rem; font-weight: 900; color: #fff; text-decoration: none; letter-spacing: -0.5px; margin-bottom: 48px; display: block; }
+    .logo span { color: #E85D04; }
+    .code {
+      font-size: clamp(5rem, 18vw, 10rem);
+      font-weight: 900;
+      line-height: 1;
+      color: #E85D04;
+      letter-spacing: -4px;
+      margin-bottom: 16px;
+      position: relative;
+    }
+    .code::after {
+      content: '📍';
+      font-size: 2rem;
+      position: absolute;
+      top: -8px;
+      right: -16px;
+      animation: bounce 1.8s ease-in-out infinite;
+    }
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50%       { transform: translateY(-12px); }
+    }
+    h1 { font-size: 1.4rem; font-weight: 800; margin-bottom: 12px; }
+    p  { color: rgba(255,255,255,0.55); font-size: 1rem; margin-bottom: 36px; line-height: 1.6; max-width: 380px; }
+    .btn {
+      display: inline-block;
+      background: #E85D04;
+      color: #fff;
+      padding: 12px 28px;
+      border-radius: 9px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      text-decoration: none;
+      transition: background 0.2s;
+      margin: 6px;
+    }
+    .btn:hover { background: #ff7320; }
+    .btn-ghost {
+      display: inline-block;
+      color: rgba(255,255,255,0.6);
+      border: 1.5px solid rgba(255,255,255,0.2);
+      padding: 12px 28px;
+      border-radius: 9px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      text-decoration: none;
+      transition: all 0.2s;
+      margin: 6px;
+    }
+    .btn-ghost:hover { border-color: rgba(255,255,255,0.5); color: #fff; }
+  </style>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+  <a href="/" class="logo">Local<span>Ad</span></a>
+  <div class="code">404</div>
+  <h1>Diese Seite gibt es nicht.</h1>
+  <p>Vielleicht wurde die URL geändert oder du hast dich vertippt. Kein Problem – hier lang:</p>
+  <div>
+    <a href="/" class="btn">← Zur Startseite</a>
+    <a href="/onboarding" class="btn-ghost">Konto erstellen</a>
+  </div>
+</body>
+</html>

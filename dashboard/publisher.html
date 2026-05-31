@@ -2,6 +2,7 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta property="og:image" content="/assets/og-image.png" />
   <meta property="og:image:width" content="1200" />
@@ -310,7 +311,7 @@
 
 <script>
   const API = (location.hostname === 'localhost' || location.hostname === '127.0.0.1') ? 'http://localhost:3000/api' : '/api';
-  let accessToken = sessionStorage.getItem('localad_pub_token') || null;
+  let accessToken = localStorage.getItem('localad_token') || null;
   let publisherData = null;
   let verifyToken = null;
   let verifyDomain = null;
@@ -336,7 +337,7 @@
       if (refreshed.ok) {
         const data = await refreshed.json();
         accessToken = data.accessToken;
-        sessionStorage.setItem('localad_pub_token', accessToken);
+        localStorage.setItem('localad_token', accessToken);
         return apiFetch(path, options);
       } else { logout(); throw new Error('Sitzung abgelaufen'); }
     }
@@ -377,7 +378,7 @@
         body: JSON.stringify({ email, password }),
       });
       accessToken = data.accessToken;
-      sessionStorage.setItem('localad_token', accessToken);
+      localStorage.setItem('localad_token', accessToken);
       document.getElementById('nav-email').textContent = data.user.email;
       showApp();
     } catch (err) {
@@ -397,7 +398,7 @@
     try {
       const data = await apiFetch('/auth/login', { method: 'POST', body: JSON.stringify({ email, password: pwd }) });
       accessToken = data.accessToken;
-      sessionStorage.setItem('localad_pub_token', accessToken);
+      localStorage.setItem('localad_token', accessToken);
       document.getElementById('nav-email').textContent = data.user.email;
       showApp();
     } catch (err) {
@@ -411,7 +412,7 @@
   function logout() {
     fetch(API + '/auth/logout', { method: 'POST', credentials: 'include' });
     accessToken = null;
-    sessionStorage.removeItem('localad_pub_token');
+    localStorage.removeItem('localad_token');
     document.getElementById('app').style.display = 'none';
     document.getElementById('auth-screen').style.display = 'flex';
   }
@@ -651,7 +652,7 @@
         showApp();
       }
     }).catch(() => {
-      sessionStorage.removeItem('localad_pub_token');
+      localStorage.removeItem('localad_token');
       accessToken = null;
     });
   }
@@ -659,3 +660,4 @@
 <script src="/cookie-banner.js" defer></script>
 </body>
 </html>
+                                
